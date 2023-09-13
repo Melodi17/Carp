@@ -1,0 +1,38 @@
+﻿namespace Carp;
+
+public abstract class CarpWarning : CarpError
+{
+    public override abstract string DisplayName { get; }
+    
+    public CarpWarning() : base("Warning occured in Carp runtime") { }
+    public CarpWarning(string message) : base(message) { }
+    private static readonly List<string> warnings = new();
+    
+    public string Key => $"{this.DisplayName}:{this.Message}";
+    public void Warn()
+    {
+        if (warnings.Contains(this.Key))
+            return;
+
+        warnings.Add(this.Key);
+        
+        
+        if (Flags.Instance.TreatWarningsAsErrors)
+            throw this;
+        
+        Console.WriteLine($"Warning: {this.Message}");
+    }
+    
+    public class Shadowing : CarpWarning
+    {
+        public override string DisplayName => "Shadowing";
+        public Shadowing(string name) : base($"Shadowing '{name}' in a parent scope") { }
+    }
+    
+    public class Unused : CarpWarning
+    {
+        // TODO: Figure out how to detect unused variables
+        public override string DisplayName => "Unused";
+        public Unused(string name) : base($"Unused '{name}'") { }
+    }
+}

@@ -1,0 +1,17 @@
+let i = 0
+while (i < 10)
+{
+    p(i)
+    i += 1
+}
+
+int x = 9
+
+try {
+    x = 1/0
+}
+catch (let ex) {
+    p(ex)
+}
+
+for 5 -> if true -> p('hi')
