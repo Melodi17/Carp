@@ -1,0 +1,84 @@
+﻿import metal.*
+
+package base
+
+struct data {
+    i32 bytes_read
+    buffer _available
+
+    data new(buffer b) {
+        this._available = b
+        return d
+    }
+
+    data from(buffer b) {
+        data d = data.new(b)
+    }
+
+    buffer _alloc(i32 size) {
+        buffer b = _available.after(bytes_read).before(size)
+        bytes_read += size
+        return b
+    }
+    
+    void destroy() {
+        _available = null
+    }
+        
+}
+
+package standard
+
+i32 size_of(data d) -> d.bytes_read
+
+struct i32 | int : data {
+	i32 v
+
+	i32 new() {
+		buffer b = base._alloc(4)
+		v = (b[0]&255)+((b[1]&255)<<8)+((b[2]&255)<<16)+((b[3]&255)<<24);
+	}
+
+	#constant iNUM as i32
+}
+
+struct col(T) : data {
+	i32 size
+	buffer b
+
+	col new() {
+		buffer h = base._alloc(4)
+		size = h ~ i32
+
+		b = base._alloc(size)
+	}
+	
+	T index(i32 i) {
+        # since different items have different sizes, we need to calculate the offset
+        # of the item we want to access
+        i32 byte_offset = 0
+        for (i32 j = 0; j < i; j++) {
+            byte_offset += size_of(b.after(byte_offset) ~ T)            
+        }
+        
+        return b.after(byte_offset) ~ T
+    }
+	
+	
+
+	#constant T* as col
+}
+
+struct chr : data {
+	chr new() {
+		buffer b = base._alloc(1)
+	}
+
+	#constant 'LETTER' as chr
+}
+
+struct str : chr*
+
+package io
+
+void Write(str msg) -> kernel32.WriteConsole(HANDLE, )

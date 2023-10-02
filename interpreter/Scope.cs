@@ -19,6 +19,8 @@ public class Scope : IScope, IDisposable
         this.Parent = null;
     }
     
+    public Dictionary<string, (CarpType type, CarpObject obj)> GetValues() => this._values;
+    
     public CarpObject Get(string name)
     {
         if (this._values.ContainsKey(name))

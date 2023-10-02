@@ -33,6 +33,17 @@ public class CarpRange<T> : CarpObject
         return new CarpEnumerableIterator<CarpObject>(Iter());
     }
 
+    public override CarpObject Property(string name)
+    {
+        return name switch
+        {
+            "start" => this._start,
+            "stop" => this._stop,
+            "length" => this._stop.Subtract(this._start),
+            _ => throw new CarpError.InvalidProperty(name),
+        };
+    }
+
     public override CarpString String() 
         => new($"{this._start}..{this._stop}");
 }

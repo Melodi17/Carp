@@ -83,4 +83,13 @@ public class CarpInternalFunc<T> : CarpFunc<T>
 
         return returnVal;
     }
+    
+    public CarpInternalFunc<T> Bind(CarpObject obj)
+    {
+        // set this
+        Scope boundScope = new(this._scope);
+        boundScope.Define("this", CarpType.GetType(obj), obj);
+        
+        return new(boundScope, this._parameters, this._block);
+    }
 }

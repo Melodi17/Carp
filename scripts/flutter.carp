@@ -1,0 +1,12 @@
+str* l = ['hello', 'world', 'zen']
+
+p(l :: .upper)
+
+int add(int a, int b)
+{
+	return a + b
+}
+
+
+int v = add(1, 2)
+p(v)

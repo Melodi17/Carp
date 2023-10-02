@@ -57,6 +57,14 @@ public class CarpInt : CarpObject
 
         return new CarpInt(Math.Pow(this._value, ci._value));
     }
+    
+    public override CarpObject Modulus(CarpObject other)
+    {
+        if (other is not CarpInt ci)
+            throw new CarpError.InvalidType(CarpInt.Type, CarpType.GetType(other));
+
+        return new CarpInt(this._value % ci._value);
+    }
 
     public override CarpBool Greater(CarpObject other)
     {
@@ -73,6 +81,8 @@ public class CarpInt : CarpObject
 
         return CarpBool.Of(this._value < ci._value);
     }
+
+    public override CarpObject Negate() => new CarpInt(-this._value);
 
     public override CarpIterator<CarpObject> Iterate()
     {
@@ -97,5 +107,13 @@ public class CarpInt : CarpObject
             str = str[..^2];
         
         return new(str);
+    }
+
+    public override CarpBool Match(CarpObject other)
+    {
+        if (other is not CarpInt ci)
+            throw new CarpError.InvalidType(CarpInt.Type, CarpType.GetType(other));
+
+        return CarpBool.Of(this._value == ci._value);
     }
 }

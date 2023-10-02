@@ -1,11 +1,10 @@
 grammar CarpGrammar;
 
 options {
-    contextSuperClass = Carp.interpreter.ScopedParserRuleContext;   
+    contextSuperClass = Carp.interpreter.ScopedParserRuleContext;
 }
 
 ELIPSIS : '..'  ;
-INDENT : ';' ;
 PERIOD : '.' ;
 COMMA : ',' ;
 
@@ -25,6 +24,8 @@ LESS_THAN_EQUALS : '<=' ;
 GREATER_THAN_EQUALS : '>=' ;
 PIPE : '|' ;
 AMPERSAND : '&' ;
+TILDE : '~' ;
+AT : '@' ;
 
 BANG : '!' ;
 PLUS_EQUALS : '+=' ;
@@ -32,11 +33,13 @@ MINUS_EQUALS : '-=' ;
 ASTERISK_EQUALS : '*=' ;
 SLASH_EQUALS : '/=' ;
 CARET_EQUALS : '^=' ;
+PERCENT_EQUALS : '%=' ;
 PLUS_PLUS : '++' ;
 MINUS_MINUS : '--' ;
 PLUS : '+' ;
 MINUS : '-' ;
 SLASH : '/' ;
+PERCENT : '%' ;
 ASTERISK_BSPACE : ' * ' ;
 ASTERISK_LSPACE : ' *' ;
 ASTERISK_RSPACE : '* ' ;
@@ -47,9 +50,10 @@ CARET : '^' ;
 QUESTION_MARK : '?' ;
 UNDERSCORE : '_' ;
 COLON : ':' ;
+SEMICOLON : ';' ;
 COLON_COLON : '::' ;
+SEMICOLON_SEMICOLON : ';;' ;
 ARROW : '->' ;
-WIND : '%' ;
 HASH : '#' ;
 
 TRUE : 'true' ;
@@ -78,9 +82,9 @@ INT : '-'? ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
 WS : [ \t\r\n]+ -> skip ;
 COMMENT : '#' .*? [\n] -> skip ;
 
-program : block EOF ;
+program : (statements+=statement)* EOF ;
 
-block : (INDENT* statements+=statement)* ;
+block : (statements+=statement)* ;
 
 generic_block
     : '{' block '}' # enclosedBlock
@@ -131,19 +135,29 @@ break_statement : BREAK ;
 continue_statement : CONTINUE ;
 yield_statement : YIELD value=expression? ;
 
+attribute
+    : '@' obj=expression
+    | '@' obj=expression '(' parameters=expression_list ')'
+    | '[' obj=expression ']'
+    | '[' obj=expression '(' parameters=expression_list ')' ']'
+    ;
+
 definition
-    : type name '=' value=expression # initializedVariableDefinition
-    | type name # variableDefinition
-    | rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
-    | rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
-    | CLASS name '{' definitions+=definition* '}' # classDefinition
-    | STRUCT name '{' definitions+=definition* '}' # structDefinition
+    : attrs=attribute* type name '=' value=expression # initializedVariableDefinition
+    | attrs=attribute* type name # variableDefinition
+    | attrs=attribute* rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
+    | attrs=attribute* rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
+    | attrs=attribute* CLASS name '{' definitions+=definition* '}' # classDefinition
+    | attrs=attribute* STRUCT name '{' definitions+=definition* '}' # structDefinition
     ;
 
 expression
     : constant # constantExpression
+    | obj=expression '~' dest=type # castExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression
+    | obj=expression '(' parameters=expression_list ')' # callExpression
+    | obj=expression '[' parameters=expression_list ']' # indexExpression
     | obj=expression '.' value=name # propertyExpression
     | left=expression op=binary right=expression # binaryExpression
     | op=unary left=expression # unaryExpression
@@ -153,12 +167,11 @@ expression
     | map # mapExpression
     | array # arrayExpression
     | name # variableExpression
-//    | expression '%' # windExpression
     | left=expression ELIPSIS right=expression # rangeExpression 
     | ELIPSIS right=expression # endRangeExpression
-    | obj=expression '(' parameters=expression_list ')' # callExpression
-    | obj=expression '[' parameters=expression_list ']' # indexExpression
     | '(' obj=expression ')' # parenthesizedExpression
+    | inner=expression '::' # windExpression
+    | inner=expression ';;' # filterExpression
     | left=expression '=' right=expression # assignmentExpression
     // add += -= *= /= %= ^=
     | left=expression op=compoundAssignment right=expression # compoundAssignmentExpression
@@ -174,6 +187,7 @@ compoundAssignment
     | ASTERISK_EQUALS # multiplyCompound
     | SLASH_EQUALS # divideCompound
     | CARET_EQUALS # powerCompound
+    | PERCENT_EQUALS # modulusCompound
     ;
 
 constant
@@ -209,6 +223,7 @@ binary
     | (ASTERISK_LSPACE | ASTERISK_BSPACE | ASTERISK_NSPC) # multiplicationBinary
     | SLASH # divideBinary
     | CARET # powerBinary
+    | PERCENT # modulusBinary
     ;
 
 array : '[' expression_list ']' ;

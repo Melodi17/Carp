@@ -155,6 +155,12 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitYield_statement([NotNull] CarpGrammarParser.Yield_statementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="CarpGrammarParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttribute([NotNull] CarpGrammarParser.AttributeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>initializedVariableDefinition</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
 	/// </summary>
@@ -246,12 +252,26 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariableExpression([NotNull] CarpGrammarParser.VariableExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>windExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitWindExpression([NotNull] CarpGrammarParser.WindExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>binaryExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBinaryExpression([NotNull] CarpGrammarParser.BinaryExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>castExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCastExpression([NotNull] CarpGrammarParser.CastExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>parenthesizedExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -280,6 +300,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitCompoundAssignmentExpression([NotNull] CarpGrammarParser.CompoundAssignmentExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>filterExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFilterExpression([NotNull] CarpGrammarParser.FilterExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>rangeExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -370,6 +397,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitPowerCompound([NotNull] CarpGrammarParser.PowerCompoundContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>modulusCompound</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.compoundAssignment"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitModulusCompound([NotNull] CarpGrammarParser.ModulusCompoundContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>intConstant</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.constant"/>.
@@ -510,6 +544,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitPowerBinary([NotNull] CarpGrammarParser.PowerBinaryContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>modulusBinary</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitModulusBinary([NotNull] CarpGrammarParser.ModulusBinaryContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="CarpGrammarParser.array"/>.
 	/// </summary>

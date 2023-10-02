@@ -6,4 +6,7 @@ public class Flags
     
     public bool TreatWarningsAsErrors = false;
     public bool Debug = false;
+    public bool ImplicitCasting = true;
+    public bool LoadedFromFile;
+    public string ExecutionContext;
 }

@@ -15,8 +15,11 @@ public class CarpChar : CarpObject
 
     public override CarpObject Cast(CarpType t)
     {
+        if (t == CarpObject.Type)
+            return this;
         if (t == CarpString.Type)
             return this.String();
+        
         if (t == CarpInt.Type)
             return new CarpInt(this._value);
         else

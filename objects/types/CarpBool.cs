@@ -19,4 +19,12 @@ public class CarpBool : CarpObject
     public static CarpBool Of(bool v) => v ? True : False;
 
     public CarpBool Not() => Of(!this._value);
+
+    public override CarpBool Match(CarpObject other)
+    {
+        if (other is not CarpBool cb)
+            throw new CarpError.InvalidType(CarpBool.Type, CarpType.GetType(other));
+
+        return Of(this._value == cb._value);
+    }
 }

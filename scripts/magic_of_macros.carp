@@ -1,0 +1,12 @@
+﻿#define add with a, b as a + b
+
+p(add(1, 2))
+p(add(1,2))
+
+#define true as rand(5) > 2
+
+p(true)
+p(true)
+p(true)
+p(true)
+p(true)

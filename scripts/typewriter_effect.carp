@@ -1,4 +1,4 @@
-﻿str Passthrough(str text) -> text + 'X'
+str Passthrough(str text) -> text + 'X'
 
 void Do(str text) -> for chr c : text -> pw(Passthrough(c))
 
@@ -7,6 +7,13 @@ int Add(int a, int b)
     return a + b
 }
 
-#Do(1'zen' * 'xxx'.length)
+p('zen' * 'xxx'.length)
 int c = Add(1, 2)
 p(c)
+
+
+let col = ['hello', 'world', 'test'] :: .upper
+p(col)
+
+# Should output something like this: ['HELLO', 'WORLD', 'TEST']
+asdas

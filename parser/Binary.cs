@@ -7,4 +7,5 @@ public enum Binary
     Multiply,
     Divide,
     Pow,
+    Modulus,
 }

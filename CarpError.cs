@@ -49,6 +49,16 @@ public abstract class CarpError : Exception
             
         }
     }
+    
+    public class KeyNotPresent : CarpError
+    {
+        public override string DisplayName => "KeyNotPresent";
+
+        public KeyNotPresent(CarpObject obj) : base($"Key '{obj}' is not present")
+        {
+            
+        }
+    }
 
     public class RangeNotCompatible : CarpError
     {
@@ -181,6 +191,21 @@ public abstract class CarpError : Exception
     {
         public override string DisplayName => "ReferenceAssignedBeforeDefinition";
         public ReferenceAssignedBeforeDefinition(string name) : base($"Reference '{name}' assigned before definition")
+        {
+            
+        }
+    }
+    public class UnenclosedFlowControl : CarpError
+    {
+        public override string DisplayName => "UnenclosedFlowControl";
+        public UnenclosedFlowControl(CarpFlowControlError err) : base($"Unenclosed flow control '{err.DisplayName}'")
+        {
+            
+        }
+    }
+    public class PreprocessorError : Exception
+    {
+        public PreprocessorError(string message) : base($"Preprocessor throws {message}")
         {
             
         }

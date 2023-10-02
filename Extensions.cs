@@ -1,6 +1,6 @@
 ﻿namespace Carp;
 
-public static class TypeExtensions
+public static class Extensions
 {
     /// <summary>
     /// Returns the type name. If this is a generic type, appends
@@ -21,4 +21,12 @@ public static class TypeExtensions
         }
         return type.Name;
     }
+
+    public static TDecendant FirstOf<TDecendant, TParent>(this IEnumerable<TParent> col)
+        where TDecendant : class, TParent
+        => col.First(x => x is TDecendant) as TDecendant;
+    
+    public static IEnumerable<TDecendant> WhereOf<TDecendant, TParent>(this IEnumerable<TParent> col)
+        where TDecendant : class, TParent
+        => col.Where(x => x is TDecendant).Select(x => x as TDecendant);
 }

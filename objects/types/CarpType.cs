@@ -22,7 +22,7 @@ public class CarpType : CarpObject
         // type.GetGenericArguments() to get sub_types
     }
 
-    public static CarpType GetType(CarpObject source) => GetType(source.GetType());
+    public static CarpType GetType(CarpObject source) => source.GetCarpType();
 
     public static CarpType GetType<T>() where T : CarpObject => GetType(typeof(T));
 
@@ -47,5 +47,12 @@ public class CarpType : CarpObject
 
     public static CarpType Of<T>(CarpString repr) where T : CarpObject => new(typeof(T), repr);
     public override CarpString String() => this._repr;
-
+    public override CarpObject Property(string name)
+    {
+        return name switch {
+            "name" => this.String(),
+            "is_struct" => CarpBool.Of(this.IsStruct),
+            _ => throw new CarpError.InvalidProperty(name),
+        };
+    }
 }
