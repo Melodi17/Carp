@@ -3,25 +3,21 @@ using Carp.interpreter;
 
 namespace Carp.objects.types;
 
-public class CarpInternalFunc<T> : CarpFunc<T>
-    where T : CarpObject
+public class CarpInternalFunc : CarpFunc
 {
-    public static new CarpType Type => CarpFunc<T>.Type;
 
     private CarpGrammarParser.Generic_blockContext _block;
     private Dictionary<string, CarpType> _parameters;
-    private CarpType _returnType;
     private IScope _scope;
 
-    public CarpInternalFunc(IScope scope, Dictionary<string, CarpType> parameters, CarpGrammarParser.Generic_blockContext block)
+    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters, CarpGrammarParser.Generic_blockContext block) : base(returnType)
     {
         this._scope = scope;
         this._parameters = parameters;
         this._block = block;
-        this._returnType = CarpType.GetType<T>();
     }
     
-    public CarpInternalFunc(IScope scope, Dictionary<string, CarpType> parameters)
+    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters) : base(returnType)
     {
         this._scope = scope;
         this._parameters = parameters;
@@ -33,15 +29,15 @@ public class CarpInternalFunc<T> : CarpFunc<T>
         // check parameter length
         if (args.Length != this._parameters.Count)
             throw new CarpError.InvalidType(this._parameters.Values.ToList(),
-                CarpType.GetType(args[0]));
+                args[0].GetCarpType());
         
         // cast all args to their respective types
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i].GetType() == this._parameters.ElementAt(i).Value.Native)
+            if (args[i].GetCarpType() == this._parameters.ElementAt(i).Value)
                 continue;
 
-            if (this._parameters.ElementAt(i).Value == CarpType.Auto)
+            if (this._parameters.ElementAt(i).Value == AutoType.Instance)
                 throw new CarpError.AutoNotPermitted();
             
             // null
@@ -58,7 +54,7 @@ public class CarpInternalFunc<T> : CarpFunc<T>
                 continue;
 
             // cast
-            args[i] = args[i].Cast(this._parameters.ElementAt(i).Value);
+            args[i] = args[i].CastEx(this._parameters.ElementAt(i).Value);
         }
         
         // invoke
@@ -78,18 +74,18 @@ public class CarpInternalFunc<T> : CarpFunc<T>
         if (returnVal == CarpVoid.Instance)
             throw new CarpError.VoidFromNonVoidFunction();
 
-        if (CarpType.GetType(returnVal) != this._returnType)
+        if (returnVal.GetCarpType() != this._returnType)
             return returnVal.Cast(this._returnType);
 
         return returnVal;
     }
     
-    public CarpInternalFunc<T> Bind(CarpObject obj)
+    public CarpInternalFunc Bind(CarpObject obj)
     {
         // set this
         Scope boundScope = new(this._scope);
-        boundScope.Define("this", CarpType.GetType(obj), obj);
+        boundScope.Define("this", obj.GetCarpType(), obj);
         
-        return new(boundScope, this._parameters, this._block);
+        return new(this._returnType, boundScope, this._parameters, this._block);
     }
 }

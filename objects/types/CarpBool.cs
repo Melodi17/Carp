@@ -2,8 +2,9 @@
 
 public class CarpBool : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpBool>(new("bool"));
-    
+    public static CarpType Type = NativeType.Of<CarpBool>("bool");
+    public override CarpType GetCarpType() => Type;
+
     public static CarpBool True = new(true);
     public static CarpBool False = new(false);
     public bool Native => this._value;
@@ -23,7 +24,7 @@ public class CarpBool : CarpObject
     public override CarpBool Match(CarpObject other)
     {
         if (other is not CarpBool cb)
-            throw new CarpError.InvalidType(CarpBool.Type, CarpType.GetType(other));
+            throw new CarpError.InvalidType(CarpBool.Type, other.GetCarpType());
 
         return Of(this._value == cb._value);
     }

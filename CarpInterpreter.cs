@@ -239,8 +239,18 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitExpressionStatement(CarpGrammarParser.ExpressionStatementContext context)
     {
         //this.Execute(context, context.expression());
-        this.Visit(context.expression(), context.ContextScope);
 
+        if (context.expression()
+            is CarpGrammarParser.AssignmentExpressionContext
+            or CarpGrammarParser.CompoundAssignmentExpressionContext
+            or CarpGrammarParser.CallExpressionContext
+            or CarpGrammarParser.TernaryExpressionContext)
+        {
+            this.Visit(context.expression(), context.ContextScope);
+        }
+        else
+            throw new CarpError.UnusedBranch(context.expression());
+        
         return null;
     }
 

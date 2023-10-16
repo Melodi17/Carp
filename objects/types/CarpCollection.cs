@@ -1,38 +1,36 @@
 ﻿using System.Collections;
 using System.Text;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
-public class CarpCollection<T> : CarpObject
-    where T : CarpObject
+public class CarpCollection : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpCollection<T>>(
-        CarpType.GetType<T>()
-                .String()
-                .Add(new CarpString("*"))
-            as CarpString);
+    public static new CarpType Type = NativeType.Of<CarpCollection>("collection");
+    public override CarpType GetCarpType() => Type.With(this._itemType);
 
-    private List<T> _value;
-    public List<T> Native => this._value;
+    private readonly CarpType _itemType;
+    private List<CarpObject> _value;
+    public List<CarpObject> Native => this._value;
     
 
-    public CarpCollection()
+    [CarpGenericConstructor]
+    public CarpCollection(CarpType itemType)
     {
+        this._itemType = itemType;
         this._value = new();
     }
-
-    public CarpCollection(List<T> value)
+    
+    [CarpGenericConstructor]
+    public CarpCollection(CarpType itemType, CarpObject[] srcArr)
     {
-        this._value = value;
+        // TODO: Cast all
+        this._itemType = itemType;
+        this._value = srcArr.Select(x => x.CastEx(itemType)).ToList();
     }
 
-    public CarpCollection(CarpObject[] srcArr)
-    {
-        this._value = srcArr.Select(x => x as T).ToList();
-    }
-
-    public override CarpIterator<CarpObject> Iterate() 
-        => new CarpEnumerableIterator<CarpObject>(this._value);
+    public override CarpIterator Iterate() 
+        => new CarpEnumerableIterator(this._itemType, this._value);
 
     public override CarpObject Index(CarpObject[] args)
     {
@@ -40,7 +38,7 @@ public class CarpCollection<T> : CarpObject
             throw new CarpError.InvalidParameterCount(1, args.Length);
 
         if (args[0] is not CarpInt)
-            args[0] = args[0].Cast<CarpInt>();
+            args[0] = args[0].CastEx(CarpInt.Type);
 
         int index = (args[0] as CarpInt)!.NativeInt;
         if (index < 0 || index >= this._value.Count)
@@ -55,27 +53,24 @@ public class CarpCollection<T> : CarpObject
             throw new CarpError.InvalidParameterCount(1, args.Length);
 
         if (args[0] is not CarpInt)
-            args[0] = args[0].Cast<CarpInt>();
+            args[0] = args[0].CastEx(CarpInt.Type);
 
         int index = (args[0] as CarpInt)!.NativeInt;
         if (index < 0 || index >= this._value.Count)
             throw new CarpError.IndexOutOfRange(index);
 
-        if (value is T t)
-            this._value[index] = t;
-        else
-            this._value[index] = value.Cast<T>();
+        this._value[index] = value.CastEx(this._itemType);
 
         return value;
     }
 
 
-    private CarpBool Contains(T inner) => CarpBool.Of(this._value.Contains(inner));
+    private CarpBool Contains(CarpObject inner) => CarpBool.Of(this._value.Contains(inner));
     private CarpBool Within(CarpInt index) 
         => CarpBool.Of(index.NativeInt >= 0 && index.NativeInt < this._value.Count);
     
-    private void Append(T item) => this._value.Add(item);
-    private void Remove(T item) => this._value.Remove(item);
+    private void Append(CarpObject item) => this._value.Add(item);
+    private void Remove(CarpObject item) => this._value.Remove(item);
     private void RemoveAt(CarpInt indexObj)
     {
         int index = indexObj.NativeInt;
@@ -85,7 +80,7 @@ public class CarpCollection<T> : CarpObject
         this._value.RemoveAt(index);
     }
 
-    private void Insert(CarpInt indexObj, T item)
+    private void Insert(CarpInt indexObj, CarpObject item)
     {
         int index = indexObj.NativeInt;
         if (index < 0 || index >= this._value.Count)
@@ -102,46 +97,45 @@ public class CarpCollection<T> : CarpObject
         return name switch
         {
             "length" => new CarpInt(this._value.Count),
-            "append" => new CarpExternalFunc<CarpVoid>(this.Append),
-            "remove" => new CarpExternalFunc<CarpVoid>(this.Remove),
-            "remove_at" => new CarpExternalFunc<CarpVoid>(this.RemoveAt),
-            "insert" => new CarpExternalFunc<CarpVoid>(this.Insert),
-            "clear" => new CarpExternalFunc<CarpVoid>(this.Clear),
-            "contains" => new CarpExternalFunc<CarpBool>(this.Contains),
-            "within" => new CarpExternalFunc<CarpBool>(this.Within),
+            "append" => new CarpExternalFunc(CarpVoid.Type, this.Append),
+            "remove" => new CarpExternalFunc(CarpVoid.Type, this.Remove),
+            "remove_at" => new CarpExternalFunc(CarpVoid.Type, this.RemoveAt),
+            "insert" => new CarpExternalFunc(CarpVoid.Type, this.Insert),
+            "clear" => new CarpExternalFunc(CarpVoid.Type, this.Clear),
+            "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
+            "within" => new CarpExternalFunc(CarpBool.Type, this.Within),
             _ => throw new CarpError.InvalidProperty(name),
         };
     }
 
     public override CarpObject Cast(CarpType type)
     {
-        if (type == CarpObject.Type)
-            return this;
-
-        if (type == CarpString.Type)
-            return this.String();
-        
-        if (type == CarpCollection<CarpObject>.Type)
-            return new CarpCollection<CarpObject>(this._value.Select(x => x as CarpObject).ToList());
-
-        if (type.Native.GetGenericTypeDefinition() == typeof(CarpCollection<>))
+        if (type.Extends(CarpCollection.Type) && type is GenericCarpType genericCarpType)
         {
-            // try cast all the items to the arg type
-            Type[] args = type.Native.GetGenericArguments();
-            Type arg = args[0];
-            
-            List<CarpObject> casted = this._value
-                .Select(item => item.GetType() == arg
-                    ? item
-                    : item.Cast(CarpType.GetType(arg)))
-                .ToList();
-            
-            return Activator.CreateInstance(type.Native, 
-                    new object[] { casted.ToArray() })
-                as CarpObject;
+            // TODO: Sort out this casting behaviour
+            return new CarpCollection(genericCarpType.SubTypes[0], this._value.ToArray());
         }
+        // if (type == CarpCollection<CarpObject>.Type)
+        //     return new CarpCollection<CarpObject>(this._value.Select(x => x as CarpObject).ToList());
+        //
+        // if (type.Native.GetGenericTypeDefinition() == typeof(CarpCollection<>))
+        // {
+        //     // try cast all the items to the arg type
+        //     Type[] args = type.Native.GetGenericArguments();
+        //     Type arg = args[0];
+        //     
+        //     List<CarpObject> casted = this._value
+        //         .Select(item => item.GetType() == arg
+        //             ? item
+        //             : item.Cast(CarpType.GetType(arg)))
+        //         .ToList();
+        //     
+        //     return Activator.CreateInstance(type.Native, 
+        //             new object[] { casted.ToArray() })
+        //         as CarpObject;
+        // }
 
-        throw new CarpError.InvalidCast(type);
+        return base.Cast(type);
     }
 
     public override CarpString String()

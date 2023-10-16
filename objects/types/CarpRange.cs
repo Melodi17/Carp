@@ -1,36 +1,41 @@
-﻿namespace Carp.objects.types;
+﻿using Carp.interpreter;
 
-public class CarpRange<T> : CarpObject
-    where T : CarpObject
+namespace Carp.objects.types;
+
+public class CarpRange : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpRange<T>>(
-        new($"range<{CarpType.GetType<T>()
-            .String().Native}>"));
+    public static new CarpType Type = NativeType.Of<CarpRange>("range");
+    public override CarpType GetCarpType() => Type.With(this._itemType);
     
-    private T _start;
-    private T _stop;
+    private CarpObject _start;
+    private CarpObject _stop;
+
+    private CarpType _itemType;
     
-    public CarpRange(T start, T stop)
+    [CarpGenericConstructor]
+    public CarpRange(CarpType itemType, CarpObject start, CarpObject stop)
     {
-        this._start = start;
-        this._stop = stop;
+        this._itemType = itemType;
+        this._start = start.CastEx(itemType);
+        this._stop = stop.CastEx(itemType);
     }
 
-    public override CarpIterator<CarpObject> Iterate()
+    public override CarpIterator Iterate()
     {
         IEnumerable<CarpObject> Iter()
         {
-            T cur = this._start;
+            CarpObject cur = this._start;
             while (cur.Less(this._stop).Native)
             {
                 yield return cur;
-                if (cur.Step() is not T t)
-                    throw new CarpError.RangeNotCompatible(CarpType.GetType(cur));
+                CarpObject t = cur.Step();
+                if (!t.GetCarpType().Extends(this._itemType)) // Might wanna replace with a cast?
+                    throw new CarpError.RangeNotCompatible(cur.GetCarpType());
                 cur = t;
             }
         }
 
-        return new CarpEnumerableIterator<CarpObject>(Iter());
+        return new CarpEnumerableIterator(this._itemType, Iter());
     }
 
     public override CarpObject Property(string name)

@@ -177,7 +177,15 @@ public abstract class CarpError : Exception
             
         }
     }
-    
+    public class UnusedBranch : CarpError
+    {
+        public override string DisplayName => "UnusedBranch";
+
+        public UnusedBranch(CarpGrammarParser.ExpressionContext expression) : base($"Unused expression branch, side-effects are not allowed on {expression.GetType().GetFormattedName()}")
+        {
+            
+        }
+    }
     public class IndexOutOfRange : CarpError
     {
         public override string DisplayName => "IndexOutOfRange";

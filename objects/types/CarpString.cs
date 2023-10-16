@@ -1,9 +1,12 @@
-﻿namespace Carp.objects.types;
+﻿using Carp.interpreter;
+
+namespace Carp.objects.types;
 
 public class CarpString : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpString>(new("str"));
-    
+    public static new CarpType Type = NativeType.Of<CarpString>("str");
+    public override CarpType GetCarpType() => Type;
+
     private readonly string _value;
 
     public string Native => this._value;
@@ -24,7 +27,7 @@ public class CarpString : CarpObject
     public override CarpObject Multiply(CarpObject other)
     {
         if (other is not CarpInt ci)
-            throw new CarpError.InvalidType(CarpInt.Type, CarpType.GetType(other));
+            throw new CarpError.InvalidType(CarpInt.Type, other.GetCarpType());
         
         return new CarpString(
             string.Join("", Enumerable.Repeat(this._value, ci.NativeInt)));
@@ -32,10 +35,6 @@ public class CarpString : CarpObject
 
     public override CarpObject Cast(CarpType t)
     {
-        if (t == CarpObject.Type)
-            return this;
-        if (t == Type)
-            return this.String();
         if (t == CarpInt.Type)
         {
             try
@@ -47,7 +46,9 @@ public class CarpString : CarpObject
                 throw new CarpError.UnparseableInt(this._value);
             }
         }
-        else if (t == CarpBool.Type)
+        
+        
+        if (t == CarpBool.Type)
         {
             if (this._value == "true")
                 return CarpBool.True;
@@ -56,11 +57,11 @@ public class CarpString : CarpObject
             else
                 throw new CarpError.InvalidCast(t);
         }
-        else
-            throw new CarpError.InvalidCast(t);
+
+        return base.Cast(t);
     }
 
-    public override CarpIterator<CarpObject> Iterate()
+    public override CarpIterator Iterate()
     {
         IEnumerable<CarpObject> Iter()
         {
@@ -68,7 +69,7 @@ public class CarpString : CarpObject
                 yield return new CarpChar(c);
         }
 
-        return new CarpEnumerableIterator<CarpObject>(Iter());
+        return new CarpEnumerableIterator(CarpChar.Type, Iter());
     }
 
     public override CarpObject Index(CarpObject[] args)
@@ -77,9 +78,9 @@ public class CarpString : CarpObject
             throw new CarpError.InvalidParameterCount(1, args.Length);
 
         if (args[0] is not CarpInt)
-            args[0] = args[0].Cast<CarpInt>();
+            args[0] = args[0].CastEx(CarpInt.Type);
 
-        int index = (args[0] as CarpInt).NativeInt;
+        int index = (args[0] as CarpInt)!.NativeInt;
         if (index < 0 || index >= this._value.Length)
             throw new CarpError.IndexOutOfRange(index);
 
@@ -87,10 +88,10 @@ public class CarpString : CarpObject
     }
 
     private CarpBool Contains(CarpString inner) => CarpBool.Of(this._value.Contains(inner._value));
-    private CarpCollection<CarpString> Split(CarpString delim)
+    private CarpCollection Split(CarpString delim)
     {
         string[] chunks = this._value.Split(delim._value);
-        return new(chunks.Select(x => new CarpString(x)).ToList());
+        return new(CarpString.Type, chunks.Select(x => new CarpString(x)).ToArray());
     }
 
     public override CarpObject Property(string name)
@@ -101,8 +102,8 @@ public class CarpString : CarpObject
             "lower" => new CarpString(this._value.ToLower()),
             "upper" => new CarpString(this._value.ToUpper()),
             "clean" => new CarpString(this._value.Trim()),
-            "split" => new CarpExternalFunc<CarpCollection<CarpString>>(this.Split),
-            "contains" => new CarpExternalFunc<CarpBool>(this.Contains),
+            "split" => new CarpExternalFunc(CarpCollection.Type, this.Split),
+            "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
             _ => throw new CarpError.InvalidProperty(name),
         };
     }
@@ -113,7 +114,7 @@ public class CarpString : CarpObject
     public override CarpBool Match(CarpObject other)
     {
         if (other is not CarpString cs)
-            throw new CarpError.InvalidType(CarpString.Type, CarpType.GetType(other));
+            throw new CarpError.InvalidType(CarpString.Type, other.GetCarpType());
 
         return CarpBool.Of(this._value == cs._value);
     }

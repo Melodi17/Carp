@@ -2,37 +2,36 @@
 
 namespace Carp.objects.types;
 
-public class CarpExternalFunc<T> : CarpFunc<T>
-    where T : CarpObject
+public class CarpExternalFunc : CarpFunc
 {
-    public static new CarpType Type => CarpFunc<T>.Type;
 
     // takes func, with any args, returns T
     private Delegate _value;
     private CarpType[] _argTypes;
     
-    public CarpExternalFunc(Delegate value)
+    public CarpExternalFunc(CarpType returnType, Delegate value) : base(returnType)
     {
         this._value = value;
         // check return type is T, unless T is CarpVoid
-        if (typeof(T) == typeof(CarpVoid))
+        if (returnType == CarpVoid.Type)
         {
             if (value.Method.ReturnType != typeof(void))
-                throw new CarpError.InvalidType(CarpType.GetType<CarpVoid>(),
-                    CarpType.GetType(value.Method.ReturnType));
+                // Type projection is not supported
+                throw new CarpError.InvalidType(CarpVoid.Type, CarpObject.Type);
+            // value.Method.ReturnType);
         }
         else
         {
-            if (value.Method.ReturnType != typeof(T))
-                throw new CarpError.InvalidType(CarpType.GetType<T>(),
-                    CarpType.GetType(value.Method.ReturnType));
+            // if (value.Method.ReturnType != typeof(T))
+            //     throw new CarpError.InvalidType(this._returnType,
+            //         CarpType.GetType(value.Method.ReturnType));
         }
 
         // check args are all derived from CarpObject
         foreach (ParameterInfo p in value.Method.GetParameters())
         {
             if (!typeof(CarpObject).IsAssignableFrom(p.ParameterType))
-                throw new CarpError.InvalidType(CarpType.GetType<CarpObject>(),
+                throw new CarpError.InvalidType(CarpObject.Type,
                     CarpType.GetType(p.ParameterType));
         }
         
@@ -40,7 +39,6 @@ public class CarpExternalFunc<T> : CarpFunc<T>
         this._argTypes = value.Method.GetParameters()
             .Select(x => CarpType.GetType(x.ParameterType))
             .ToArray();
-
     }
 
     public override CarpObject Call(CarpObject[] args)
@@ -48,15 +46,15 @@ public class CarpExternalFunc<T> : CarpFunc<T>
         // check parameter length
         if (args.Length != this._argTypes.Length)
             throw new CarpError.InvalidType(this._argTypes.ToList(),
-                CarpType.GetType(args[0]));
+                args[0].GetCarpType());
         
         // cast all args to their respective types
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i].GetType() == this._argTypes[i].Native)
+            if (args[i].GetCarpType() == this._argTypes[i])
                 continue;
             
-            if (this._argTypes[i] == CarpType.Auto)
+            if (this._argTypes[i] == AutoType.Instance)
                 continue;
             
             // null
@@ -78,12 +76,12 @@ public class CarpExternalFunc<T> : CarpFunc<T>
         
         // invoke
         object resp = this._value.DynamicInvoke(args);
-        if (typeof(T) == typeof(CarpVoid))
+        if (this._returnType == CarpVoid.Type)
             return CarpVoid.Instance;
             
         if (resp is CarpObject co)
             return co;
         else
-            throw new Exception("External function did not return a CarpObject");
+            throw new("External function did not return a CarpObject");
     }
 }

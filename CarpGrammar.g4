@@ -156,14 +156,14 @@ expression
     | obj=expression '~' dest=type # castExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression
-    | obj=expression '(' parameters=expression_list ')' # callExpression
+    | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
     | obj=expression '[' parameters=expression_list ']' # indexExpression
     | obj=expression '.' value=name # propertyExpression
     | left=expression op=binary right=expression # binaryExpression
     | op=unary left=expression # unaryExpression
     | left=expression op=comparison right=expression # comparisonExpression
     | left=expression op=logical right=expression # logicalExpression
-    | condition=expression '?' left=expression ':' right=expression # ternaryExpression
+    | condition=expression '?' left=expression ':' right=expression # ternaryExpression // Side effects
     | map # mapExpression
     | array # arrayExpression
     | name # variableExpression
@@ -172,9 +172,9 @@ expression
     | '(' obj=expression ')' # parenthesizedExpression
     | inner=expression '::' # windExpression
     | inner=expression ';;' # filterExpression
-    | left=expression '=' right=expression # assignmentExpression
+    | left=expression '=' right=expression # assignmentExpression // Side effects
     // add += -= *= /= %= ^=
-    | left=expression op=compoundAssignment right=expression # compoundAssignmentExpression
+    | left=expression op=compoundAssignment right=expression # compoundAssignmentExpression // Side effects
     ;
 
 expression_list

@@ -1,31 +1,33 @@
 ﻿namespace Carp.objects.types;
 
-public abstract class CarpIterator<T> : CarpObject
-    where T : CarpObject
+public abstract class CarpIterator : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpIterator<T>>(
-        new($"iterator<{CarpType.GetType<T>()
-            .String().Native}>"));
-
+    public static new CarpType Type = NativeType.Of<CarpIterator>("iterator");
+    public override CarpType GetCarpType() => Type.With(this._itemType);
+    private CarpType _itemType;
+    
     public abstract CarpBool HasNext();
-    public abstract T Next();
+    public abstract CarpObject Next();
     public abstract void Reset();
 
     public override CarpString String() 
-        => new($"iterator<{CarpType.GetType<T>()
-            .String().Native}>");
+        => new($"iterator<{this._itemType.String().Native}>");
+    
+    public CarpIterator(CarpType itemType)
+    {
+        this._itemType = itemType;
+    }
 }
 
-public class CarpFastIterator<T> : CarpIterator<T>
-    where T : CarpObject
+public class CarpFastIterator : CarpIterator
 {
-    public static new CarpType Type = CarpIterator<T>.Type;
+    public static new CarpType Type = CarpIterator.Type;
     
-    private Func<T> _next;
+    private Func<CarpObject> _next;
     private Func<CarpBool> _hasNext;
     private Action _reset;
     
-    public CarpFastIterator(Func<T> next, Func<CarpBool> hasNext, Action reset)
+    public CarpFastIterator(CarpType itemType, Func<CarpObject> next, Func<CarpBool> hasNext, Action reset) : base(itemType)
     {
         this._next = next;
         this._hasNext = hasNext;
@@ -33,27 +35,26 @@ public class CarpFastIterator<T> : CarpIterator<T>
     }
     
     public override CarpBool HasNext() => this._hasNext();
-    public override T Next() => this._next();
+    public override CarpObject Next() => this._next();
     public override void Reset() => this._reset();
 }
 
-public class CarpEnumerableIterator<T> : CarpIterator<T>
-    where T : CarpObject
+public class CarpEnumerableIterator : CarpIterator
 {
-    public static new CarpType Type = CarpIterator<T>.Type;
+    public static new CarpType Type = CarpIterator.Type;
 
-    private IEnumerator<T> _enumerator;
+    private IEnumerator<CarpObject> _enumerator;
     private bool _exhausted;
 
-    public CarpEnumerableIterator(IEnumerable<T> enumerable)
+    public CarpEnumerableIterator(CarpType itemType, IEnumerable<CarpObject> enumerable) : base(itemType)
     {
         this._enumerator = enumerable.GetEnumerator();
         this._enumerator.MoveNext();
     }
 
-    public override T Next()
+    public override CarpObject Next()
     {
-        T value = this._enumerator.Current;
+        CarpObject value = this._enumerator.Current;
         this._exhausted = !this._enumerator.MoveNext();
         return value;
     }

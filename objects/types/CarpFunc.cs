@@ -1,15 +1,19 @@
 ﻿namespace Carp.objects.types;
 
-public abstract class CarpFunc<T> : CarpObject
-    where T : CarpObject
+public abstract class CarpFunc : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpFunc<T>>(
-        new($"func<{CarpType.GetType<T>()
-            .String().Native}>"));
+    public static new CarpType Type = NativeType.Of<CarpFunc>("func");
+    public override CarpType GetCarpType() => Type.With(this._returnType);
+    
+    protected CarpType _returnType;
 
+    protected CarpFunc(CarpType returnType)
+    {
+        this._returnType = returnType;
+    }
+    
     public override abstract CarpObject Call(CarpObject[] args);
 
     public override CarpString String() 
-        => new($"func<{CarpType.GetType<T>()
-            .String().Native}>");
+        => new($"func<{this._returnType.String().Native}>");
 }

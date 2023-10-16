@@ -1,8 +1,11 @@
-﻿namespace Carp.objects.types;
+﻿using Carp.interpreter;
+
+namespace Carp.objects.types;
 
 public class CarpWinded : CarpObject
 {
-    public static new CarpType Type = CarpType.Of<CarpWinded>(new("winded"));
+    public static new CarpType Type = NativeType.Of<CarpWinded>("winded");
+    public override CarpType GetCarpType() => Type;
 
     private CarpObject _value;
 
@@ -11,11 +14,11 @@ public class CarpWinded : CarpObject
         this._value = value;
     }
     
-    private CarpCollection<T> CollectAll<T>(Func<CarpObject, T> func)
+    private CarpCollection CollectAll<T>(Func<CarpObject, T> func)
         where T : CarpObject
     {
         // Run d on all elements of this._value
-        CarpIterator<CarpObject> iter = this._value.Iterate();
+        CarpIterator iter = this._value.Iterate();
         List<CarpObject> result = new();
 
         while (iter.HasNext().Native)
@@ -24,12 +27,12 @@ public class CarpWinded : CarpObject
             CarpObject o = func(src);
             result.Add(o);
         }
-        
-        return new(result.ToArray());
+        // TODO: Should this really be so generic???
+        return new(CarpObject.Type, result.ToArray());
     }
 
 
-    private CarpBool All(CarpCollection<CarpBool> collection) => CarpBool.Of(collection.Native.All(x => x.Native));
+    private CarpBool All(CarpCollection collection) => CarpBool.Of(collection.Native.All(x => (x.CastEx(CarpBool.Type) as CarpBool)!.Native));
 
     public override CarpObject Add(CarpObject other) => this.CollectAll(o => o.Add(other));
 
@@ -53,13 +56,13 @@ public class CarpWinded : CarpObject
 
     public override CarpObject Negate() => this.CollectAll(o => o.Negate());
 
-    public override CarpIterator<CarpObject> Iterate()
+    public override CarpIterator Iterate()
     {
         // runiterate on all elements of this._value
-        CarpCollection<CarpIterator<CarpObject>> result = this.CollectAll(o => o.Iterate());
+        CarpCollection result = this.CollectAll(o => o.Iterate());
         IEnumerable<CarpObject> Iter()
         {
-            foreach (CarpIterator<CarpObject> iter in result.Native)
+            foreach (CarpIterator iter in result.Native)
             {
                 while (iter.HasNext().Native)
                 {
@@ -68,7 +71,7 @@ public class CarpWinded : CarpObject
             }
         }
         
-        return new CarpEnumerableIterator<CarpObject>(Iter());
+        return new CarpEnumerableIterator(CarpObject.Type, Iter());
     }
 
     public override CarpObject Call(CarpObject[] args) => this.CollectAll(o => o.Call(args));
