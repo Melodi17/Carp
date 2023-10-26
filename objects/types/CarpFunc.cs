@@ -17,3 +17,12 @@ public abstract class CarpFunc : CarpObject
     public override CarpString String() 
         => new($"func<{this._returnType.String().Native}>");
 }
+
+public class EmptyFunc : CarpFunc
+{
+    public EmptyFunc(CarpType returnType) : base(returnType)
+    {
+    }
+
+    public override CarpObject Call(CarpObject[] args) => CarpNull.Instance;
+}

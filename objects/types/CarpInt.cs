@@ -1,5 +1,6 @@
 ﻿namespace Carp.objects.types;
 
+[CarpStruct(0)]
 public class CarpInt : CarpObject
 {
     public static new CarpType Type = NativeType.Of<CarpInt>("int");

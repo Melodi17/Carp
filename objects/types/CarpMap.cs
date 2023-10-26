@@ -58,10 +58,10 @@ public class CarpMap : CarpObject
             throw new CarpError.InvalidParameterCount(1, args.Length);
         
         CarpObject index = args[0].CastEx(this._keyType);
-        if (!this._value.ContainsKey(index))
+        if (!this._value.ContainsKeySlow(index))
             throw new CarpError.KeyNotPresent(index);
 
-        return this._value[index];
+        return this._value.GetValueSlow(index);
     }
 
     public override CarpObject SetIndex(CarpObject[] args, CarpObject value)
@@ -70,22 +70,23 @@ public class CarpMap : CarpObject
             throw new CarpError.InvalidParameterCount(1, args.Length);
 
         CarpObject index = args[0].CastEx(this._keyType);
-        if (!this._value.ContainsKey(index))
-            throw new CarpError.KeyNotPresent(index);
+        // if (!this._value.ContainsKeySlow(index))
+        //     throw new CarpError.KeyNotPresent(index);
+        // The fuck is this doing here?
 
-        this._value[index] = value.CastEx(this._valueType);
+        this._value.SetValueSlow(index, value.CastEx(this._valueType));
 
         return value;
     }
     
-    private CarpBool Contains(CarpObject inner) => CarpBool.Of(this._value.ContainsKey(inner));
+    private CarpBool Contains(CarpObject inner) => CarpBool.Of(this._value.ContainsKeySlow(inner));
 
     private void Remove(CarpObject index)
     {
-        if (!this._value.ContainsKey(index))
+        if (!this._value.ContainsKeySlow(index))
             throw new CarpError.KeyNotPresent(index);
 
-        this._value.Remove(index);
+        this._value.RemoveSlow(index);
     }
     private void Clear() => this._value.Clear();
 

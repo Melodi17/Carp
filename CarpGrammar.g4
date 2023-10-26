@@ -93,7 +93,7 @@ generic_block
     ;
 
 statement
-    : definition # definitionStatement
+    : definition_with_attr # definitionStatement
     | expression # expressionStatement
     | flow_control # flowControlStatement
     ;
@@ -137,18 +137,20 @@ yield_statement : YIELD value=expression? ;
 
 attribute
     : '@' obj=expression
-    | '@' obj=expression '(' parameters=expression_list ')'
     | '[' obj=expression ']'
-    | '[' obj=expression '(' parameters=expression_list ')' ']'
+    ;
+    
+definition_with_attr
+    : attrs+=attribute* def=definition
     ;
 
 definition
-    : attrs=attribute* type name '=' value=expression # initializedVariableDefinition
-    | attrs=attribute* type name # variableDefinition
-    | attrs=attribute* rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
-    | attrs=attribute* rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
-    | attrs=attribute* CLASS name '{' definitions+=definition* '}' # classDefinition
-    | attrs=attribute* STRUCT name '{' definitions+=definition* '}' # structDefinition
+    : type name '=' value=expression # initializedVariableDefinition
+    | type name # variableDefinition
+    | rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
+    | rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
+    | CLASS name '{' definitions+=definition_with_attr* '}' # classDefinition
+    | STRUCT name '{' definitions+=definition_with_attr* '}' # structDefinition
     ;
 
 expression

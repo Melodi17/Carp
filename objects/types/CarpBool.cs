@@ -1,5 +1,6 @@
 ﻿namespace Carp.objects.types;
 
+[CarpStruct(false)]
 public class CarpBool : CarpObject
 {
     public static CarpType Type = NativeType.Of<CarpBool>("bool");

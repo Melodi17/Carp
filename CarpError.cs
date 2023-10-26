@@ -7,8 +7,9 @@ public abstract class CarpError : Exception
     public abstract string DisplayName { get; }
     public class CarpObjError : CarpObject
     {
-        public static new CarpType Type = CarpType.Of<CarpObjError>(new("error"));
-        
+        public static new CarpType Type = NativeType.Of<CarpObjError>("error");
+        public override CarpType GetCarpType() => Type;
+
         public string ErrorType;
         public string Message;
         
@@ -28,13 +29,23 @@ public abstract class CarpError : Exception
     public class PrimitiveIncompatible : CarpError
     {
         public override string DisplayName => "PrimitiveIncompatible";
-        public PrimitiveIncompatible(string primitive, CarpObject sourceObject) : base($"Primitive '{primitive}' is not compatible with '{CarpType.GetType(sourceObject)}'") { }
+        public PrimitiveIncompatible(string primitive, CarpObject sourceObject) : base($"Primitive '{primitive}' is not compatible with '{sourceObject.GetCarpType()}'") { }
     }
 
     public class UnparseableInt : CarpError
     {
         public override string DisplayName => "UnparseableInt";
         public UnparseableInt(string soCalledInt) : base($"Given int '{soCalledInt}' was unparseable")
+        {
+            
+        }
+    }
+    
+    public class AutoInitObjectNotPermitted : CarpError
+    {
+        public override string DisplayName => "AutoInitObjectNotPermitted";
+
+        public AutoInitObjectNotPermitted() : base($"Non-structs cannot be auto-initialized here")
         {
             
         }
@@ -156,8 +167,6 @@ public abstract class CarpError : Exception
         }
     }
     
-    
-    
     public class CastNullToStruct : CarpError
     {
         public override string DisplayName => "CastNullToStruct";
@@ -225,8 +234,9 @@ public abstract class CarpFlowControlError : Exception
     public abstract string DisplayName { get; }
     public class CarpObjFlowControlError : CarpObject
     {
-        public static new CarpType Type = CarpType.Of<CarpObjFlowControlError>(new("flowControlError"));
-        
+        public static new CarpType Type = NativeType.Of<CarpObjFlowControlError>("flowControlError");
+        public override CarpType GetCarpType() => Type;
+
         public string ErrorType;
         public string Message;
         

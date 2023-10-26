@@ -46,8 +46,9 @@ public class Scope : IScope, IDisposable
         if (this._values.ContainsKey(name))
         {
             var (type, _) = this._values[name];
-            if (type != CarpType.GetType(value))
-                throw new CarpError.InvalidType(type, CarpType.GetType(value));
+            // TODO: Fix this soon!!!
+            if (!type.Extends(value.GetCarpType()))
+                throw new CarpError.InvalidType(type, value.GetCarpType());
             else
             {
                 this._values[name] = (type, value);
@@ -85,6 +86,7 @@ public class Scope : IScope, IDisposable
     {
         this._values.Clear();
     }
+
 
     public override string ToString() => "Scope{" + string.Join(", ", this._values.Select(x => $"{x.Key}: {x.Value.type}")) + "}";
 }

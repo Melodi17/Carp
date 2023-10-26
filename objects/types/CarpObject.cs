@@ -44,6 +44,14 @@ public abstract class CarpObject
 
         throw new CarpError.InvalidCast(type);
     }
+    
+    public override bool Equals(object obj)
+    {
+        if (obj is CarpObject co)
+            return this.Match(co).Native;
+
+        return base.Equals(obj);
+    }
 
     public abstract CarpString String();
     public virtual string Repr() => this.String().Native;

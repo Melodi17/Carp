@@ -8,6 +8,7 @@ namespace Carp;
 
 public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 {
+    private static readonly CarpStatic Marshal = new("marshal");
     public static CarpInterpreter Instance = new();
     
     public int CurrentLine { get; private set; } = 0;
@@ -40,6 +41,11 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         this.GlobalScope.Define("obj", CarpType.Type, CarpObject.Type);
         this.GlobalScope.Define("null", CarpNull.Type, CarpNull.Instance);
         this.GlobalScope.Define("void", CarpType.Type, CarpVoid.Type);
+        
+        // TODO: marshal or member?
+        Marshal.SetProperty("static", CarpEnum.Of(Marshal, "static"));
+        
+        this.GlobalScope.Define("marshal", CarpStatic.Type, Marshal);
 
         // io contains print and input
         // fs containts filesystem
@@ -47,29 +53,29 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // color has color stuff, like 'hi %red%etc%reset%'
         // refract has reflection stuff, e.g get type
         
-        this.GlobalScope.Define("t", CarpFunc<CarpType>.Type, new CarpExternalFunc<CarpType>((CarpObject obj)
-            => CarpType.GetType(obj)));
+        this.GlobalScope.Define("t", CarpFunc.Type, new CarpExternalFunc(CarpType.Type, (CarpObject obj)
+            => obj.GetCarpType()));
 
-        this.GlobalScope.Define("p", CarpFunc<CarpVoid>.Type, new CarpExternalFunc<CarpVoid>((CarpObject str) =>
+        this.GlobalScope.Define("p", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, (CarpObject str) =>
         {
             Console.WriteLine(str.String().Native);
         }));
 
-        this.GlobalScope.Define("pw", CarpFunc<CarpVoid>.Type, new CarpExternalFunc<CarpVoid>((CarpObject str) =>
+        this.GlobalScope.Define("pw", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, (CarpObject str) =>
         {
             Console.Write(str.String().Native);
         }));
         
-        this.GlobalScope.Define("r", CarpFunc<CarpString>.Type, new CarpExternalFunc<CarpString>((CarpObject str) =>
+        this.GlobalScope.Define("r", CarpFunc.Type, new CarpExternalFunc(CarpString.Type, (CarpObject str) =>
         {
             Console.Write(str.String().Native);
             return new CarpString(Console.ReadLine());
         }));
         
-        this.GlobalScope.Define("rw", CarpFunc<CarpChar>.Type, new CarpExternalFunc<CarpChar>((CarpBool hideKeyStrokes) 
+        this.GlobalScope.Define("rw", CarpFunc.Type, new CarpExternalFunc(CarpChar.Type, (CarpBool hideKeyStrokes) 
             => new CarpChar(Console.ReadKey(hideKeyStrokes.Native).KeyChar)));
         
-        this.GlobalScope.Define("rand", CarpFunc<CarpInt>.Type, new CarpExternalFunc<CarpInt>((CarpInt max) 
+        this.GlobalScope.Define("rand", CarpFunc.Type, new CarpExternalFunc(CarpInt.Type, (CarpInt max) 
             => new CarpInt(new Random().Next(max.NativeInt))));
     }
     
@@ -88,7 +94,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     {
         Scope s = new(parentScope);
         foreach (KeyValuePair<string, CarpObject> kvp in scope)
-            s.Define(kvp.Key, CarpType.GetType(kvp.Value), kvp.Value);
+            s.Define(kvp.Key, kvp.Value.GetCarpType(), kvp.Value);
 
         this.Execute(s, child);
     }
@@ -120,9 +126,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     // TODO: Use modifier result from name!!
     public (string name, Modifier modifiers) GetName(CarpGrammarParser.NameContext name) => ((string name, Modifier modifiers))this.VisitName(name);
-    
-    public (CarpObject obj, CarpObject[] args) GetAttribute(IScope parent, CarpGrammarParser.AttributeContext context) => ((CarpObject obj, CarpObject[] args))this.Visit(context, parent);
-    public (CarpObject obj, CarpObject[] args) GetAttribute(ScopedParserRuleContext parent, CarpGrammarParser.AttributeContext context) => this.GetAttribute(parent.ContextScope, context);
+    public (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) GetDefinition(CarpGrammarParser.Definition_with_attrContext def) => ((CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext))this.VisitDefinition_with_attr(def);
 
     public CarpObject[] GetExpressionList(ScopedParserRuleContext parent, CarpGrammarParser.Expression_listContext context) => this.Visit(context, parent.ContextScope) as CarpObject[];
 
@@ -147,13 +151,10 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public T GetObject<T>(ScopedParserRuleContext parent, ScopedParserRuleContext child) where T : CarpObject
     {
-        object obj = this.Visit(child, parent.ContextScope);
-        if (obj is not T t)
-            if (obj is CarpObject co)
-                throw new CarpError.InvalidType(CarpType.GetType<T>(), CarpType.GetType(co));
-            else
-                throw new InvalidCastException($"Expected {CarpType.GetType<T>()} : CarpObject, got {obj.GetType().GetFormattedName()}");
-        return t;
+        CarpObject obj = this.GetObject(parent, child);
+        CarpType type = NativeType.Find<T>();
+
+        return obj.CastEx(type) as T;
     }
 
     public override object VisitProgram(CarpGrammarParser.ProgramContext context)
@@ -309,7 +310,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitIterStatement(CarpGrammarParser.IterStatementContext context)
     {
         CarpObject iter = this.GetObject(context, context.iter);
-        CarpIterator<CarpObject> iterator = iter.Iterate();
+        CarpIterator iterator = iter.Iterate();
 
         while (iterator.HasNext().Native)
         {
@@ -334,7 +335,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitIterAsStatement(CarpGrammarParser.IterAsStatementContext context)
     {
         CarpObject iter = this.GetObject(context, context.iter);
-        CarpIterator<CarpObject> iterator = iter.Iterate();
+        CarpIterator iterator = iter.Iterate();
 
         Dictionary<string, CarpObject> subScope = new();
 
@@ -347,13 +348,12 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             {
                 CarpObject cur = iterator.Next();
 
-                if (type != CarpType.Auto && CarpType.GetType(cur) != type)
-                    //throw new CarpError.InvalidType(type, CarpType.GetType(cur));
+                if (type != AutoType.Instance && cur.GetCarpType() != type)
                     // TODO: Test this out
-                    cur = cur.Cast(type);
+                    cur = cur.CastEx(type);
 
-                if (type == CarpType.Auto)
-                    type = CarpType.GetType(cur);
+                if (type == AutoType.Instance)
+                    type = cur.GetCarpType();
 
                 subScope[name] = cur;
 
@@ -394,7 +394,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             {
                 CarpGrammarParser.TypeContext tc = context._catch_types[index];
                 CarpObject obj = this.GetObject(context, tc);
-                if (obj == CarpType.Auto)
+                if (obj == AutoType.Instance)
                 {
                     scope[context._catch_names[index].GetText()] = errorObj;
                     this.Execute(context, context._catch_blocks[index], scope);
@@ -461,11 +461,8 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitAttribute(CarpGrammarParser.AttributeContext context)
     {
         CarpObject obj = this.GetObject(context, context.obj);
-        CarpObject[] args = context.parameters?._expressions?.Count == 0
-            ? Array.Empty<CarpObject>()
-            : this.GetExpressionList(context, context.parameters);
         
-        return (obj, args);
+        return obj;
     }
 
     public override object VisitInitializedVariableDefinition(CarpGrammarParser.InitializedVariableDefinitionContext context)
@@ -474,13 +471,13 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpType type = this.GetObject<CarpType>(context, context.type());
         CarpObject value = this.GetObject(context, context.value);
 
-        if (type != CarpType.Auto && CarpType.GetType(value) != type)
-            //throw new CarpError.InvalidType(type, CarpType.GetType(value));
+        if (type != AutoType.Instance && value.GetCarpType().Extends(type))
+            //throw new CarpError.InvalidType(type, value.GetCarpType());
             // TODO: test this out
-            value = value.Cast(type);
+            value = value.CastEx(type);
 
-        if (type == CarpType.Auto)
-            type = CarpType.GetType(value);
+        if (type == AutoType.Instance)
+            type = value.GetCarpType();
 
         context.ContextScope.Define(name, type, value);
 
@@ -489,7 +486,18 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitVariableDefinition(CarpGrammarParser.VariableDefinitionContext context)
     {
-        throw new NotImplementedException();
+        (string name, Modifier modifiers) = this.GetName(context.name());
+        CarpType type = this.GetObject<CarpType>(context, context.type());
+
+        if (type == AutoType.Instance)
+            throw new CarpError.AutoNotPermitted();
+
+        if (!type.IsStruct && !Flags.Instance.DefaultNonStructs)
+            throw new CarpError.AutoInitObjectNotPermitted();
+
+        context.ContextScope.Define(name, type, type.DefaultValue);
+
+        return null;
     }
 
     public override object VisitFunctionDefinition(CarpGrammarParser.FunctionDefinitionContext context)
@@ -500,37 +508,81 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpGrammarParser.Generic_blockContext body = context.body;
         body.ContextScope = context.ContextScope;
 
-        Type funcType = typeof(CarpInternalFunc<>);
-        Type[] typeArgs = new[] { returnType.Native };
-        Type constructed = funcType.MakeGenericType(typeArgs);
+        // we are going to violate the rules here to prevent having to make MAJOR changes to the code to support non-carp objects to C# objects
 
-        object func = Activator.CreateInstance(constructed, new object[] { context.ContextScope, args, body });
+        CarpInternalFunc func = new(returnType, context.ContextScope, args, body);
 
-        context.ContextScope.Define(name, CarpType.GetType(constructed), func as CarpObject);
-
+        context.ContextScope.Define(name, func.GetCarpType(), func);
+        
         return null;
     }
 
     public override object VisitEmptyFunctionDefinition(CarpGrammarParser.EmptyFunctionDefinitionContext context)
     {
+        (string name, Modifier modifiers) = this.GetName(context.name());
+        
         Dictionary<string, CarpType> args = this.GetTypeNameList(context, context.values);
         CarpType returnType = this.GetObject<CarpType>(context, context.rtype);
 
-        Type funcType = typeof(CarpInternalFunc<>);
-        Type[] typeArgs = new[] { returnType.GetType() };
-        Type constructed = funcType.MakeGenericType(typeArgs);
+        // Type funcType = typeof(CarpInternalFunc<>);
+        // Type[] typeArgs = new[] { returnType.GetType() };
+        // Type constructed = funcType.MakeGenericType(typeArgs);
+        //
+        // return Activator.CreateInstance(constructed, new object[] { args });
 
-        return Activator.CreateInstance(constructed, new object[] { args });
+        // return new EmptyFunc(returnType);
+
+        EmptyFunc func = new(returnType);
+
+        context.ContextScope.Define(name, func.GetCarpType(), func);
+        
+        return null;
     }
 
     public override object VisitClassDefinition(CarpGrammarParser.ClassDefinitionContext context)
     {
-        throw new NotImplementedException();
+        // TODO: Remember about attrs!
+
+        (string name, Modifier modifiers) = this.GetName(context.name());
+
+        this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), false);
+        
+        return null;
     }
 
     public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context)
     {
-        throw new NotImplementedException();
+        (string name, Modifier modifiers) = this.GetName(context.name());
+
+        this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), true);
+        
+        return null;
+    }
+
+    private void MakeObject(string name, Modifier modifiers, IScope scope,
+        List<CarpGrammarParser.Definition_with_attrContext> definitions, bool isStruct)
+    {
+        // Split static and dynamic
+        List<CarpGrammarParser.Definition_with_attrContext> staticDefinitions = new();
+        List<CarpGrammarParser.Definition_with_attrContext> nonStaticDefinitions = new();
+
+        foreach (CarpGrammarParser.Definition_with_attrContext def in definitions)
+        {
+            (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) = this.GetDefinition(def);
+
+            (attrs.Any(x => x.Equals(Marshal.Property("static")))
+                ? staticDefinitions
+                : nonStaticDefinitions).Add(def);
+        }
+
+
+        CarpClass clazz = new(new CarpString(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
+    }
+
+    public override object VisitDefinition_with_attr(CarpGrammarParser.Definition_with_attrContext context)
+    {
+        return (context._attrs.Select(x => this.GetObject(context.ContextScope, x)).ToArray(),
+                context.def);
     }
 
     public override object VisitMapExpression(CarpGrammarParser.MapExpressionContext context)
@@ -698,14 +750,17 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         // raise if not same
         if (left.GetType() != right.GetType())
-            throw new CarpError.InvalidType(CarpType.GetType(left), CarpType.GetType(right));
+            throw new CarpError.InvalidType(left.GetCarpType(), right.GetCarpType());
 
         // make generic range type
-        Type rangeType = typeof(CarpRange<>);
-        Type[] typeArgs = { left.GetType() };
-        Type constructed = rangeType.MakeGenericType(typeArgs);
+        // Type rangeType = typeof(CarpRange<>);
+        // Type[] typeArgs = { left.GetType() };
+        // Type constructed = rangeType.MakeGenericType(typeArgs);
+        //
+        // return Activator.CreateInstance(constructed, new object[] { left, right });
 
-        return Activator.CreateInstance(constructed, new object[] { left, right });
+        return CarpRange.Type.With(left.GetCarpType())
+            .Instantiate(new[] { left, right });
     }
 
     public override object VisitEndRangeExpression(CarpGrammarParser.EndRangeExpressionContext context)
@@ -714,15 +769,18 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject right = this.GetObject(context, context.right);
 
         // raise if not same
-        if (left.GetType() != right.GetType())
-            throw new CarpError.InvalidType(CarpType.GetType(left), CarpType.GetType(right));
+        if (left.GetCarpType() != right.GetCarpType())
+            throw new CarpError.InvalidType(left.GetCarpType(), right.GetCarpType());
 
         // make generic range type
-        Type rangeType = typeof(CarpRange<>);
-        Type[] typeArgs = { left.GetType() };
-        Type constructed = rangeType.MakeGenericType(typeArgs);
+        // Type rangeType = typeof(CarpRange);
+        // Type[] typeArgs = { left.GetType() };
+        // Type constructed = rangeType.MakeGenericType(typeArgs);
+        //
+        // return Activator.CreateInstance(constructed, new object[] { left, right });
 
-        return Activator.CreateInstance(constructed, new object[] { left, right });
+        return CarpRange.Type.With(left.GetCarpType())
+            .Instantiate(new[] { left, right });
     }
 
     public override object VisitIndexExpression(CarpGrammarParser.IndexExpressionContext context)
@@ -745,7 +803,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             Unary.Negate => obj.Negate(),
             Unary.Not => obj is CarpBool b
                 ? b.Not()
-                : throw new CarpError.InvalidType(CarpBool.Type, CarpType.GetType(obj)),
+                : throw new CarpError.InvalidType(CarpBool.Type, obj.GetCarpType()),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -852,23 +910,32 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // if they are all the same type, return a CarpCollection<similartype>
         // otherwise, return a CarpCollection
 
+        // if (arr.Length == 0)
+        //     return new CarpCollection<CarpObject>();
+        //
+        // Type type = arr[0].GetType();
+        // bool allSame = arr.All(obj => obj.GetType() == type);
+        //
+        // if (allSame)
+        // {
+        //     Type collectionType = typeof(CarpCollection<>);
+        //     Type[] typeArgs = { type };
+        //     Type constructed = collectionType.MakeGenericType(typeArgs);
+        //
+        //     return Activator.CreateInstance(constructed, new object[] { arr });
+        // }
+        // else
+        //     return new CarpCollection<CarpObject>(arr.ToList());
+
         if (arr.Length == 0)
-            return new CarpCollection<CarpObject>();
+            return new CarpCollection(CarpObject.Type);
 
-        Type type = arr[0].GetType();
-        bool allSame = arr.All(obj => obj.GetType() == type);
+        CarpType type = CarpType.HighestCommonType(arr.Select(x => x.GetCarpType()).ToArray());
 
-        if (allSame)
-        {
-            Type collectionType = typeof(CarpCollection<>);
-            Type[] typeArgs = { type };
-            Type constructed = collectionType.MakeGenericType(typeArgs);
-
-            return Activator.CreateInstance(constructed, new object[] { arr });
-        }
-        else
-            return new CarpCollection<CarpObject>(arr.ToList());
+        return new CarpCollection(type, arr);
     }
+
+    
 
     public override object VisitMap(CarpGrammarParser.MapContext context)
     {
@@ -877,25 +944,33 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         if (keys.Length != values.Length)
             throw new CarpError.InvalidParameterCount(keys.Length, values.Length);
+        
+        // if (keys.Length == 0)
+        //     return new CarpMap<CarpObject, CarpObject>();
+        //
+        // // induvidually typecheck keys and values
+        // Type keyType = keys[0].GetType();
+        // bool keysAllSame = keys.All(obj => obj.GetType() == keyType);
+        //
+        // Type valueType = values[0].GetType();
+        // bool valuesAllSame = values.All(obj => obj.GetType() == valueType);
+        //
+        // Type mapKeyType = keysAllSame ? keyType : typeof(CarpObject);
+        // Type mapValueType = valuesAllSame ? valueType : typeof(CarpObject);
+        //
+        // Type mapType = typeof(CarpMap);
+        // Type[] typeArgs = { mapKeyType, mapValueType };
+        // Type constructed = mapType.MakeGenericType(typeArgs);
+        //
+        // return Activator.CreateInstance(constructed, new object[] { keys, values });
 
         if (keys.Length == 0)
-            return new CarpMap<CarpObject, CarpObject>();
-
-        // induvidually typecheck keys and values
-        Type keyType = keys[0].GetType();
-        bool keysAllSame = keys.All(obj => obj.GetType() == keyType);
-
-        Type valueType = values[0].GetType();
-        bool valuesAllSame = values.All(obj => obj.GetType() == valueType);
-
-        Type mapKeyType = keysAllSame ? keyType : typeof(CarpObject);
-        Type mapValueType = valuesAllSame ? valueType : typeof(CarpObject);
-
-        Type mapType = typeof(CarpMap<,>);
-        Type[] typeArgs = { mapKeyType, mapValueType };
-        Type constructed = mapType.MakeGenericType(typeArgs);
-
-        return Activator.CreateInstance(constructed, new object[] { keys, values });
+            return new CarpMap(CarpObject.Type, CarpObject.Type);
+        
+        CarpType keyType = CarpType.HighestCommonType(keys.Select(x => x.GetCarpType()).ToArray());
+        CarpType valueType = CarpType.HighestCommonType(values.Select(x => x.GetCarpType()).ToArray());
+        
+        return new CarpMap(keyType, valueType, keys, values);
     }
 
     public override object VisitPrivateModifier(CarpGrammarParser.PrivateModifierContext context) => Modifier.Private;
@@ -906,12 +981,12 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         string name = context.ID().GetText();
         CarpObject obj = context.ContextScope.Get(name);
         if (obj is not CarpType type)
-            throw new CarpError.InvalidType(CarpType.Type, CarpType.GetType(obj));
+            throw new CarpError.InvalidType(CarpType.Type, obj.GetCarpType());
 
         return type;
     }
 
-    public override object VisitAutoType(CarpGrammarParser.AutoTypeContext context) => CarpType.Auto;
+    public override object VisitAutoType(CarpGrammarParser.AutoTypeContext context) => AutoType.Instance;
 
     public override object VisitMapType(CarpGrammarParser.MapTypeContext context)
     {
@@ -920,11 +995,13 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         // Assemble type with generics
 
-        Type type = typeof(CarpMap<,>);
-        Type[] typeArgs = { keyType.Native, valueType.Native };
-        Type constructed = type.MakeGenericType(typeArgs);
+        // Type type = typeof(CarpMap);
+        // Type[] typeArgs = { keyType.Native, valueType.Native };
+        // Type constructed = type.MakeGenericType(typeArgs);
+        //
+        // return constructed.GetCarpType();
 
-        return CarpType.GetType(constructed);
+        return CarpMap.Type.With(keyType, valueType);
     }
 
     public override object VisitListType(CarpGrammarParser.ListTypeContext context)
@@ -933,11 +1010,13 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         // Assemble type with generics
 
-        Type type = typeof(CarpCollection<>);
-        Type[] typeArgs = { elementType.Native };
-        Type constructed = type.MakeGenericType(typeArgs);
+        // Type type = typeof(CarpCollection<>);
+        // Type[] typeArgs = { elementType.Native };
+        // Type constructed = type.MakeGenericType(typeArgs);
+        //
+        // return constructed.GetCarpType();
 
-        return CarpType.GetType(constructed);
+        return CarpCollection.Type.With(elementType);
     }
 
     public override object VisitType_name_list(CarpGrammarParser.Type_name_listContext context)

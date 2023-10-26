@@ -5,6 +5,8 @@ namespace Carp.objects.types;
 
 public class CarpInternalFunc : CarpFunc
 {
+    public static new CarpType Type = NativeType.Of<CarpInternalFunc>(CarpFunc.Type, "funcIn");
+    public override CarpType GetCarpType() => Type;
 
     private CarpGrammarParser.Generic_blockContext _block;
     private Dictionary<string, CarpType> _parameters;
@@ -82,6 +84,7 @@ public class CarpInternalFunc : CarpFunc
     
     public CarpInternalFunc Bind(CarpObject obj)
     {
+        // TODO: dont think we need this anymore :/
         // set this
         Scope boundScope = new(this._scope);
         boundScope.Define("this", obj.GetCarpType(), obj);

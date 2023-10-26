@@ -17,6 +17,13 @@ public static class Helper
         // If Flags.Instance.ImplicitCasting is false, then we don't allow implicit casting.
         if (!Flags.Instance.ImplicitCasting && isImplicit)
             throw new CarpError.InvalidType(dest, source.GetCarpType());
+
+        if (source == CarpNull.Instance)
+        {
+            if (dest.IsStruct) throw new CarpError.CastNullToStruct(dest);
+
+            return source;
+        }
         
         // Else cast!
         return source.Cast(dest);

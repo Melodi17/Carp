@@ -22,6 +22,11 @@ public static class Extensions
         return type.Name;
     }
 
+    public static bool ContainsKeySlow<TK, TV>(this Dictionary<TK, TV> source, TK key) => source.Keys.Any(x => x.Equals(key));
+    public static TV GetValueSlow<TK, TV>(this Dictionary<TK, TV> source, TK key) => source[source.Keys.First(x => x.Equals(key))];
+    public static void SetValueSlow<TK, TV>(this Dictionary<TK, TV> source, TK key, TV value) => source[source.Keys.First(x => x.Equals(key))] = value;
+    public static bool RemoveSlow<TK, TV>(this Dictionary<TK, TV> source, TK key) => source.Remove(source.Keys.First(x => x.Equals(key)));
+
     public static TDecendant FirstOf<TDecendant, TParent>(this IEnumerable<TParent> col)
         where TDecendant : class, TParent
         => col.First(x => x is TDecendant) as TDecendant;

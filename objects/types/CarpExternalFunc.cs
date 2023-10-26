@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
 public class CarpExternalFunc : CarpFunc
 {
-
+    public static new CarpType Type = NativeType.Of<CarpExternalFunc>(CarpFunc.Type, "funcEx");
+    public override CarpType GetCarpType() => Type;
     // takes func, with any args, returns T
     private Delegate _value;
     private CarpType[] _argTypes;
@@ -16,9 +18,7 @@ public class CarpExternalFunc : CarpFunc
         if (returnType == CarpVoid.Type)
         {
             if (value.Method.ReturnType != typeof(void))
-                // Type projection is not supported
-                throw new CarpError.InvalidType(CarpVoid.Type, CarpObject.Type);
-            // value.Method.ReturnType);
+                throw new CarpError.InvalidType(CarpVoid.Type, NativeType.Find(value.Method.ReturnType));
         }
         else
         {
@@ -32,12 +32,12 @@ public class CarpExternalFunc : CarpFunc
         {
             if (!typeof(CarpObject).IsAssignableFrom(p.ParameterType))
                 throw new CarpError.InvalidType(CarpObject.Type,
-                    CarpType.GetType(p.ParameterType));
+                    NativeType.Find(p.ParameterType));
         }
         
         // save arg types
         this._argTypes = value.Method.GetParameters()
-            .Select(x => CarpType.GetType(x.ParameterType))
+            .Select(x => NativeType.Find(x.ParameterType))
             .ToArray();
     }
 
@@ -65,13 +65,9 @@ public class CarpExternalFunc : CarpFunc
                 else
                     continue;
             }
-            
-            // generic object
-            if (this._argTypes[i] == CarpObject.Type)
-                continue;
 
             // cast
-            args[i] = args[i].Cast(this._argTypes[i]);
+            args[i] = args[i].CastEx(this._argTypes[i]);
         }
         
         // invoke
