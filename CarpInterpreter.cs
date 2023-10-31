@@ -1,7 +1,10 @@
-﻿using Antlr4.Runtime;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Carp.interpreter;
 using Carp.objects.types;
+using Carp.package;
 using Carp.parser;
 
 namespace Carp;
@@ -9,7 +12,7 @@ namespace Carp;
 public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 {
     private static readonly CarpStatic Marshal = new("marshal");
-    public static CarpInterpreter Instance = new();
+    public static CarpInterpreter Instance;
     
     public int CurrentLine { get; private set; } = 0;
     public bool Paused { get; set; } = false;
@@ -30,7 +33,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     }
     public IScope GlobalScope { get; set; }
 
-    public CarpInterpreter()
+    public CarpInterpreter(IPackageResolver packageResolver)
     {
         this.GlobalScope = new Scope();
 
@@ -43,10 +46,10 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         this.GlobalScope.Define("void", CarpType.Type, CarpVoid.Type);
         
         // TODO: marshal or member?
-        Marshal.SetProperty("static", CarpEnum.Of(Marshal, "static"));
+        Marshal.DefineProperty("static",  CarpEnum.Type, CarpEnum.Of(Marshal, "static"));
         
         this.GlobalScope.Define("marshal", CarpStatic.Type, Marshal);
-
+        
         // io contains print and input
         // fs containts filesystem
         // math has more math
@@ -107,9 +110,9 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         {
             if (Program.Debugger.Breakpoints.Contains(this.CurrentLine))
                 this.Paused = true;
+            
+            while (!this.Next) Thread.Sleep(50);
         }
-        
-        while (!this.Next) Thread.Sleep(50);
         
         this.Visit(child, parentScope);
     }
@@ -126,7 +129,11 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     // TODO: Use modifier result from name!!
     public (string name, Modifier modifiers) GetName(CarpGrammarParser.NameContext name) => ((string name, Modifier modifiers))this.VisitName(name);
-    public (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) GetDefinition(CarpGrammarParser.Definition_with_attrContext def) => ((CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext))this.VisitDefinition_with_attr(def);
+    public (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) GetDefinition(ScopedParserRuleContext parent, CarpGrammarParser.Definition_with_attrContext def) 
+        => ((CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext))this.Visit(def, parent.ContextScope);
+    
+    public (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) GetDefinition(IScope scope, CarpGrammarParser.Definition_with_attrContext def) 
+        => ((CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext))this.Visit(def, scope);
 
     public CarpObject[] GetExpressionList(ScopedParserRuleContext parent, CarpGrammarParser.Expression_listContext context) => this.Visit(context, parent.ContextScope) as CarpObject[];
 
@@ -155,6 +162,26 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpType type = NativeType.Find<T>();
 
         return obj.CastEx(type) as T;
+    }
+
+    public override object VisitPath(CarpGrammarParser.PathContext context) =>
+        string.Join(".", context._parts
+            .Select(x => this.GetName(x).name));
+
+    public override object VisitPath_part(CarpGrammarParser.Path_partContext context)
+    {
+        if (context.STRING() != null)
+        {
+            return context.STRING().GetText()[1..^1];
+        }
+    }
+
+    public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
+    {
+        string path = this.Visit(context.loc, context.ContextScope) as string;
+        // TODO: import module
+        Console.WriteLine(path);
+        return null;
     }
 
     public override object VisitProgram(CarpGrammarParser.ProgramContext context)
@@ -235,7 +262,13 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         return CarpVoid.Instance;
     }
 
-    public override object VisitDefinitionStatement(CarpGrammarParser.DefinitionStatementContext context) => this.PassDown(context);
+    public override object VisitDefinitionStatement(CarpGrammarParser.DefinitionStatementContext context)
+    {
+        CarpGrammarParser.Definition_with_attrContext def = context.definition_with_attr();
+        (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) parts = GetDefinition(context, def);
+        this.Visit(parts.definitionContext, context.ContextScope);
+        return null;
+    }
 
     public override object VisitExpressionStatement(CarpGrammarParser.ExpressionStatementContext context)
     {
@@ -470,14 +503,14 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         (string name, Modifier modifiers) = this.GetName(context.name());
         CarpType type = this.GetObject<CarpType>(context, context.type());
         CarpObject value = this.GetObject(context, context.value);
+        
+        if (type == AutoType.Instance)
+            type = value.GetCarpType();
 
-        if (type != AutoType.Instance && value.GetCarpType().Extends(type))
+        if (!value.GetCarpType().Extends(type))
             //throw new CarpError.InvalidType(type, value.GetCarpType());
             // TODO: test this out
             value = value.CastEx(type);
-
-        if (type == AutoType.Instance)
-            type = value.GetCarpType();
 
         context.ContextScope.Define(name, type, value);
 
@@ -568,7 +601,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         foreach (CarpGrammarParser.Definition_with_attrContext def in definitions)
         {
-            (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) = this.GetDefinition(def);
+            (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) = this.GetDefinition(scope, def);
 
             (attrs.Any(x => x.Equals(Marshal.Property("static")))
                 ? staticDefinitions
@@ -577,6 +610,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
 
         CarpClass clazz = new(new CarpString(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
+        scope.Define(name, clazz.GetCarpType(), clazz);
     }
 
     public override object VisitDefinition_with_attr(CarpGrammarParser.Definition_with_attrContext context)
@@ -614,7 +648,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         else if (assignmentTarget is CarpGrammarParser.PropertyExpressionContext pec)
         {
             (string name, Modifier modifiers) = this.GetName(pec.value);
-            CarpObject obj = this.GetObject(context, pec.value);
+            CarpObject obj = this.GetObject(context, pec.obj);
             obj.SetProperty(name, value);
             return value;
         }
@@ -866,7 +900,51 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         string value = context.STRING().GetText();
         // crop surrounding quotes
         value = value[1..^1];
-        return new CarpString(value);
+
+        
+        // StringBuilder sb = new();
+        // bool escaped = false;
+        // foreach (char c in value)
+        // {
+        //     if (c == '\\')
+        //     {
+        //         escaped = true;
+        //         continue;
+        //     }
+        //
+        //     if (escaped)
+        //     {
+        //         switch (c)
+        //         {
+        //             case 'n':
+        //                 sb.Append('\n');
+        //                 break;
+        //             case 't':
+        //                 sb.Append('\t');
+        //                 break;
+        //             case 'r':
+        //                 sb.Append('\r');
+        //                 break;
+        //             case '\\':
+        //                 sb.Append('\\');
+        //                 break;
+        //             case '\'':
+        //                 sb.Append('\'');
+        //                 break;
+        //             case '0':
+        //                 sb.Append('\0');
+        //                 break;
+        //             default:
+        //                 throw new CarpError.PreprocessorError($"Unknown escape sequence \\{c}");
+        //         }
+        //
+        //         escaped = false;
+        //     }
+        //     else
+        //         sb.Append(c);
+        // }
+        
+        return new CarpString(Regex.Unescape(value));
     }
 
     public override object VisitTrueConstant(CarpGrammarParser.TrueConstantContext context) => CarpBool.True;

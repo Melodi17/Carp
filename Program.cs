@@ -2,6 +2,8 @@
 
 using Antlr4.Runtime;
 using Carp.objects.types;
+using Carp.package;
+using Carp.package.resolvers;
 using Carp.preprocessor;
 
 namespace Carp;
@@ -9,6 +11,7 @@ namespace Carp;
 internal class Program
 {
     public static Debugger Debugger;
+    public static IPackageResolver DefaultPackageResolver;
     public static void Main(string[] args)
     {
         bool interactive = args.Contains("-i");
@@ -28,6 +31,9 @@ internal class Program
             Console.WriteLine("Usage: carp [options] [file]");
             return;
         }
+
+        DefaultPackageResolver = GetPackageResolver();
+        CarpInterpreter.Instance = new(DefaultPackageResolver);
         
         Flags.Instance.LoadedFromFile = !line && arg.Length > 0;
         Flags.Instance.ExecutionContext = arg;
@@ -49,13 +55,13 @@ internal class Program
                 return;
             }
             
-            CarpObject response = RunString(arg);
+            CarpObject response = RunString(CarpInterpreter.Instance, arg);
             if (response != CarpVoid.Instance)
                 Console.WriteLine(response.Repr());
         }
         else if (arg.Length > 0)
         {
-            CarpObject response = RunString(File.ReadAllText(arg));
+            CarpObject response = RunString(CarpInterpreter.Instance, File.ReadAllText(arg));
             if (response != CarpVoid.Instance && verbose)
                 Console.WriteLine(response.Repr());
         }
@@ -64,22 +70,30 @@ internal class Program
             Repl();
     }
 
+    private static IPackageResolver GetPackageResolver()
+    {
+        ModularPackageResolver mpr = new();
+        mpr.AddResolver("github", new GithubPackageResolver());
+
+        return mpr;
+    }
+
     private static void Repl()
     {
         while (true)
         {
             Console.Write(" : ");
             string msg = Console.ReadLine();
-            if (msg == "exit")
+            if (msg is null or "exit")
                 break;
 
-            CarpObject response = RunString(msg);
+            CarpObject response = RunString(CarpInterpreter.Instance, msg);
             if (response != CarpVoid.Instance)
                 Console.WriteLine(response.Repr());
         }
     }
 
-    public static CarpObject RunString(string s)
+    public static CarpObject RunString(CarpInterpreter interpreter, string s)
     {
         if (s.Trim().Length == 0)
             return CarpVoid.Instance;
@@ -89,12 +103,12 @@ internal class Program
         
         AntlrInputStream inputStream = new(processed);
         CarpGrammarLexer lexer = new(inputStream);
+        lexer.RemoveErrorListeners();
         CommonTokenStream tokenStream = new(lexer);
 
         CarpGrammarParser parser = new(tokenStream);
 
         CarpGrammarParser.ProgramContext program = parser.program();
-        CarpInterpreter interpreter = CarpInterpreter.Instance;
         try
         {
             CarpObject obj = interpreter.Visit(program) as CarpObject;

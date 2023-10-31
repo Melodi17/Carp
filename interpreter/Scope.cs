@@ -46,7 +46,6 @@ public class Scope : IScope, IDisposable
         if (this._values.ContainsKey(name))
         {
             var (type, _) = this._values[name];
-            // TODO: Fix this soon!!!
             if (!type.Extends(value.GetCarpType()))
                 throw new CarpError.InvalidType(type, value.GetCarpType());
             else
@@ -66,8 +65,9 @@ public class Scope : IScope, IDisposable
         if (this._values.ContainsKey(name))
             throw new CarpError.ReferenceAlreadyDefined(name);
         
-        if (this.HasParent && this.Parent!.Has(name))
-            new CarpWarning.Shadowing(name).Warn();
+        // if (this.HasParent && this.Parent!.Has(name))
+        //     new CarpWarning.Shadowing(name).Warn();
+        
         this._values[name] = (type, value);
         return value;
     }

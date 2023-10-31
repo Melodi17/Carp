@@ -34,4 +34,16 @@ public static class Extensions
     public static IEnumerable<TDecendant> WhereOf<TDecendant, TParent>(this IEnumerable<TParent> col)
         where TDecendant : class, TParent
         => col.Where(x => x is TDecendant).Select(x => x as TDecendant);
+
+
+    public static T With<T>(this T obj, Action<T> act)
+    {
+        act(obj);
+        return obj;
+    }
+
+    public static T Sync<T>(this Task<T> task)
+    {
+        return task.GetAwaiter().GetResult();
+    }
 }

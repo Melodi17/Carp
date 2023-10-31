@@ -137,6 +137,16 @@ public abstract class CarpError : Exception
         }
     }
 
+    public class InvalidArgumentCount : CarpError
+    {
+        public override string DisplayName => "InvalidArgumentCount";
+
+        public InvalidArgumentCount(int given, int expected) : base($"Invalid argument count, got {given}, expected {expected}")
+        {
+            
+        }
+    }
+    
     public class ReferenceDoesNotExist : CarpError
     {
         public override string DisplayName => "ReferenceDoesNotExist";
@@ -152,6 +162,16 @@ public abstract class CarpError : Exception
         public override string DisplayName => "ReferenceAlreadyDefined";
 
         public ReferenceAlreadyDefined(string name) : base($"Reference '{name}' is already defined in current scope")
+        {
+            
+        }
+    }
+    
+    public class PackageNotFound : CarpError
+    {
+        public override string DisplayName => "PackageNotFound";
+
+        public PackageNotFound(string name, string version) : base($"Could not find package '{name}' with version '{version}'")
         {
             
         }

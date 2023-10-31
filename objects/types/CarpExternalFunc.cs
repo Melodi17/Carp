@@ -10,10 +10,12 @@ public class CarpExternalFunc : CarpFunc
     // takes func, with any args, returns T
     private Delegate _value;
     private CarpType[] _argTypes;
+    private bool _ignoreArgTypes;
     
-    public CarpExternalFunc(CarpType returnType, Delegate value) : base(returnType)
+    public CarpExternalFunc(CarpType returnType, Delegate value, bool ignoreArgTypes = false) : base(returnType)
     {
         this._value = value;
+        this._ignoreArgTypes = ignoreArgTypes;
         // check return type is T, unless T is CarpVoid
         if (returnType == CarpVoid.Type)
         {
@@ -28,6 +30,9 @@ public class CarpExternalFunc : CarpFunc
         }
 
         // check args are all derived from CarpObject
+        if (this._ignoreArgTypes)
+            return;
+        
         foreach (ParameterInfo p in value.Method.GetParameters())
         {
             if (!typeof(CarpObject).IsAssignableFrom(p.ParameterType))
@@ -43,10 +48,30 @@ public class CarpExternalFunc : CarpFunc
 
     public override CarpObject Call(CarpObject[] args)
     {
+        if (this._ignoreArgTypes)
+        {
+            object returnValue;
+            try
+            {
+                returnValue = this._value.DynamicInvoke(new object[] { args });
+            }
+            catch (TargetInvocationException e)
+            {
+                throw e.InnerException!;
+            }
+            
+            if (this._returnType == CarpVoid.Type)
+                return CarpVoid.Instance;
+            
+            if (returnValue is CarpObject coResp)
+                return coResp;
+            else
+                throw new("External function did not return a CarpObject");
+        }
+        
         // check parameter length
         if (args.Length != this._argTypes.Length)
-            throw new CarpError.InvalidType(this._argTypes.ToList(),
-                args[0].GetCarpType());
+            throw new CarpError.InvalidArgumentCount(args.Length, this._argTypes.Length);
         
         // cast all args to their respective types
         for (int i = 0; i < args.Length; i++)

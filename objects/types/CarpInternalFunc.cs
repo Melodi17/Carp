@@ -30,8 +30,7 @@ public class CarpInternalFunc : CarpFunc
     {
         // check parameter length
         if (args.Length != this._parameters.Count)
-            throw new CarpError.InvalidType(this._parameters.Values.ToList(),
-                args[0].GetCarpType());
+            throw new CarpError.InvalidArgumentCount(args.Length, this._parameters.Count);
         
         // cast all args to their respective types
         for (int i = 0; i < args.Length; i++)
@@ -77,7 +76,7 @@ public class CarpInternalFunc : CarpFunc
             throw new CarpError.VoidFromNonVoidFunction();
 
         if (returnVal.GetCarpType() != this._returnType)
-            return returnVal.Cast(this._returnType);
+            return returnVal.CastEx(this._returnType);
 
         return returnVal;
     }

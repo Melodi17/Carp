@@ -107,9 +107,63 @@ public class Preprocessor
             
             else if (ch == '\'')
             {
-                string str = Until('\'');
-                str += Next();
-                yield return new(ch + str, PrimitiveTokenType.Constant);
+                // string str = Until('\'');
+                // str += Next();
+                // yield return new(ch + str, PrimitiveTokenType.Constant);
+                
+                // lets add escaping support
+                StringBuilder text = new();
+                bool escaped = false;
+                while (!(!escaped && Peek() == '\''))
+                {
+                    char c = Next();
+                    if (c == '\\')
+                    {
+                        escaped = true;
+                        continue;
+                    }
+                
+                    if (escaped)
+                    {
+                        text.Append('\\');
+                        text.Append(c);
+                        // switch (c)
+                        // {
+                        //     // case 'n':
+                        //     //     text.Append('\n');
+                        //     //     break;
+                        //     // case 't':
+                        //     //     text.Append('\t');
+                        //     //     break;
+                        //     // case 'r':
+                        //     //     text.Append('\r');
+                        //     //     break;
+                        //     case '\\':
+                        //         text.Append('\\');
+                        //         break;
+                        //     case '\'':
+                        //         text.Append('\'');
+                        //         break;
+                        //     // case '0':
+                        //     //     text.Append('\0');
+                        //     //     break;
+                        //     default:
+                        //         throw new CarpError.PreprocessorError($"Unknown escape sequence \\{c}");
+                        // }
+                        escaped = false;
+                    }
+                    else
+                        text.Append(c);
+                }
+                
+                // string textStr = text.ToString();
+                // if (textStr.Contains("\'"))
+                // {
+                //     // this is a complex string
+                // }
+                
+                
+                yield return new(ch + text.ToString() + Next(), PrimitiveTokenType.Constant);
             }
 
             else
@@ -119,6 +173,8 @@ public class Preprocessor
             ch = Next();
         }
     }
+    
+    
 
     public string Process()
     {

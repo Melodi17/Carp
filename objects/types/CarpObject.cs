@@ -2,6 +2,8 @@
 
 public abstract class CarpObject
 {
+    // TODO: consider using this for garbage collection
+    // public int RefCount = 0;
     public virtual CarpObject Add(CarpObject other) { throw new CarpError.PrimitiveIncompatible("Add", this); }
     public virtual CarpObject Subtract(CarpObject other) { throw new CarpError.PrimitiveIncompatible("Subtract", this); }
     public virtual CarpObject Multiply(CarpObject other) { throw new CarpError.PrimitiveIncompatible("Multiply", this); }
@@ -14,7 +16,7 @@ public abstract class CarpObject
         CarpType t = other.GetCarpType();
         CarpType thisType = this.GetCarpType();
 
-        if (t.Extends(thisType))
+        if (!t.Extends(thisType))
             return CarpBool.False;
 
         return this == other ? CarpBool.True : CarpBool.False;
@@ -31,8 +33,7 @@ public abstract class CarpObject
 
     public virtual CarpObject Property(string name) { throw new CarpError.PrimitiveIncompatible("Property", this); }
     public virtual CarpObject SetProperty(string name, CarpObject value) { throw new CarpError.PrimitiveIncompatible("SetProperty", this); }
-
-    // TODO: Listen to Flags.ImplicitCast flag and make a cast helper
+    
     public virtual CarpObject Cast(CarpType type)
     {
         // throw new CarpError.PrimitiveIncompatible("Cast", this);

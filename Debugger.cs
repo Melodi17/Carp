@@ -164,7 +164,7 @@ public class Debugger
             case "eval":
                 {
                     string code = string.Join(" ", args);
-                    CarpObject response = Program.RunString(code);
+                    CarpObject response = Program.RunString(CarpInterpreter.Instance, code);
                     return response.Repr();
                 }
 

@@ -204,7 +204,7 @@ public class CarpClass : CarpType
         
         // Create static definitions
         foreach (CarpGrammarParser.Definition_with_attrContext def in staticDefinitions)
-            CarpInterpreter.Instance.Execute(this._scope, CarpInterpreter.Instance.GetDefinition(def).definitionContext);
+            CarpInterpreter.Instance.Execute(this._scope, CarpInterpreter.Instance.GetDefinition(scope, def).definitionContext);
     }
 
     public override CarpObject Instantiate(CarpObject[] args, bool isImplicit = false)
@@ -215,7 +215,7 @@ public class CarpClass : CarpType
         
         // Create non-static definitions
         foreach (CarpGrammarParser.Definition_with_attrContext def in this._nonStaticDefinitions)
-            CarpInterpreter.Instance.Execute(scope, CarpInterpreter.Instance.GetDefinition(def).definitionContext);
+            CarpInterpreter.Instance.Execute(scope, CarpInterpreter.Instance.GetDefinition(this._scope, def).definitionContext);
         
         // Call constructor
         if (scope.Has("init"))
@@ -232,8 +232,11 @@ public class CarpClass : CarpType
 
     public override CarpObject Property(string name)
     {
+        if (name == "new")
+            return new CarpExternalFunc(CarpObject.Type, (CarpObject[] args) => this.Instantiate(args), ignoreArgTypes: true);
+
         return this._scope.Has(name) 
-            ? this._scope.Get(name) 
+            ? this._scope.Get(name)
             : base.Property(name);
     }
     
@@ -252,6 +255,8 @@ public class CarpDynamic : CarpObject
     {
         this._class = carpClass;
         this._scope = scope;
+
+        this._scope.Define("this", carpClass, this);
     }
 
     public override CarpString String()
@@ -273,12 +278,31 @@ public class CarpDynamic : CarpObject
         if (this._scope.Has("property"))
         {
             CarpObject f = this._scope.Get("property");
+            if (f is not CarpFunc func)
+                throw new CarpError.InvalidType(CarpFunc.Type, f.GetCarpType());
             
+            return func.Call(new CarpObject[] {new CarpString(name)});
         }
         else if (this._scope.Has(name))
             return this._scope.Get(name);
         
-        throw new 
+        throw new CarpError.InvalidProperty(name);
+    }
+    
+    public override CarpObject SetProperty(string name, CarpObject value)
+    {
+        if (this._scope.Has("set_property"))
+        {
+            CarpObject f = this._scope.Get("set_property");
+            if (f is not CarpFunc func)
+                throw new CarpError.InvalidType(CarpFunc.Type, f.GetCarpType());
+            
+            return func.Call(new CarpObject[] {new CarpString(name), value});
+        }
+        else
+            this._scope.Set(name, value);
+        
+        return value;
     }
 
     public override CarpType GetCarpType() => this._class;
@@ -291,4 +315,9 @@ public class AutoType : CarpType
 
     public override CarpObject Instantiate(CarpObject[] args, bool isImplicit = false) 
         => throw new InvalidOperationException("Cannot instantiate an auto type.");
+
+    public override bool Equals(object obj)
+    {
+        return obj is AutoType;
+    }
 }

@@ -14,6 +14,12 @@ public class CarpStatic : CarpObject
         this._scope = new Scope();
     }
 
+    public CarpStatic(string name, IScope scope)
+    {
+        this._name = name;
+        this._scope = scope;
+    }
+
     public override CarpString String() => new(this._name);
     public override CarpBool Match(CarpObject other)
     {
