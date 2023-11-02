@@ -11,8 +11,13 @@ namespace Carp;
 
 public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 {
-    private static readonly CarpStatic Marshal = new("marshal");
+    private static readonly CarpStatic Marshal = new CarpStatic("marshal")
+        .With(o => 
+            o.DefineProperty("static",  CarpEnum.Type, CarpEnum.Of(Marshal, "static"))
+        );
+    
     public static CarpInterpreter Instance;
+    public IPackageResolver PackageResolver;
     
     public int CurrentLine { get; private set; } = 0;
     public bool Paused { get; set; } = false;
@@ -36,6 +41,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public CarpInterpreter(IPackageResolver packageResolver)
     {
         this.GlobalScope = new Scope();
+        this.PackageResolver = packageResolver;
 
         this.GlobalScope.Define("int", CarpType.Type, CarpInt.Type);
         this.GlobalScope.Define("str", CarpType.Type, CarpString.Type);
@@ -44,9 +50,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         this.GlobalScope.Define("obj", CarpType.Type, CarpObject.Type);
         this.GlobalScope.Define("null", CarpNull.Type, CarpNull.Instance);
         this.GlobalScope.Define("void", CarpType.Type, CarpVoid.Type);
-        
-        // TODO: marshal or member?
-        Marshal.DefineProperty("static",  CarpEnum.Type, CarpEnum.Of(Marshal, "static"));
         
         this.GlobalScope.Define("marshal", CarpStatic.Type, Marshal);
         
@@ -58,28 +61,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         
         this.GlobalScope.Define("t", CarpFunc.Type, new CarpExternalFunc(CarpType.Type, (CarpObject obj)
             => obj.GetCarpType()));
-
-        this.GlobalScope.Define("p", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, (CarpObject str) =>
-        {
-            Console.WriteLine(str.String().Native);
-        }));
-
-        this.GlobalScope.Define("pw", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, (CarpObject str) =>
-        {
-            Console.Write(str.String().Native);
-        }));
-        
-        this.GlobalScope.Define("r", CarpFunc.Type, new CarpExternalFunc(CarpString.Type, (CarpObject str) =>
-        {
-            Console.Write(str.String().Native);
-            return new CarpString(Console.ReadLine());
-        }));
-        
-        this.GlobalScope.Define("rw", CarpFunc.Type, new CarpExternalFunc(CarpChar.Type, (CarpBool hideKeyStrokes) 
-            => new CarpChar(Console.ReadKey(hideKeyStrokes.Native).KeyChar)));
-        
-        this.GlobalScope.Define("rand", CarpFunc.Type, new CarpExternalFunc(CarpInt.Type, (CarpInt max) 
-            => new CarpInt(new Random().Next(max.NativeInt))));
     }
     
     public void Step() => this._step = true;
@@ -164,23 +145,20 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         return obj.CastEx(type) as T;
     }
 
-    public override object VisitPath(CarpGrammarParser.PathContext context) =>
-        string.Join(".", context._parts
-            .Select(x => this.GetName(x).name));
-
-    public override object VisitPath_part(CarpGrammarParser.Path_partContext context)
-    {
-        if (context.STRING() != null)
-        {
-            return context.STRING().GetText()[1..^1];
-        }
-    }
-
     public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
     {
-        string path = this.Visit(context.loc, context.ContextScope) as string;
-        // TODO: import module
-        Console.WriteLine(path);
+        string path = string.Join("", context._loc.Select(x => x.Text));
+        string[] parts = path!.Split(".")
+            .Select(x => x.Replace('/', '.'))
+            .ToArray();
+
+        string ver = string.Join("", context._ver?.Select(x => x.Text) ?? Array.Empty<string>());
+        if (string.IsNullOrEmpty(ver))
+            ver = "latest";
+
+        Package pkg = this.PackageResolver.GetPackage(parts, ver);
+        pkg.Include(this);
+        
         return null;
     }
 

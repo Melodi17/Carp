@@ -171,7 +171,7 @@ public abstract class CarpError : Exception
     {
         public override string DisplayName => "PackageNotFound";
 
-        public PackageNotFound(string name, string version) : base($"Could not find package '{name}' with version '{version}'")
+        public PackageNotFound(string[] name, string version) : base($"Could not find package '{string.Join(",", name)}' with version '{version}'")
         {
             
         }

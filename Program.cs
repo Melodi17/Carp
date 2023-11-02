@@ -73,6 +73,7 @@ internal class Program
     private static IPackageResolver GetPackageResolver()
     {
         ModularPackageResolver mpr = new();
+        mpr.AddResolver("std", new StandardPackageResolver());
         mpr.AddResolver("github", new GithubPackageResolver());
 
         return mpr;

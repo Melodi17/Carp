@@ -69,7 +69,6 @@ INT=68
 WS=69
 COMMENT=70
 STRING=71
-PATH=72
 '..'=1
 '.'=2
 ','=3

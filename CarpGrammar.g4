@@ -87,7 +87,7 @@ STRING : '\'' SHORT_STRING_ITEM_FOR_SINGLE_QUOTE* '\'' ;
 fragment SHORT_STRING_ITEM_FOR_SINGLE_QUOTE : SHORT_STRING_CHAR_NO_SINGLE_QUOTE | ('\\' .);
 fragment SHORT_STRING_CHAR_NO_SINGLE_QUOTE : ~[\\'];
 
-PATH : [a-zA-Z0-9_\-]+ ;
+//PATH : [a-zA-Z0-9_\-.]+ ;
 
 program : (statements+=statement)* EOF ;
 
@@ -98,12 +98,9 @@ generic_block
     | '->' expression # lambdaExpressionBlock
     | '->' statement # lambdaBlock
     ;
-    
-path_part : PATH | STRING ;
-path : parts+=path_part ('.' parts+=path_part)* ;
 
 statement
-    : IMPORT loc=path (':' ver=path_part)? # importStatement
+    : IMPORT loc+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT)* (':' ver+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT | COLON))? # importStatement
     | definition_with_attr # definitionStatement
     | expression # expressionStatement
     | flow_control # flowControlStatement

@@ -15,12 +15,12 @@ public class ModularPackageResolver : IPackageResolver
         this._defaultResolver = resolver;
     }
     
-    public Package GetPackage(string path, string version = "latest")
+    public Package GetPackage(string[] path, string version = "latest")
     {
         foreach ((string key, IPackageResolver value) in this._children)
         {
-            if (path.StartsWith(key))
-                return value.GetPackage(path[key.Length..].TrimStart('.'), version);
+            if (path[0] == key)
+                return value.GetPackage(path[1..], version);
         }
 
         if (this._defaultResolver != null)

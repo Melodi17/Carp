@@ -10,15 +10,10 @@ public class GithubPackageResolver : IPackageResolver
     public static string BaseUrl = "https://api.github.com";
     public static string GetReleaseUrl = $"{BaseUrl}/repos/{{owner}}/{{repo}}/releases/tags/{{tag}}";
     public static string GetLatestReleaseUrl = $"{BaseUrl}/repos/{{owner}}/{{repo}}/releases/latest";
-    public Package GetPackage(string path, string version = "latest")
+    public Package GetPackage(string[] path, string version = "latest")
     {
-        string[] split = path.Split(".");
-        string username = split[0];
-        string repo = string.Join(".", split[1..]);
-
-        string safeName = repo
-            .Replace(".", "_")
-            .Replace("-", "_");
+        string username = path[0];
+        string repo = string.Join(".", path[1]);
 
         HttpClient client = new();
         string downloadUrl = null;
@@ -61,7 +56,7 @@ public class GithubPackageResolver : IPackageResolver
             using StreamReader reelReader = new(reelEntry.Open());
             string reelJson = reelReader.ReadToEnd();
             JObject reel = JObject.Parse(reelJson);
-            string mainFile = reel["main"].ToString();
+            string mainFile = reel["main"]!.ToString();
             
             ZipArchiveEntry mainEntry = archive.GetEntry(mainFile)!;
             using StreamReader mainReader = new(mainEntry.Open());
@@ -69,13 +64,13 @@ public class GithubPackageResolver : IPackageResolver
             
             // TODO: change this
             
-            Package pkg = new(this, Program.DefaultPackageResolver, safeName, main);
+            Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: main);
             return pkg;
         }
         else
         {
             string download = client.GetStringAsync(downloadUrl).Sync();
-            Package pkg = new(this, Program.DefaultPackageResolver, safeName, download);
+            Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: download);
             return pkg;
         }
     }

@@ -65,18 +65,6 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitLambdaBlock([NotNull] CarpGrammarParser.LambdaBlockContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="CarpGrammarParser.path_part"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitPath_part([NotNull] CarpGrammarParser.Path_partContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="CarpGrammarParser.path"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitPath([NotNull] CarpGrammarParser.PathContext context);
-	/// <summary>
 	/// Visit a parse tree produced by the <c>importStatement</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.statement"/>.
 	/// </summary>
