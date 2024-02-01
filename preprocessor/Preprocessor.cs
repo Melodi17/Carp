@@ -227,6 +227,16 @@ public class Preprocessor
         
         foreach (PrimitiveToken token in stream)
         {
+            if (token.Type == PrimitiveTokenType.Identifier
+                && token.Value == "import")
+            {
+                sb.Append("import");
+                // do whatever
+                sb.Append(UntilNewlineStr());
+                // allow main parser to differentiate
+                sb.Append(";");
+                continue;
+            }
             if (token.Type == PrimitiveTokenType.Operator
                 && token.Value == "#")
             {

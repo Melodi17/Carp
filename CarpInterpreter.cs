@@ -11,10 +11,12 @@ namespace Carp;
 
 public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 {
-    private static readonly CarpStatic Marshal = new CarpStatic("marshal")
-        .With(o => 
-            o.DefineProperty("static",  CarpEnum.Type, CarpEnum.Of(Marshal, "static"))
-        );
+    private static readonly CarpStatic Marshal = new("marshal");
+
+    static CarpInterpreter()
+    {
+        Marshal.DefineProperty("static", CarpEnum.Type, CarpEnum.Of(Marshal, "static"));
+    }
     
     public static CarpInterpreter Instance;
     public IPackageResolver PackageResolver;

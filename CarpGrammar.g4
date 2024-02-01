@@ -100,7 +100,7 @@ generic_block
     ;
 
 statement
-    : IMPORT loc+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT)* (':' ver+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT | COLON))? # importStatement
+    : IMPORT loc+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT)* (':' ver+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT | COLON))? ';' # importStatement
     | definition_with_attr # definitionStatement
     | expression # expressionStatement
     | flow_control # flowControlStatement

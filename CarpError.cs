@@ -1,7 +1,7 @@
 ﻿using Carp.objects.types;
 
 namespace Carp;
-
+// TODO: Rewrite errors to use errorinst.Error() and add line numbers
 public abstract class CarpError : Exception
 {
     public abstract string DisplayName { get; }
