@@ -117,7 +117,7 @@ internal class Program
         }
         catch (CarpError e)
         {
-            PrintError($"{e.DisplayName}: {e.Message}");
+            PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }
         catch (CarpFlowControlError fcError)
         {
