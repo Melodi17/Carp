@@ -1,4 +1,6 @@
-﻿str thing = 'hi\'chicken'
+﻿import std.io
+
+str thing = 'hi\'chicken'
 
 let static = marshal.static
 
@@ -13,7 +15,7 @@ class Apple {
         this.x = ptr
     }
 
-    void v() -> p(this.x)
+    void v() -> IO.println(this.x)
     
     @static
     obj make() -> Apple.new()
@@ -41,4 +43,4 @@ class Point {
 }
 
 Point p1 = Point.new(1, 2, 3)
-p(p1)
+IO.println(p1)

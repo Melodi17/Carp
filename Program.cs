@@ -122,7 +122,7 @@ internal class Program
         catch (CarpFlowControlError fcError)
         {
             CarpError.UnenclosedFlowControl e = new(fcError);
-            PrintError($"{e.DisplayName}: {e.Message}");
+            PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }
 
         return CarpVoid.Instance;
