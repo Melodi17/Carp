@@ -6,7 +6,7 @@ namespace Carp.preprocessor;
 
 public class Preprocessor
 {
-    internal class PrimitiveToken
+    public class PrimitiveToken
     {
         public string Value { get; set; }
         public PrimitiveTokenType Type { get; set; }
@@ -23,7 +23,7 @@ public class Preprocessor
         }
     }
 
-    internal enum PrimitiveTokenType
+    public enum PrimitiveTokenType
     {
         Identifier,
         Constant,
@@ -41,7 +41,7 @@ public class Preprocessor
         this._source = source;
     }
 
-    private IEnumerable<PrimitiveToken> FastLex()
+    public IEnumerable<PrimitiveToken> FastLex()
     {
         char[] junk = new[] {' ', '\t', '\n', '\r'};
 
@@ -434,6 +434,12 @@ public class Preprocessor
                     }
                     else
                         UntilNewline();
+                }
+                else if (stream.HasNext && stream.Peek().Type == PrimitiveTokenType.Operator &&
+                         stream.Peek().Value == "(")
+                {
+                    stream.Next();
+                    UntilDepthMatch();
                 }
                 else
                 {

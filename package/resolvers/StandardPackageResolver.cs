@@ -8,7 +8,7 @@ namespace Carp.package.resolvers;
 
 public class StandardPackageResolver : IPackageResolver
 {
-    public Package GetPackage(string[] path, string version = "latest")
+    public Package GetPackage(string[] fullPath, string[] path, string version = "latest")
     {
         string j = string.Join(".", path);
         return j switch
@@ -17,7 +17,7 @@ public class StandardPackageResolver : IPackageResolver
             "fs" => this.FS(version),
             "math" => this.Math(version),
             "net" => this.Net(version),
-            _ => throw new CarpError.PackageNotFound(path, version),
+            _ => throw new CarpError.PackageNotFound(fullPath, version),
         };
     }
 

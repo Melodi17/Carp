@@ -45,6 +45,8 @@ internal class Program
             Debugger.StartAsync();
             CarpInterpreter.Instance.Paused = true;
             Console.WriteLine("Debugger started");
+            while (!Debugger.Attached) Thread.Sleep(50);
+            Console.WriteLine("Debugger continuing");
         }
         
         if (line)
@@ -87,6 +89,16 @@ internal class Program
             string msg = Console.ReadLine();
             if (msg is null or "exit")
                 break;
+            
+            int predictionDepth = CalculateDepth(msg);
+            
+            while (predictionDepth > 0)
+            {
+                Console.Write("   " + string.Concat(Enumerable.Repeat("  ", predictionDepth)));
+                string next = Console.ReadLine();
+                msg += "\n" + next;
+                predictionDepth = CalculateDepth(msg);
+            }
 
             CarpObject response = RunString(CarpInterpreter.Instance, msg);
             if (response != CarpVoid.Instance)
@@ -133,5 +145,29 @@ internal class Program
         Console.ForegroundColor = ConsoleColor.Red;
         Console.Error.WriteLine(text);
         Console.ResetColor();
+    }
+
+    public static int CalculateDepth(string text)
+    {
+        (string Opening, string Closing)[] delimiters = {
+            ("(", ")"),
+            ("{", "}"),
+            ("[", "]"),
+        };
+        Preprocessor preprocessor = new(text);
+        IEnumerable<Preprocessor.PrimitiveToken> lex = preprocessor.FastLex();
+        int[] depths = new int[delimiters.Length];
+        foreach (Preprocessor.PrimitiveToken token in lex)
+        {
+            for (int i = 0; i < delimiters.Length; i++)
+            {
+                if (token.Value == delimiters[i].Opening)
+                    depths[i]++;
+                else if (token.Value == delimiters[i].Closing)
+                    depths[i]--;
+            }
+        }
+
+        return depths.Sum();
     }
 }

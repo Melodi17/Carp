@@ -158,7 +158,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         if (string.IsNullOrEmpty(ver))
             ver = "latest";
 
-        Package pkg = this.PackageResolver.GetPackage(parts, ver);
+        Package pkg = this.PackageResolver.GetPackage(parts, parts, ver);
         pkg.Include(this);
         
         return null;

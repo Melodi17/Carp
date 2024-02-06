@@ -10,7 +10,7 @@ public class GithubPackageResolver : IPackageResolver
     public static string BaseUrl = "https://api.github.com";
     public static string GetReleaseUrl = $"{BaseUrl}/repos/{{owner}}/{{repo}}/releases/tags/{{tag}}";
     public static string GetLatestReleaseUrl = $"{BaseUrl}/repos/{{owner}}/{{repo}}/releases/latest";
-    public Package GetPackage(string[] path, string version = "latest")
+    public Package GetPackage(string[] fullPath, string[] path, string version = "latest")
     {
         string username = path[0];
         string repo = string.Join(".", path[1]);
@@ -42,7 +42,7 @@ public class GithubPackageResolver : IPackageResolver
         }
 
         if (downloadUrl == null)
-            throw new CarpError.PackageNotFound(path, version);
+            throw new CarpError.PackageNotFound(fullPath, version);
         
         // now caaarp and carp files are handled differently
         if (isArchive)
