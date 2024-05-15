@@ -43,7 +43,7 @@ public abstract class CarpObject
         if (type == CarpString.Type)
             return this.String();
 
-        throw new CarpError.InvalidCast(type);
+        throw new CarpError.InvalidCast(this, type);
     }
     
     public override bool Equals(object obj)

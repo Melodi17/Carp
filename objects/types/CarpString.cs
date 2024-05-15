@@ -46,6 +46,11 @@ public class CarpString : CarpObject
                 throw new CarpError.UnparseableInt(this._value);
             }
         }
+
+        if (t == CarpChar.Type)
+        {
+            return new CarpChar(this._value.First());
+        }
         
         
         if (t == CarpBool.Type)
@@ -55,7 +60,7 @@ public class CarpString : CarpObject
             else if (this._value == "false")
                 return CarpBool.False;
             else
-                throw new CarpError.InvalidCast(t);
+                throw new CarpError.InvalidCast(this, t);
         }
 
         return base.Cast(t);

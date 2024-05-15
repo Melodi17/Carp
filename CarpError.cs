@@ -101,7 +101,7 @@ public abstract class CarpError : Exception
     {
         public override string DisplayName => "InvalidCast";
 
-        public InvalidCast(CarpType got) : base($"Invalid cast, got '{got}'")
+        public InvalidCast(CarpObject obj, CarpType newType) : base($"Invalid cast, tried to convert '{obj}' to '{newType}'")
         {
             
         }
@@ -243,6 +243,15 @@ public abstract class CarpError : Exception
     public class PreprocessorError : Exception
     {
         public PreprocessorError(string message) : base($"Preprocessor throws {message}")
+        {
+            
+        }
+    }
+
+    public class VagueTypeSpecificationError : CarpError
+    {
+        public override string DisplayName => "VagueTypeSpecificationError";
+        public VagueTypeSpecificationError(CarpObject obj) : base($"Vague typing used, unable to determine automatic type for '{obj}'")
         {
             
         }

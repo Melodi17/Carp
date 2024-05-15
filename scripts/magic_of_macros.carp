@@ -1,4 +1,4 @@
-﻿import std.io
+import std.io
 import std.math
 
 # define add with a, b as a + b

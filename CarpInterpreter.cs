@@ -52,6 +52,9 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         this.GlobalScope.Define("obj", CarpType.Type, CarpObject.Type);
         this.GlobalScope.Define("null", CarpNull.Type, CarpNull.Instance);
         this.GlobalScope.Define("void", CarpType.Type, CarpVoid.Type);
+
+        this.GlobalScope.Define("func", CarpType.Type, CarpFunc.Type);
+        this.GlobalScope.Define("auto", CarpType.Type, AutoType.Instance);
         
         this.GlobalScope.Define("marshal", CarpStatic.Type, Marshal);
         
@@ -602,6 +605,17 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitMapExpression(CarpGrammarParser.MapExpressionContext context)
         => this.PassDown(context);
 
+    public override object VisitLambdaExpression(CarpGrammarParser.LambdaExpressionContext context)
+    {
+        Dictionary<string, CarpType> args = this.GetTypeNameList(context, context.values);
+        CarpGrammarParser.Generic_blockContext body = context.body;
+        body.ContextScope = context.ContextScope;
+        
+        CarpInternalFunc func = new(AutoType.Instance, context.ContextScope, args, body);
+
+        return func;
+    }
+
     public override object VisitConstantExpression(CarpGrammarParser.ConstantExpressionContext context) => this.PassDown(context);
 
     public override object VisitArrayExpression(CarpGrammarParser.ArrayExpressionContext context) => this.PassDown(context);
@@ -1060,6 +1074,14 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // return constructed.GetCarpType();
 
         return CarpMap.Type.With(keyType, valueType);
+    }
+
+    public override object VisitGenericType(CarpGrammarParser.GenericTypeContext context)
+    {
+        CarpType baseType = this.GetObject<CarpType>(context, context.main);
+        CarpType[] subTypes = context._subs.Select(x => this.GetObject<CarpType>(context, x)).ToArray();
+
+        return baseType.With(subTypes);
     }
 
     public override object VisitListType(CarpGrammarParser.ListTypeContext context)

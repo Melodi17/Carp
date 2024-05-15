@@ -9,6 +9,9 @@ public static class Helper
         // This is already done by the one below.
         //if (source.GetCarpType() == dest)
         //    return source;
+
+        if (dest == AutoType.Instance)
+            throw new CarpError.VagueTypeSpecificationError(source);
         
         // if source derives from dest, then we can cast.
         if (source.GetCarpType().Extends(dest))

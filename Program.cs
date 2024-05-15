@@ -1,4 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+// See https://aka.ms/new-console-template for more information
 
 using Antlr4.Runtime;
 using Carp.objects.types;
@@ -135,6 +135,10 @@ internal class Program
         {
             CarpError.UnenclosedFlowControl e = new(fcError);
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
+        }
+        catch (NotImplementedException)
+        {
+            PrintError($"Not implemented on {interpreter.CurrentLine}: This feature has not been implemented yet");
         }
 
         return CarpVoid.Instance;

@@ -1,0 +1,87 @@
+import std.io
+import std.math
+
+chr** grid = []
+
+struct Vec2 {
+	int x
+	int y
+	
+	@ marshal.static
+	obj duh(int x, int y) {
+		Vec2 v
+		v.x = x
+		v.y = y
+		return v
+	}
+	
+	void init(int x, int y) {
+		this.x = x
+		this.y = y
+	}
+	# Invalid argument count for some reason, probably since this is a struct :D
+	# I love stupid programming language bugs
+	
+	# str string() -> '' + this.x + ', ' + this.y
+}
+
+class Rect {
+	int x
+	int y
+	int w
+	int h
+	
+	void init(int x, int y, int w, int h) {
+		this.x = x
+		this.y = y
+		this.w = w
+		this.h = h
+	}
+}
+
+void Render(chr** grid) {
+	IO.move(0, 0)
+	for (chr* row : grid) {
+		for (chr col : row) {
+			IO.printw(col)
+		}
+		IO.println('')
+	}
+}
+
+
+
+# Initialize the list
+void Clean(chr** grid) {
+	for (int y : ..10) {
+		chr* line = []
+		for (int x : ..10) -> line.append('.')
+		grid.append(line)	
+	}	
+}
+
+void SetPos(int x, int y, chr value) -> grid[y][x] = value
+void GetPos(int x, int y) -> grid[y][x]
+
+Vec2 pos
+Rect map_rect = Rect.new(0, 0, 10, 10)
+
+Vec2 pos2 = Vec2.new(1, 2)
+IO.println(pos2)
+
+IO.clear()
+
+Clean(grid)
+
+# Render
+while (true) {
+	SetPos(pos.x, pos.y, '@')
+	
+	Render(grid)
+	
+	chr input = IO.readw(true)
+	if (input == 'w') -> if pos.y > map_rect.y -> pos.y -= 1
+	if (input == 's') -> if pos.y < map_rect.h - 1 -> pos.y += 1
+	if (input == 'a') -> if pos.x > map_rect.x -> pos.x -= 1
+	if (input == 'd') -> if pos.x < map_rect.w - 1 -> pos.x += 1
+}

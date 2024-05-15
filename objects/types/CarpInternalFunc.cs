@@ -71,6 +71,9 @@ public class CarpInternalFunc : CarpFunc
 
         if (this._returnType == CarpVoid.Type)
             return CarpVoid.Instance;
+        
+        if (this._returnType == AutoType.Instance)
+            return returnVal;
 
         if (returnVal == CarpVoid.Instance)
             throw new CarpError.VoidFromNonVoidFunction();

@@ -11,9 +11,7 @@ p('zen' * 'xxx'.length)
 int c = Add(1, 2)
 p(c)
 
-
 let col = ['hello', 'world', 'test'] :: .upper
 p(col)
 
 # Should output something like this: ['HELLO', 'WORLD', 'TEST']
-asdas

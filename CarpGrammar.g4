@@ -153,10 +153,10 @@ definition_with_attr
     ;
 
 definition
-    : type name '=' value=expression # initializedVariableDefinition
-    | type name # variableDefinition
-    | rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
+    : rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
     | rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
+    | type name '=' value=expression # initializedVariableDefinition
+    | type name # variableDefinition
     | CLASS name '{' definitions+=definition_with_attr* '}' # classDefinition
     | STRUCT name '{' definitions+=definition_with_attr* '}' # structDefinition
     ;
@@ -185,6 +185,7 @@ expression
     | left=expression '=' right=expression # assignmentExpression // Side effects
     // add += -= *= /= %= ^=
     | left=expression op=compoundAssignment right=expression # compoundAssignmentExpression // Side effects
+    | '(' values=type_name_list ')' body=generic_block # lambdaExpression
     ;
 
 expression_list
@@ -256,7 +257,8 @@ modifier
 
 type
     : key=type ':' value=type # mapType
-    | element=type ASTERISK_RSPACE # listType
+    | element=type (ASTERISK_RSPACE | ASTERISK_NSPC) # listType
+    | main=type '<' subs+=type (',' subs+=type)* '>' # genericType
     | ID # namedType
     | LET # autoType
     ;

@@ -45,6 +45,12 @@ public class StandardPackageResolver : IPackageResolver
         
             cs.DefineProperty("readw", CarpFunc.Type, new CarpExternalFunc(CarpChar.Type, (CarpBool hideKeyStrokes) 
                 => new CarpChar(Console.ReadKey(hideKeyStrokes.Native).KeyChar)));
+            
+            cs.DefineProperty("clear", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, () 
+                => Console.Clear()));
+            
+            cs.DefineProperty("move", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, (CarpInt x, CarpInt y) 
+                            => Console.SetCursorPosition(x.NativeInt, y.NativeInt)));
 
             return cs;
         });
@@ -91,6 +97,9 @@ public class StandardPackageResolver : IPackageResolver
             // make sure to use CarpInt#Greater/Less
             cs.DefineProperty("chance", CarpFunc.Type, new CarpExternalFunc(CarpBool.Type, (CarpInt chance) 
                 => new CarpInt(new Random().Next(0, 100)).Greater(chance)));
+            
+            cs.DefineProperty("wait", CarpFunc.Type, new CarpExternalFunc(CarpVoid.Type, (CarpInt ms) 
+                => Thread.Sleep(ms.NativeInt)));
 
             return cs;
         });
