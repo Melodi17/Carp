@@ -4,6 +4,7 @@ namespace Carp.objects.types;
 
 public class CarpClass : CarpType
 {
+    
     private List<CarpGrammarParser.Definition_with_attrContext> _staticDefinitions;
     private List<CarpGrammarParser.Definition_with_attrContext> _nonStaticDefinitions;
     private Scope _scope;
@@ -29,9 +30,9 @@ public class CarpClass : CarpType
             CarpInterpreter.Instance.Execute(scope, CarpInterpreter.Instance.GetDefinition(this._scope, def).definitionContext);
         
         // Call constructor
-        if (scope.Has("init"))
+        if (scope.Has(Signature.InitMethod))
         {
-            CarpObject init = scope.Get("init");
+            CarpObject init = scope.Get(Signature.InitMethod);
             if (init is not CarpFunc func)
                 throw new CarpError.InvalidType(CarpFunc.Type, init.GetCarpType());
             
@@ -41,19 +42,19 @@ public class CarpClass : CarpType
         return obj;
     }
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        if (name == "new")
+        if (Equals(signature, Signature.NewCall))
             return new CarpExternalFunc(CarpObject.Type, (CarpObject[] args) => this.Instantiate(args), ignoreArgTypes: true);
-
-        return this._scope.Has(name) 
-            ? this._scope.Get(name)
-            : base.Property(name);
+        
+        return this._scope.Has(signature) 
+            ? this._scope.Get(signature)
+            : base.Property(signature);
     }
     
-    public override CarpObject SetProperty(string name, CarpObject value)
+    public override CarpObject SetProperty(Signature signature, CarpObject value)
     {
-        this._scope.Set(name, value);
+        this._scope.Set(signature, value);
         return value;
     }
 }

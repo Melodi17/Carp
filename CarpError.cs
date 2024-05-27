@@ -1,4 +1,5 @@
-﻿using Carp.objects.types;
+﻿using Carp.interpreter;
+using Carp.objects.types;
 
 namespace Carp;
 // TODO: Rewrite errors to use errorinst.Error() and add line numbers
@@ -131,7 +132,7 @@ public abstract class CarpError : Exception
     {
         public override string DisplayName => "InvalidProperty";
 
-        public InvalidProperty(string name) : base($"Invalid property '{name}'")
+        public InvalidProperty(Signature signature) : base($"Invalid property '{signature}'")
         {
             
         }

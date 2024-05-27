@@ -40,8 +40,15 @@ public abstract class CarpType : CarpObject
         };
     }
 
-    public static bool operator ==(CarpType left, CarpType right) => left!.Equals(right);
-    public static bool operator !=(CarpType left, CarpType right) => !left!.Equals(right);
+    public static bool operator ==(CarpType left, CarpType right)
+    {
+        if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+            return true;
+        if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            return false;
+        return left.Equals(right);
+    }
+    public static bool operator !=(CarpType left, CarpType right) => !(left == right);
     
     public static CarpType HighestCommonType(CarpType[] arr)
     {

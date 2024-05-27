@@ -31,21 +31,21 @@ public class CarpStatic : CarpObject
 
     public override CarpObject Property(string name)
     {
-        if (this._scope.Has(name))
-            return this._scope.Get(name);
+        if (this._scope.Has(new(name)))
+            return this._scope.Get(new(name));
         
         throw new CarpError.InvalidProperty(name);
     }
 
     public override CarpObject SetProperty(string name, CarpObject value)
     {
-        this._scope.Set(name, value);
+        this._scope.Set(new(name), value);
         return value;
     }
     
     public void DefineProperty(string name, CarpType type, CarpObject value)
     {
-        this._scope.Define(name, type, value);
+        this._scope.Define(new(name), type, value);
     }
     
     public bool HasProperty(string name)

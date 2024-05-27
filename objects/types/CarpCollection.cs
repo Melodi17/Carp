@@ -92,9 +92,9 @@ public class CarpCollection : CarpObject
     private void Clear() => this._value.Clear();
 
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        return name switch
+        return signature.Name switch
         {
             "length" => new CarpInt(this._value.Count),
             "append" => new CarpExternalFunc(CarpVoid.Type, this.Append),
@@ -104,7 +104,7 @@ public class CarpCollection : CarpObject
             "clear" => new CarpExternalFunc(CarpVoid.Type, this.Clear),
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
             "within" => new CarpExternalFunc(CarpBool.Type, this.Within),
-            _ => throw new CarpError.InvalidProperty(name),
+            _ => throw new CarpError.InvalidProperty(signature),
         };
     }
 

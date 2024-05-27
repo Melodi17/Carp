@@ -1,4 +1,6 @@
-﻿namespace Carp.objects.types;
+﻿using Carp.interpreter;
+
+namespace Carp.objects.types;
 
 public abstract class CarpObject
 {
@@ -31,8 +33,8 @@ public abstract class CarpObject
     public virtual CarpObject Index(CarpObject[] args) { throw new CarpError.PrimitiveIncompatible("Index", this); }
     public virtual CarpObject SetIndex(CarpObject[] args, CarpObject value) { throw new CarpError.PrimitiveIncompatible("SetIndex", this); }
 
-    public virtual CarpObject Property(string name) { throw new CarpError.PrimitiveIncompatible("Property", this); }
-    public virtual CarpObject SetProperty(string name, CarpObject value) { throw new CarpError.PrimitiveIncompatible("SetProperty", this); }
+    public virtual CarpObject Property(Signature name) { throw new CarpError.PrimitiveIncompatible("Property", this); }
+    public virtual CarpObject SetProperty(Signature name, CarpObject value) { throw new CarpError.PrimitiveIncompatible("SetProperty", this); }
     
     public virtual CarpObject Cast(CarpType type)
     {
