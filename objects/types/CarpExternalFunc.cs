@@ -11,7 +11,7 @@ public class CarpExternalFunc : CarpFunc
     private Delegate _value;
     private bool _ignoreArgTypes;
     
-    public CarpExternalFunc(CarpType returnType, Delegate value, bool ignoreArgTypes = false) : base(returnType)
+    public CarpExternalFunc(CarpType returnType, Delegate value, bool ignoreArgTypes = false) : base(returnType, Array.Empty<CarpType>())
     {
         this._value = value;
         this._ignoreArgTypes = ignoreArgTypes;

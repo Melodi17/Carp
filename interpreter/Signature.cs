@@ -36,11 +36,16 @@ public class Signature
     }
 
     public bool Includes(Signature other) =>
-        this.Name == other.Name && (this.Specific == null || this.Specific == other.Specific);
+        this.Name == other.Name && (this.Specific == null || other.Specific == null || this.Specific == other.Specific || this.Specific.StartsWith(other.Specific));
 
     public Signature WithSpecific(string specific)
     {
         return new(this.Name, specific);
+    }
+    
+    public Signature WithSpecific(CarpType returnType, params CarpType[] argTypes)
+    {
+        return OfMethod(this.Name, returnType, argTypes);
     }
 
     // comparisons

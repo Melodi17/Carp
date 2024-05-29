@@ -12,14 +12,16 @@ public class CarpInternalFunc : CarpFunc
     private Dictionary<string, CarpType> _parameters;
     private IScope _scope;
 
-    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters, CarpGrammarParser.Generic_blockContext block) : base(returnType)
+    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters, CarpGrammarParser.Generic_blockContext block) 
+        : base(returnType, parameters.Values.ToArray())
     {
         this._scope = scope;
         this._parameters = parameters;
         this._block = block;
     }
     
-    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters) : base(returnType)
+    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters) 
+        : base(returnType, parameters.Values.ToArray())
     {
         this._scope = scope;
         this._parameters = parameters;

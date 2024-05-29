@@ -7,19 +7,19 @@ public class Scope : IScope, IDisposable
 {
     public IScope? Parent { get; set; }
     public bool HasParent => this.Parent != null;
-    
+
     private readonly Dictionary<Signature, (CarpType type, CarpObject obj)> _values = new();
-    
+
     public Scope(IScope parent)
     {
         this.Parent = parent;
     }
-    
+
     public Scope()
     {
         this.Parent = null;
     }
-    
+
     public List<Signature> GetAll() => this._values.Keys.ToList();
     public List<Signature> GetSpecifications(Signature name) => this._values.Keys.Where(name.Includes).ToList();
 
@@ -27,42 +27,49 @@ public class Scope : IScope, IDisposable
     {
         if (this._values.TryGetValue(sig, out (CarpType type, CarpObject obj) value))
             return value;
-        
+
         // sig will be MORE generic
-        return this._values.FirstOrDefault(x => sig.Includes(x.Key)).Value;
+        // return this._values.FirstOrDefault(x => sig.Includes(x.Key))?.Value;
+        
+        var result = this._values.FirstOrDefault(x => x.Key.Includes(sig));
+        if (result.Key != null)
+            return result.Value;
+        
+        return null;
     }
 
     public CarpObject Get(Signature name)
     {
         CarpObject? obj = this.FindBySignature(name)?.obj;
-        
+
         if (obj != null)
-            return this._values[name].obj;
-        
+            return obj;
+
         if (this.HasParent)
             return this.Parent!.Get(name);
-        
+
         throw new CarpError.ReferenceDoesNotExist(name.ToString());
     }
-    
+
     public CarpType GetType(Signature name)
     {
         CarpType? type = this.FindBySignature(name)?.type;
-        
-        if (type != null)    
-            return this._values[name].type;
-        
+
+        if (type != null)
+            return type;
+
         if (this.HasParent)
             return this.Parent!.GetType(name);
-        
+
         throw new CarpError.ReferenceDoesNotExist(name.ToString());
     }
-    
+
     public CarpObject Set(Signature name, CarpObject value)
     {
-        if (this._values.ContainsKey(name))
+        var result = this.FindBySignature(name);
+        if (result != null)
         {
-            var (type, _) = this._values[name];
+            var (type, _) = result.Value;
             if (!type.Extends(value.GetCarpType()))
                 throw new CarpError.InvalidType(type, value.GetCarpType());
             else
@@ -76,42 +83,40 @@ public class Scope : IScope, IDisposable
         else
             throw new CarpError.ReferenceAssignedBeforeDefinition(name.ToString());
     }
-    
-    public CarpObject Define(Signature name, CarpType type, CarpObject value)
-    {
-        if (this._values.ContainsKey(name))
-            throw new CarpError.ReferenceAlreadyDefined(name.ToString());
-        
-        // if (this.HasParent && this.Parent!.Has(name))
-        //     new CarpWarning.Shadowing(name).Warn();
-        
-        this._values[name] = (type, value);
-        return value;
-    }
-    
+
     public bool Has(Signature name)
     {
-        if (this._values.ContainsKey(name))
+        if (this.FindBySignature(name) != null)
             return true;
         else if (this.HasParent)
             return this.Parent!.Has(name);
         else
             return false;
     }
-    
+
     public bool TryGet(Signature name, [NotNullWhen(true)] out CarpObject? value)
     {
-        if (this._values.ContainsKey(name))
+        var result = this.FindBySignature(name);
+        if (result != null)
         {
-            value = this._values[name].obj;
+            value = result.Value.obj;
             return true;
         }
 
         if (this.HasParent)
             return this.Parent!.TryGet(name, out value);
-        
+
         value = null;
         return false;
+    }
+
+    public CarpObject Define(Signature name, CarpType type, CarpObject value)
+    {
+        if (this.FindBySignature(name) != null)
+            throw new CarpError.ReferenceAlreadyDefined(name.ToString());
+
+        this._values[name] = (type, value);
+        return value;
     }
 
     public void Dispose()
@@ -120,5 +125,6 @@ public class Scope : IScope, IDisposable
     }
 
 
-    public override string ToString() => "Scope{" + string.Join(", ", this._values.Select(x => $"{x.Key}: {x.Value.type}")) + "}";
+    public override string ToString() =>
+        "Scope{" + string.Join(", ", this._values.Select(x => $"{x.Key}: {x.Value.type}")) + "}";
 }

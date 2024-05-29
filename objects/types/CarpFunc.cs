@@ -8,7 +8,7 @@ public abstract class CarpFunc : CarpObject
     public CarpType ReturnType { get; protected set; }
     public CarpType[] ArgTypes { get; protected set; }
 
-    protected CarpFunc(CarpType returnType, params CarpType[] argTypes)
+    protected CarpFunc(CarpType returnType, CarpType[] argTypes)
     {
         this.ReturnType = returnType;
         this.ArgTypes = argTypes;
@@ -22,7 +22,7 @@ public abstract class CarpFunc : CarpObject
 
 public class EmptyFunc : CarpFunc
 {
-    public EmptyFunc(CarpType returnType) : base(returnType)
+    public EmptyFunc(CarpType returnType, CarpType[] argTypes) : base(returnType, argTypes)
     {
     }
 

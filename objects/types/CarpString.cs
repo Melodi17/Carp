@@ -99,9 +99,9 @@ public class CarpString : CarpObject
         return new(CarpString.Type, chunks.Select(x => new CarpString(x)).ToArray());
     }
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        return name switch
+        return signature.Name switch
         {
             "length" => new CarpInt(this._value.Length),
             "lower" => new CarpString(this._value.ToLower()),
@@ -109,7 +109,7 @@ public class CarpString : CarpObject
             "clean" => new CarpString(this._value.Trim()),
             "split" => new CarpExternalFunc(CarpCollection.Type, this.Split),
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
-            _ => throw new CarpError.InvalidProperty(name),
+            _ => throw new CarpError.InvalidProperty(signature),
         };
     }
 

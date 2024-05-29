@@ -15,14 +15,17 @@ struct Vec2 {
 		return v
 	}
 	
+	void init() {
+	    this.x = 0
+        this.y = 0
+	}
+	
 	void init(int x, int y) {
 		this.x = x
 		this.y = y
 	}
-	# Invalid argument count for some reason, probably since this is a struct :D
-	# I love stupid programming language bugs
 	
-	# str string() -> '' + this.x + ', ' + this.y
+	str string() -> '' + this.x + ', ' + this.y
 }
 
 class Rect {
@@ -74,7 +77,7 @@ IO.clear()
 Clean(grid)
 
 # Render
-while (true) {
+while (false) {
 	SetPos(pos.x, pos.y, '@')
 	
 	Render(grid)

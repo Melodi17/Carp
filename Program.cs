@@ -12,6 +12,7 @@ internal class Program
 {
     public static Debugger Debugger;
     public static IPackageResolver DefaultPackageResolver;
+    public static bool ForceThrow = false;
     public static void Main(string[] args)
     {
         bool interactive = args.Contains("-i");
@@ -19,6 +20,7 @@ internal class Program
         bool verbose = args.Contains("-v");
         bool debug = args.Contains("-d");
         bool help = args.Contains("-h");
+        bool forceThrow = args.Contains("-f");
         
         // args without flags
         args = args.Where(x => !x.StartsWith("-") && x.Length != 2).ToArray();
@@ -29,11 +31,20 @@ internal class Program
         {
             Console.WriteLine("Carp Programming Language");
             Console.WriteLine("Usage: carp [options] [file]");
+            Console.WriteLine("Options:");
+            Console.WriteLine("  -i: Start the Carp REPL after executing the script.");
+            Console.WriteLine("  -c: Execute the Carp code provided in the command line.");
+            Console.WriteLine("  -v: Print the result of the script execution to the console.");
+            Console.WriteLine("  -d: Start the Carp debugger.");
+            Console.WriteLine("  -h: Display this help menu.");
+            Console.WriteLine("  -f: Force the internal errors to trigger the native stacktrace.");
+            Console.WriteLine("File: The path to the Carp script to execute. If no file is provided, Carp will start in REPL mode.");
             return;
         }
 
         DefaultPackageResolver = GetPackageResolver();
         CarpInterpreter.Instance = new(DefaultPackageResolver);
+        ForceThrow = forceThrow;
         
         Flags.Instance.LoadedFromFile = !line && arg.Length > 0;
         Flags.Instance.ExecutionContext = arg;
@@ -129,10 +140,14 @@ internal class Program
         }
         catch (CarpError e)
         {
+            if (ForceThrow) throw;
+            
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }
         catch (CarpFlowControlError fcError)
         {
+            if (ForceThrow) throw;
+            
             CarpError.UnenclosedFlowControl e = new(fcError);
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }

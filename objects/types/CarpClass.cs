@@ -30,9 +30,10 @@ public class CarpClass : CarpType
             CarpInterpreter.Instance.Execute(scope, CarpInterpreter.Instance.GetDefinition(this._scope, def).definitionContext);
         
         // Call constructor
-        if (scope.Has(Signature.InitMethod))
+        Signature sig = Signature.InitMethod.WithSpecific(CarpVoid.Type, args.Select(x => x.GetCarpType()).ToArray());
+        if (scope.Has(sig))
         {
-            CarpObject init = scope.Get(Signature.InitMethod);
+            CarpObject init = scope.Get(sig);
             if (init is not CarpFunc func)
                 throw new CarpError.InvalidType(CarpFunc.Type, init.GetCarpType());
             

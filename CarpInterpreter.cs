@@ -12,7 +12,7 @@ namespace Carp;
 public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 {
     private static readonly CarpStatic Marshal = new("marshal");
-
+    
     static CarpInterpreter()
     {
         Marshal.AddEnum("static");
@@ -68,9 +68,11 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // math has more math
         // color has color stuff, like 'hi %red%etc%reset%'
         // refract has reflection stuff, e.g get type
+
+        CarpExternalFunc tFunc = new(CarpType.Type, (CarpObject obj)
+            => obj.GetCarpType());
         
-        DefineVarByName("t", CarpFunc.Type, new CarpExternalFunc(CarpType.Type, (CarpObject obj)
-            => obj.GetCarpType()));
+        this.GlobalScope.Define(Signature.OfMethod("t", tFunc), CarpFunc.Type, tFunc);
     }
     
     public void Step() => this._step = true;
@@ -555,7 +557,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         // return new EmptyFunc(returnType);
 
-        EmptyFunc func = new(returnType);
+        EmptyFunc func = new(returnType, args.Values.ToArray());
 
         context.ContextScope.Define(Signature.OfMethod(name, func), func.GetCarpType(), func);
         
@@ -1061,7 +1063,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     {
         // get it from scope
         string name = context.ID().GetText();
-        CarpObject obj = context.ContextScope.Get(name);
+        CarpObject obj = context.ContextScope.Get(Signature.OfVariable(name));
         if (obj is not CarpType type)
             throw new CarpError.InvalidType(CarpType.Type, obj.GetCarpType());
 

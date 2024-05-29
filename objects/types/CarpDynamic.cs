@@ -38,7 +38,7 @@ public class CarpDynamic : CarpObject
             
             return func.Call(new CarpObject[] {new CarpString(signature.Name)});
         }
-        else if (this._scope.Has(signature))
+        else if (signature.Name != "init" && this._scope.Has(signature))
             return this._scope.Get(signature);
         
         throw new CarpError.InvalidProperty(signature);
