@@ -52,4 +52,14 @@ public class CarpStatic : CarpObject
     {
         return this._scope.Has(signature);
     }
+
+    public void AddEnum(string name)
+    {
+        this.DefineProperty(Signature.OfVariable(name), CarpEnum.Type, CarpEnum.Of(this, name));
+    }
+
+    public CarpEnum Enum(string name)
+    {
+        return (CarpEnum) this.Property(Signature.OfVariable(name));
+    }
 }

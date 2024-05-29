@@ -15,7 +15,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     static CarpInterpreter()
     {
-        Marshal.DefineProperty("static", CarpEnum.Type, CarpEnum.Of(Marshal, "static"));
+        Marshal.AddEnum("static");
     }
     
     public static CarpInterpreter Instance;
@@ -45,18 +45,23 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         this.GlobalScope = new Scope();
         this.PackageResolver = packageResolver;
 
-        this.GlobalScope.Define("int", CarpType.Type, CarpInt.Type);
-        this.GlobalScope.Define("str", CarpType.Type, CarpString.Type);
-        this.GlobalScope.Define("chr", CarpType.Type, CarpChar.Type);
-        this.GlobalScope.Define("bool", CarpType.Type, CarpBool.Type);
-        this.GlobalScope.Define("obj", CarpType.Type, CarpObject.Type);
-        this.GlobalScope.Define("null", CarpNull.Type, CarpNull.Instance);
-        this.GlobalScope.Define("void", CarpType.Type, CarpVoid.Type);
+        void DefineVarByName(string name, CarpType type, CarpObject value)
+        {
+            this.GlobalScope.Define(Signature.OfVariable(name), type, value);
+        }
 
-        this.GlobalScope.Define("func", CarpType.Type, CarpFunc.Type);
-        this.GlobalScope.Define("auto", CarpType.Type, AutoType.Instance);
+        DefineVarByName("int", CarpType.Type, CarpInt.Type);
+        DefineVarByName("str", CarpType.Type, CarpString.Type);
+        DefineVarByName("chr", CarpType.Type, CarpChar.Type);
+        DefineVarByName("bool", CarpType.Type, CarpBool.Type);
+        DefineVarByName("obj", CarpType.Type, CarpObject.Type);
+        DefineVarByName("null", CarpNull.Type, CarpNull.Instance);
+        DefineVarByName("void", CarpType.Type, CarpVoid.Type);
+
+        DefineVarByName("func", CarpType.Type, CarpFunc.Type);
+        DefineVarByName("auto", CarpType.Type, AutoType.Instance);
         
-        this.GlobalScope.Define("marshal", CarpStatic.Type, Marshal);
+        DefineVarByName("marshal", CarpStatic.Type, Marshal);
         
         // io contains print and input
         // fs containts filesystem
@@ -64,7 +69,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // color has color stuff, like 'hi %red%etc%reset%'
         // refract has reflection stuff, e.g get type
         
-        this.GlobalScope.Define("t", CarpFunc.Type, new CarpExternalFunc(CarpType.Type, (CarpObject obj)
+        DefineVarByName("t", CarpFunc.Type, new CarpExternalFunc(CarpType.Type, (CarpObject obj)
             => obj.GetCarpType()));
     }
     
@@ -76,13 +81,13 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         return this.Visit(tree);
     }
 
-    public void Execute(ScopedParserRuleContext parent, CarpGrammarParser.Generic_blockContext child, Dictionary<string, CarpObject> scope)
+    public void Execute(ScopedParserRuleContext parent, CarpGrammarParser.Generic_blockContext child, Dictionary<Signature, CarpObject> scope)
         => this.Execute(parent.ContextScope, child, scope);
 
-    public void Execute(IScope parentScope, CarpGrammarParser.Generic_blockContext child, Dictionary<string, CarpObject> scope)
+    public void Execute(IScope parentScope, CarpGrammarParser.Generic_blockContext child, Dictionary<Signature, CarpObject> scope)
     {
         Scope s = new(parentScope);
-        foreach (KeyValuePair<string, CarpObject> kvp in scope)
+        foreach (KeyValuePair<Signature, CarpObject> kvp in scope)
             s.Define(kvp.Key, kvp.Value.GetCarpType(), kvp.Value);
 
         this.Execute(s, child);
@@ -353,7 +358,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject iter = this.GetObject(context, context.iter);
         CarpIterator iterator = iter.Iterate();
 
-        Dictionary<string, CarpObject> subScope = new();
+        Dictionary<Signature, CarpObject> subScope = new();
 
         (string name, _) = this.GetName(context.name());
         CarpType type = this.GetObject<CarpType>(context, context.type());
@@ -371,7 +376,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
                 if (type == AutoType.Instance)
                     type = cur.GetCarpType();
 
-                subScope[name] = cur;
+                subScope[Signature.OfVariable(name)] = cur;
 
                 this.Execute(context, context.body, subScope);
             }
@@ -404,22 +409,23 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         {
             CarpError.CarpObjError errorObj = new(error);
 
-            Dictionary<string, CarpObject> scope = new();
+            Dictionary<Signature, CarpObject> scope = new();
 
             for (int index = 0; index < context._catch_types.Count; index++)
             {
                 CarpGrammarParser.TypeContext tc = context._catch_types[index];
                 CarpObject obj = this.GetObject(context, tc);
+                Signature sig = Signature.OfVariable(context._catch_names[index].GetText());
                 if (obj == AutoType.Instance)
                 {
-                    scope[context._catch_names[index].GetText()] = errorObj;
+                    scope[sig] = errorObj;
                     this.Execute(context, context._catch_blocks[index], scope);
                     return null;
                 }
 
                 if (obj is not CarpError.CarpObjError coe || coe.ErrorType != errorObj.ErrorType) continue;
 
-                scope[context._catch_names[index].GetText()] = errorObj;
+                scope[sig] = errorObj;
                 this.Execute(context, context._catch_blocks[index], scope);
                 return null;
             }
@@ -430,7 +436,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         {
             CarpFlowControlError.CarpObjFlowControlError errorObj = new(error);
 
-            Dictionary<string, CarpObject> scope = new();
+            Dictionary<Signature, CarpObject> scope = new();
 
             // only catch explicit
             for (int index = 0; index < context._catch_types.Count; index++)
@@ -440,7 +446,8 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
                 if (obj is not CarpFlowControlError.CarpObjFlowControlError coe || coe.ErrorType != errorObj.ErrorType) continue;
 
-                scope[context._catch_names[index].GetText()] = errorObj;
+                Signature sig = Signature.OfVariable(context._catch_names[index].GetText());
+                scope[sig] = errorObj;
                 this.Execute(context, context._catch_blocks[index], scope);
                 return null;
             }
@@ -495,7 +502,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             // TODO: test this out
             value = value.CastEx(type);
 
-        context.ContextScope.Define(name, type, value);
+        context.ContextScope.Define(Signature.OfVariable(name), type, value);
 
         return null;
     }
@@ -511,7 +518,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         if (!type.IsStruct && !Flags.Instance.DefaultNonStructs)
             throw new CarpError.AutoInitObjectNotPermitted();
 
-        context.ContextScope.Define(name, type, type.DefaultValue);
+        context.ContextScope.Define(Signature.OfVariable(name), type, type.DefaultValue);
 
         return null;
     }
@@ -528,7 +535,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         CarpInternalFunc func = new(returnType, context.ContextScope, args, body);
 
-        context.ContextScope.Define(name, func.GetCarpType(), func);
+        context.ContextScope.Define(Signature.OfMethod(name, func), func.GetCarpType(), func);
         
         return null;
     }
@@ -550,7 +557,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         EmptyFunc func = new(returnType);
 
-        context.ContextScope.Define(name, func.GetCarpType(), func);
+        context.ContextScope.Define(Signature.OfMethod(name, func), func.GetCarpType(), func);
         
         return null;
     }
@@ -582,18 +589,20 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         List<CarpGrammarParser.Definition_with_attrContext> staticDefinitions = new();
         List<CarpGrammarParser.Definition_with_attrContext> nonStaticDefinitions = new();
 
+        CarpEnum staticEnum = Marshal.Enum("static");
+        
         foreach (CarpGrammarParser.Definition_with_attrContext def in definitions)
         {
             (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) = this.GetDefinition(scope, def);
 
-            (attrs.Any(x => x.Equals(Marshal.Property("static")))
+            (attrs.Any(x => x.Equals(staticEnum))
                 ? staticDefinitions
                 : nonStaticDefinitions).Add(def);
         }
 
 
-        CarpClass clazz = new(new CarpString(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
-        scope.Define(name, clazz.GetCarpType(), clazz);
+        CarpClass clazz = new(new(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
+        scope.Define(Signature.OfVariable(name), clazz.GetCarpType(), clazz);
     }
 
     public override object VisitDefinition_with_attr(CarpGrammarParser.Definition_with_attrContext context)
@@ -629,7 +638,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         {
             (string name, _) = this.GetName(vec.name());
 
-            context.ContextScope.Set(name, value);
+            context.ContextScope.Set(Signature.OfVariable(name), value);
             return value;
         }
         else if (assignmentTarget is CarpGrammarParser.IndexExpressionContext iec)
@@ -643,7 +652,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         {
             (string name, Modifier modifiers) = this.GetName(pec.value);
             CarpObject obj = this.GetObject(context, pec.obj);
-            obj.SetProperty(name, value);
+            obj.SetProperty(Signature.OfVariable(name), value);
             return value;
         }
         else
@@ -687,7 +696,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context)
     {
         (string name, _) = this.GetName(context.name());
-        return context.ContextScope.Get(name);
+        return context.ContextScope.Get(Signature.OfVariable(name));
     }
 
     public override object VisitBinaryExpression(CarpGrammarParser.BinaryExpressionContext context)
@@ -722,6 +731,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitCallExpression(CarpGrammarParser.CallExpressionContext context)
     {
         CarpObject callee = this.GetObject(context, context.obj);
+        
         CarpObject[] args = this.GetExpressionList(context, context.parameters);
 
         CarpObject obj = callee.Call(args);
@@ -852,7 +862,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject obj = this.GetObject(context, context.obj);
         (string name, Modifier modifiers) = this.GetName(context.value);
 
-        return obj.Property(name);
+        return obj.Property(Signature.OfVariable(name));
     }
 
     public override object VisitPostfixExpression(CarpGrammarParser.PostfixExpressionContext context)
