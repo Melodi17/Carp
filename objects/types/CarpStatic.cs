@@ -29,27 +29,27 @@ public class CarpStatic : CarpObject
         return CarpBool.Of(this._name == en._name);   
     }
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        if (this._scope.Has(new(name)))
-            return this._scope.Get(new(name));
+        if (this._scope.Has(signature))
+            return this._scope.Get(signature);
         
-        throw new CarpError.InvalidProperty(name);
+        throw new CarpError.InvalidProperty(signature);
     }
 
-    public override CarpObject SetProperty(string name, CarpObject value)
+    public override CarpObject SetProperty(Signature signature, CarpObject value)
     {
-        this._scope.Set(new(name), value);
+        this._scope.Set(signature, value);
         return value;
     }
     
-    public void DefineProperty(string name, CarpType type, CarpObject value)
+    public void DefineProperty(Signature signature, CarpType type, CarpObject value)
     {
-        this._scope.Define(new(name), type, value);
+        this._scope.Define(signature, type, value);
     }
     
-    public bool HasProperty(string name)
+    public bool HasProperty(Signature signature)
     {
-        return this._scope.Has(name);
+        return this._scope.Has(signature);
     }
 }

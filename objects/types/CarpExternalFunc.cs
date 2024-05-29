@@ -9,7 +9,6 @@ public class CarpExternalFunc : CarpFunc
     public override CarpType GetCarpType() => Type;
     // takes func, with any args, returns T
     private Delegate _value;
-    private CarpType[] _argTypes;
     private bool _ignoreArgTypes;
     
     public CarpExternalFunc(CarpType returnType, Delegate value, bool ignoreArgTypes = false) : base(returnType)
@@ -41,9 +40,11 @@ public class CarpExternalFunc : CarpFunc
         }
         
         // save arg types
-        this._argTypes = value.Method.GetParameters()
+        this.ArgTypes = value.Method.GetParameters()
             .Select(x => NativeType.Find(x.ParameterType))
             .ToArray();
+
+        this.ReturnType = returnType;
     }
 
     public override CarpObject Call(CarpObject[] args)
@@ -60,7 +61,7 @@ public class CarpExternalFunc : CarpFunc
                 throw e.InnerException!;
             }
             
-            if (this._returnType == CarpVoid.Type)
+            if (this.ReturnType == CarpVoid.Type)
                 return CarpVoid.Instance;
             
             if (returnValue is CarpObject coResp)
@@ -70,34 +71,34 @@ public class CarpExternalFunc : CarpFunc
         }
         
         // check parameter length
-        if (args.Length != this._argTypes.Length)
-            throw new CarpError.InvalidArgumentCount(args.Length, this._argTypes.Length);
+        if (args.Length != this.ArgTypes.Length)
+            throw new CarpError.InvalidArgumentCount(args.Length, this.ArgTypes.Length);
         
         // cast all args to their respective types
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i].GetCarpType() == this._argTypes[i])
+            if (args[i].GetCarpType() == this.ArgTypes[i])
                 continue;
             
-            if (this._argTypes[i] == AutoType.Instance)
+            if (this.ArgTypes[i] == AutoType.Instance)
                 continue;
             
             // null
             if (args[i] is CarpNull)
             {
-                if (this._argTypes[i].IsStruct)
-                    throw new CarpError.CastNullToStruct(this._argTypes[i]);
+                if (this.ArgTypes[i].IsStruct)
+                    throw new CarpError.CastNullToStruct(this.ArgTypes[i]);
                 else
                     continue;
             }
 
             // cast
-            args[i] = args[i].CastEx(this._argTypes[i]);
+            args[i] = args[i].CastEx(this.ArgTypes[i]);
         }
         
         // invoke
         object resp = this._value.DynamicInvoke(args);
-        if (this._returnType == CarpVoid.Type)
+        if (this.ReturnType == CarpVoid.Type)
             return CarpVoid.Instance;
             
         if (resp is CarpObject co)

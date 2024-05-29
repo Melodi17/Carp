@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
@@ -31,12 +32,12 @@ public abstract class CarpType : CarpObject
 
     // public static CarpType Of<T>(CarpString repr) where T : CarpObject => new(typeof(T), repr);
     public override CarpString String() => this._repr;
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        return name switch {
+        return signature.Name switch {
             "name" => this.String(),
             "is_struct" => CarpBool.Of(this.IsStruct),
-            _ => throw new CarpError.InvalidProperty(name),
+            _ => throw new CarpError.InvalidProperty(signature),
         };
     }
 

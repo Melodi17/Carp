@@ -3,19 +3,21 @@
 public abstract class CarpFunc : CarpObject
 {
     public static new CarpType Type = NativeType.Of<CarpFunc>("func");
-    public override CarpType GetCarpType() => Type.With(this._returnType);
+    public override CarpType GetCarpType() => Type.With(this.ReturnType);
     
-    protected CarpType _returnType;
+    public CarpType ReturnType { get; protected set; }
+    public CarpType[] ArgTypes { get; protected set; }
 
-    protected CarpFunc(CarpType returnType)
+    protected CarpFunc(CarpType returnType, params CarpType[] argTypes)
     {
-        this._returnType = returnType;
+        this.ReturnType = returnType;
+        this.ArgTypes = argTypes;
     }
     
     public override abstract CarpObject Call(CarpObject[] args);
 
     public override CarpString String() 
-        => new($"func<{this._returnType.String().Native}>");
+        => new($"func<{this.ReturnType.String().Native}>");
 }
 
 public class EmptyFunc : CarpFunc

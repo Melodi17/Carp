@@ -64,22 +64,22 @@ public class CarpInternalFunc : CarpFunc
         {
             CarpObject obj = args[index];
             string name = this._parameters.ElementAt(index).Key;
-            scope.Define(name, this._parameters.ElementAt(index).Value, obj);
+            scope.Define(Signature.OfVariable(name), this._parameters.ElementAt(index).Value, obj);
         }
 
         CarpObject returnVal = CarpInterpreter.Instance.GetObject(scope, this._block);
 
-        if (this._returnType == CarpVoid.Type)
+        if (this.ReturnType == CarpVoid.Type)
             return CarpVoid.Instance;
         
-        if (this._returnType == AutoType.Instance)
+        if (this.ReturnType == AutoType.Instance)
             return returnVal;
 
         if (returnVal == CarpVoid.Instance)
             throw new CarpError.VoidFromNonVoidFunction();
 
-        if (returnVal.GetCarpType() != this._returnType)
-            return returnVal.CastEx(this._returnType);
+        if (returnVal.GetCarpType() != this.ReturnType)
+            return returnVal.CastEx(this.ReturnType);
 
         return returnVal;
     }
@@ -89,8 +89,8 @@ public class CarpInternalFunc : CarpFunc
         // TODO: dont think we need this anymore :/
         // set this
         Scope boundScope = new(this._scope);
-        boundScope.Define("this", obj.GetCarpType(), obj);
+        boundScope.Define(Signature.OfVariable("this"), obj.GetCarpType(), obj);
         
-        return new(this._returnType, boundScope, this._parameters, this._block);
+        return new(this.ReturnType, boundScope, this._parameters, this._block);
     }
 }

@@ -90,15 +90,15 @@ public class CarpMap : CarpObject
     }
     private void Clear() => this._value.Clear();
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        return name switch
+        return signature.Name switch
         {
             "length" => new CarpInt(this._value.Count),
             "remove" => new CarpExternalFunc(CarpVoid.Type, this.Remove),
             "clear" => new CarpExternalFunc(CarpVoid.Type, this.Clear),
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
-            _ => throw new CarpError.InvalidProperty(name),
+            _ => throw new CarpError.InvalidProperty(signature),
         };
     }
 

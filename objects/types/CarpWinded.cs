@@ -80,9 +80,9 @@ public class CarpWinded : CarpObject
 
     public override CarpObject SetIndex(CarpObject[] args, CarpObject value) => this.CollectAll(o => o.SetIndex(args, value));
 
-    public override CarpObject Property(string name) => this.CollectAll(o => o.Property(name));
+    public override CarpObject Property(Signature signature) => this.CollectAll(o => o.Property(signature));
 
-    public override CarpObject SetProperty(string name, CarpObject value) => this.CollectAll(o => o.SetProperty(name, value));
+    public override CarpObject SetProperty(Signature signature, CarpObject value) => this.CollectAll(o => o.SetProperty(signature, value));
 
     public override CarpObject Cast(CarpType type) => this.CollectAll(o => o.Cast(type));
     

@@ -1,4 +1,6 @@
-﻿namespace Carp.objects.types;
+﻿using Carp.interpreter;
+
+namespace Carp.objects.types;
 
 public class CarpEnum : CarpObject
 {
@@ -28,13 +30,13 @@ public class CarpEnum : CarpObject
     
     public CarpBool Has(string key) => CarpBool.Of(this._keys.Contains(key));
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        return name switch {
+        return signature.Name switch {
             "keys" => new CarpCollection(CarpString.Type, this._keys.Select(x => new CarpString(x)).ToArray()),
             "source" => this._source,
             "has" => new CarpExternalFunc(CarpBool.Type, this.Has),
-            _ => throw new CarpError.InvalidProperty(name),
+            _ => throw new CarpError.InvalidProperty(signature),
         };
     }
 }

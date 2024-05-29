@@ -38,14 +38,14 @@ public class CarpRange : CarpObject
         return new CarpEnumerableIterator(this._itemType, Iter());
     }
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        return name switch
+        return signature.Name switch
         {
             "start" => this._start,
             "stop" => this._stop,
             "length" => this._stop.Subtract(this._start),
-            _ => throw new CarpError.InvalidProperty(name),
+            _ => throw new CarpError.InvalidProperty(signature),
         };
     }
 

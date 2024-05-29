@@ -1,4 +1,5 @@
-﻿using Carp.objects.types;
+﻿using Carp.interpreter;
+using Carp.objects.types;
 
 namespace Carp.package;
 
@@ -39,7 +40,7 @@ public class Package : CarpObject
         else
             enclosure = this.Export(subInterpreter);
 
-        interpreter.GlobalScope.Define(this.Name, CarpStatic.Type, enclosure);
+        interpreter.GlobalScope.Define(Signature.OfVariable(this.Name), CarpStatic.Type, enclosure);
     }
 
     public override CarpString String() => new(this.Name);

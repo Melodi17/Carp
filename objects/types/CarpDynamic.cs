@@ -11,14 +11,14 @@ public class CarpDynamic : CarpObject
         this._class = carpClass;
         this._scope = scope;
 
-        this._scope.Define("this", carpClass, this);
+        this._scope.Define(Signature.ThisVariable, carpClass, this);
     }
 
     public override CarpString String()
     {
-        if (this._scope.Has("string"))
+        if (this._scope.Has(Signature.StringMethod))
         {
-            CarpObject str = this._scope.Get("string");
+            CarpObject str = this._scope.Get(Signature.StringMethod);
             if (str is not CarpFunc func)
                 throw new CarpError.InvalidType(CarpFunc.Type, str.GetCarpType());
 
@@ -28,34 +28,34 @@ public class CarpDynamic : CarpObject
         return new($"instance of {this._class}");
     }
 
-    public override CarpObject Property(string name)
+    public override CarpObject Property(Signature signature)
     {
-        if (this._scope.Has("property"))
+        if (this._scope.Has(Signature.PropertyMethod))
         {
-            CarpObject f = this._scope.Get("property");
+            CarpObject f = this._scope.Get(Signature.PropertyMethod);
             if (f is not CarpFunc func)
                 throw new CarpError.InvalidType(CarpFunc.Type, f.GetCarpType());
             
-            return func.Call(new CarpObject[] {new CarpString(name)});
+            return func.Call(new CarpObject[] {new CarpString(signature.Name)});
         }
-        else if (this._scope.Has(name))
-            return this._scope.Get(name);
+        else if (this._scope.Has(signature))
+            return this._scope.Get(signature);
         
-        throw new CarpError.InvalidProperty(name);
+        throw new CarpError.InvalidProperty(signature);
     }
     
-    public override CarpObject SetProperty(string name, CarpObject value)
+    public override CarpObject SetProperty(Signature signature, CarpObject value)
     {
-        if (this._scope.Has("set_property"))
+        if (this._scope.Has(Signature.SetPropertyMethod))
         {
-            CarpObject f = this._scope.Get("set_property");
+            CarpObject f = this._scope.Get(Signature.SetPropertyMethod);
             if (f is not CarpFunc func)
                 throw new CarpError.InvalidType(CarpFunc.Type, f.GetCarpType());
             
-            return func.Call(new CarpObject[] {new CarpString(name), value});
+            return func.Call(new[] {new CarpString(signature.Name), value});
         }
         else
-            this._scope.Set(name, value);
+            this._scope.Set(signature, value);
         
         return value;
     }
