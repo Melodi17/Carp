@@ -4,7 +4,6 @@ namespace Carp.objects.types;
 
 public abstract class CarpObject
 {
-    // TODO: consider using this for garbage collection
     // public int RefCount = 0;
     public virtual CarpObject Add(CarpObject other) { throw new CarpError.PrimitiveIncompatible("Add", this); }
     public virtual CarpObject Subtract(CarpObject other) { throw new CarpError.PrimitiveIncompatible("Subtract", this); }

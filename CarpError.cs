@@ -257,6 +257,11 @@ public abstract class CarpError : Exception
             
         }
     }
+
+    public class InvalidOperation(string message) : CarpError(message)
+    {
+        public override string DisplayName => "InvalidOperationError";
+    }
 }
 
 public abstract class CarpFlowControlError : Exception

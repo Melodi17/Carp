@@ -449,7 +449,8 @@ public class Preprocessor
             else if (token.Type == PrimitiveTokenType.Identifier)
             {
                 Macro macro = macros.FirstOrDefault(x => x.Name == token.Value);
-                // TODO: optimize this search with a dictionary to decrease load and timing
+                // NODO: optimize this search with a dictionary to decrease load and timing
+                // fuck it we leave it
                 
                 if (macro != null)
                 {
@@ -503,7 +504,7 @@ public class Preprocessor
 
                     foreach (PrimitiveToken t in body) sb.Append(t.Value);
                     
-                    // TODO: Debug only
+                    // Debug only
                     // Console.WriteLine($"Macro {macro.Name}({string.Join(", ", macro.Arguments)}) => {string.Join("", body.Select(x=>x.Value))}");
                 }
                 else

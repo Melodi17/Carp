@@ -1,5 +1,6 @@
 // See https://aka.ms/new-console-template for more information
 
+using System.Text;
 using Antlr4.Runtime;
 using Carp.objects.types;
 using Carp.package;
@@ -90,6 +91,34 @@ internal class Program
         mpr.AddResolver("github", new GithubPackageResolver());
 
         return mpr;
+    }
+
+    private static string ReadLineAdvanced(string prompt)
+    {
+        Console.Write(prompt);
+        StringBuilder sb = new();
+        while (true)
+        {
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            if (key.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                return sb.ToString();
+            }
+            else if (key.Key == ConsoleKey.Backspace)
+            {
+                if (sb.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    sb.Remove(sb.Length - 1, 1);
+                }
+            }
+            else
+            {
+                Console.Write(key.KeyChar);
+                sb.Append(key.KeyChar);
+            }
+        }
     }
 
     private static void Repl()

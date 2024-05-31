@@ -12,8 +12,6 @@ public class ScopedParserRuleContext : ParserRuleContext
     }
 
     //public Context Context { get; set; } = new();
-    // TODO: use context
-
     public IScope ContextScope { get; set; }
 }
 

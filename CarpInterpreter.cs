@@ -500,8 +500,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             type = value.GetCarpType();
 
         if (!value.GetCarpType().Extends(type))
-            //throw new CarpError.InvalidType(type, value.GetCarpType());
-            // TODO: test this out
             value = value.CastEx(type);
 
         context.ContextScope.Define(Signature.OfVariable(name), type, value);
@@ -670,7 +668,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         return op switch
         {
             Comparison.Match => left.Match(right),
-            // TODO: Check this??
             Comparison.NotMatch => left.Match(right).Not(),
             Comparison.GreaterThan => left.Greater(right),
             Comparison.LessThan => left.Less(right),
@@ -737,7 +734,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject[] args = this.GetExpressionList(context, context.parameters);
 
         CarpObject obj = callee.Call(args);
-        // TODO: Typechecking
         return obj;
     }
 
@@ -829,7 +825,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject[] args = this.GetExpressionList(context, context.parameters);
 
         CarpObject obj = callee.Index(args);
-        // TODO: Typechecking
         return obj;
     }
 

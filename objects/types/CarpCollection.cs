@@ -138,6 +138,22 @@ public class CarpCollection : CarpObject
         return base.Cast(type);
     }
 
+    public override CarpObject Add(CarpObject other)
+    {
+        // if its a collection, add all the items
+        if (other is CarpCollection otherCollection)
+        {
+            if (otherCollection._itemType != this._itemType)
+                throw new CarpError.InvalidOperation("Cannot add collections of different types");
+
+            this._value.AddRange(otherCollection._value);
+            return this;
+        }
+        
+        // else incorrect type
+        throw new CarpError.InvalidType(this.GetCarpType(), other.GetCarpType());
+    }
+
     public override CarpString String()
     {
         StringBuilder sb = new();

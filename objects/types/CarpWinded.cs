@@ -27,7 +27,6 @@ public class CarpWinded : CarpObject
             CarpObject o = func(src);
             result.Add(o);
         }
-        // TODO: Should this really be so generic???
         return new(CarpObject.Type, result.ToArray());
     }
 
