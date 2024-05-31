@@ -6,6 +6,7 @@ namespace Carp;
 // TODO: Rewrite errors to use errorinst.Error() and add line numbers
 public abstract class CarpError(string message) : Exception(message)
 {
+    public string DisplayName => this.GetType().Name;
     public class CarpObjError : CarpObject
     {
         public static new CarpType Type = NativeType.Of<CarpObjError>("error");
@@ -13,7 +14,7 @@ public abstract class CarpError(string message) : Exception(message)
 
         public string ErrorType;
         public string Message;
-
+        
         public CarpObjError(CarpError err)
         {
             this.ErrorType = err.GetType().Name;

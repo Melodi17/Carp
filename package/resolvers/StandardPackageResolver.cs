@@ -18,6 +18,7 @@ public class StandardPackageResolver : IPackageResolver
             "fs" => new FSPackage(this),
             "math" => new MathPackage(this),
             "net" => new NetPackage(this),
+            "parse" => new ParsePackage(this),
             _ => throw new CarpError.PackageNotFound(fullPath, version),
         };
     }

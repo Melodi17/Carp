@@ -2,8 +2,7 @@
 
 public abstract class CarpWarning : CarpError
 {
-    public override abstract string DisplayName { get; }
-    
+    public string DisplayName => this.GetType().Name;
     public CarpWarning() : base("Warning occured in Carp runtime") { }
     public CarpWarning(string message) : base(message) { }
     private static readonly List<string> warnings = new();
@@ -25,14 +24,12 @@ public abstract class CarpWarning : CarpError
     
     public class Shadowing : CarpWarning
     {
-        public override string DisplayName => "Shadowing";
         public Shadowing(string name) : base($"Shadowing '{name}' in a parent scope") { }
     }
     
     public class Unused : CarpWarning
     {
         // TODO: Figure out how to detect unused variables
-        public override string DisplayName => "Unused";
         public Unused(string name) : base($"Unused '{name}'") { }
     }
 }

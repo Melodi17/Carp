@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Carp.package.packages.standard;
 
-public class ParsingPackage(IPackageResolver source) : EmbeddedPackage(source, "Parse")
+public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Parse")
 {
     // [PackageMember("ds.json.")]
     // public CarpObject LoadJson(CarpString json)
@@ -143,7 +143,7 @@ public class ParsingPackage(IPackageResolver source) : EmbeddedPackage(source, "
 
         public override CarpString String()
         {
-            return new($"match({(this.Success ? this.Value : "<failed>")})");
+            return new($"match({(this.Success ? $"'{this.Value}'" : "<failed>")})");
         }
     }
 
