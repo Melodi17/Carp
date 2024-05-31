@@ -6,7 +6,7 @@ namespace Carp.package.packages;
 
 public abstract class EmbeddedPackage : Package
 {
-    public EmbeddedPackage(IPackageResolver source, IPackageResolver utilized, string name) : base(source, utilized,
+    public EmbeddedPackage(IPackageResolver source, string name) : base(source, source,
         name)
     {
     }
@@ -22,7 +22,8 @@ public abstract class EmbeddedPackage : Package
                      .Where(x => x.GetCustomAttribute<PackageMemberAttribute>() != null))
         {
             PackageMemberAttribute att = field.GetCustomAttribute<PackageMemberAttribute>()!;
-            string name = att.Name ?? field.Name; // Use the attribute name if it exists, otherwise use the field name
+            string name = att.Name ?? Formatting.FormatProperty(field.Name); // Use the attribute name if it exists, otherwise use the field name
+            if (name.EndsWith('.')) name += Formatting.FormatProperty(field.Name);
 
             // Get the value of the field
             object value = field.GetValue(this);
@@ -37,13 +38,13 @@ public abstract class EmbeddedPackage : Package
                      .Where(x => x.GetCustomAttribute<PackageMemberAttribute>() != null))
         {
             PackageMemberAttribute att = method.GetCustomAttribute<PackageMemberAttribute>()!;
-            string name = att.Name ?? method.Name; // Use the attribute name if it exists, otherwise use the method name
-            if (name.EndsWith('.')) name += method.Name;
+            string name = att.Name ?? Formatting.FormatMethod(method.Name); // Use the attribute name if it exists, otherwise use the method name
+            if (name.EndsWith('.')) name += Formatting.FormatMethod(method.Name);
 
             // Add the method to the CarpStatic object
             CarpType type = method.ReturnType == typeof(void) ? CarpVoid.Type : NativeType.Find(method.ReturnType);
-            
-            Delegate del = method.CreateDelegate(typeof(Delegate));
+
+            Delegate del = Extensions.CreateDelegate(method, this);
 
             flattened.Add(name, new CarpExternalFunc(type, del));
         }
@@ -77,4 +78,13 @@ public abstract class EmbeddedPackage : Package
 public class PackageMemberAttribute(string? name = null) : Attribute
 {
     public string? Name = name;
+}
+
+public class StandardPackageAttribute : Attribute
+{
+    public string Name;
+    public StandardPackageAttribute(string name)
+    {
+        this.Name = name;
+    }
 }

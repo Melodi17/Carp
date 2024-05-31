@@ -64,14 +64,16 @@ public class GithubPackageResolver : IPackageResolver
             
             // TODO: change this
             
-            Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: main);
-            return pkg;
+            // Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: main);
+            // return pkg;
         }
         else
         {
             string download = client.GetStringAsync(downloadUrl).Sync();
-            Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: download);
-            return pkg;
+            // Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: download);
+            // return pkg;
         }
+
+        throw new NotImplementedException();
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Carp;
+﻿using System.Linq.Expressions;
+using System.Reflection;
+
+namespace Carp;
 
 public static class Extensions
 {
@@ -45,5 +48,16 @@ public static class Extensions
     public static T Sync<T>(this Task<T> task)
     {
         return task.GetAwaiter().GetResult();
+    }
+    
+    public static Delegate CreateDelegate(this MethodInfo methodInfo, object? target)
+    {
+        var parmTypes = methodInfo.GetParameters().Select(parm => parm.ParameterType);
+        var parmAndReturnTypes = parmTypes.Append(methodInfo.ReturnType).ToArray();
+        var delegateType = Expression.GetDelegateType(parmAndReturnTypes);
+
+        if (methodInfo.IsStatic)
+            return methodInfo.CreateDelegate(delegateType);
+        return methodInfo.CreateDelegate(delegateType, target);
     }
 }

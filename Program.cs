@@ -151,17 +151,27 @@ internal class Program
         if (s.Trim().Length == 0)
             return CarpVoid.Instance;
 
-        Preprocessor preprocessor = new(s);
-        string processed = preprocessor.Process();
+        CarpGrammarParser.ProgramContext program;
+        try
+        {
+            Preprocessor preprocessor = new(s);
+            string processed = preprocessor.Process();
         
-        AntlrInputStream inputStream = new(processed);
-        CarpGrammarLexer lexer = new(inputStream);
-        lexer.RemoveErrorListeners();
-        CommonTokenStream tokenStream = new(lexer);
+            AntlrInputStream inputStream = new(processed);
+            CarpGrammarLexer lexer = new(inputStream);
+            lexer.RemoveErrorListeners();
+            CommonTokenStream tokenStream = new(lexer);
 
-        CarpGrammarParser parser = new(tokenStream);
+            CarpGrammarParser parser = new(tokenStream);
 
-        CarpGrammarParser.ProgramContext program = parser.program();
+            program = parser.program();            
+        }
+        catch (Exception e)
+        {
+            PrintError($"Syntax error on {interpreter.CurrentLine}: {e.Message}");
+            return CarpVoid.Instance;
+        }
+        
         try
         {
             CarpObject obj = interpreter.Visit(program) as CarpObject;
