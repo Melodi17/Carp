@@ -2,10 +2,10 @@
 using Carp.objects.types;
 
 namespace Carp;
+
 // TODO: Rewrite errors to use errorinst.Error() and add line numbers
-public abstract class CarpError : Exception
+public abstract class CarpError(string message) : Exception(message)
 {
-    public abstract string DisplayName { get; }
     public class CarpObjError : CarpObject
     {
         public static new CarpType Type = NativeType.Of<CarpObjError>("error");
@@ -13,298 +13,133 @@ public abstract class CarpError : Exception
 
         public string ErrorType;
         public string Message;
-        
+
         public CarpObjError(CarpError err)
         {
-            this.ErrorType = err.DisplayName;
+            this.ErrorType = err.GetType().Name;
             this.Message = err.Message;
         }
+
         public override CarpString String()
         {
             return new($"error.{this.ErrorType}");
         }
     }
-    public CarpError() : base("Error occured in Carp runtime") { }
-    public CarpError(string message) : base(message) { }
-    
-    public class PrimitiveIncompatible : CarpError
+
+    public CarpError() : this("Error occured in Carp runtime")
     {
-        public override string DisplayName => "PrimitiveIncompatible";
-        public PrimitiveIncompatible(string primitive, CarpObject sourceObject) : base($"Primitive '{primitive}' is not compatible with '{sourceObject.GetCarpType()}'") { }
     }
 
-    public class UnparseableInt : CarpError
-    {
-        public override string DisplayName => "UnparseableInt";
-        public UnparseableInt(string soCalledInt) : base($"Given int '{soCalledInt}' was unparseable")
-        {
-            
-        }
-    }
-    
-    public class AutoInitObjectNotPermitted : CarpError
-    {
-        public override string DisplayName => "AutoInitObjectNotPermitted";
+    public class PrimitiveIncompatible(string primitive, CarpObject sourceObject) : CarpError(
+        $"Primitive '{primitive}' is not compatible with '{sourceObject.GetCarpType()}'");
 
-        public AutoInitObjectNotPermitted() : base($"Non-structs cannot be auto-initialized here")
-        {
-            
-        }
-    }
+    public class UnparseableInt(string soCalledInt) : CarpError($"Given int '{soCalledInt}' was unparseable");
 
-    public class AutoNotPermitted : CarpError
-    {
-        public override string DisplayName => "AutoNotPermitted";
+    public class AutoInitObjectNotPermitted() : CarpError($"Non-structs cannot be auto-initialized here");
 
-        public AutoNotPermitted() : base($"Auto is not permitted here")
-        {
-            
-        }
-    }
-    
-    public class KeyNotPresent : CarpError
-    {
-        public override string DisplayName => "KeyNotPresent";
+    public class AutoNotPermitted() : CarpError($"Auto is not permitted here");
 
-        public KeyNotPresent(CarpObject obj) : base($"Key '{obj}' is not present")
-        {
-            
-        }
-    }
+    public class KeyNotPresent(CarpObject obj) : CarpError($"Key '{obj}' is not present");
 
-    public class RangeNotCompatible : CarpError
-    {
-        public override string DisplayName => "RangeNotCompatible";
-
-        public RangeNotCompatible(CarpType type) : base($"Cannot compute range on '{type}'")
-        {
-            
-        }
-    }
+    public class RangeNotCompatible(CarpType type) : CarpError($"Cannot compute range on '{type}'");
 
     public class InvalidType : CarpError
     {
-        public override string DisplayName => "InvalidType";
-
         public InvalidType(CarpType expected, CarpType got) : base($"Invalid type, expected '{expected}', got '{got}'")
         {
-            
         }
-        
+
         public InvalidType(List<CarpType> expected, CarpType got)
-            : base($"Invalid type, expected any of '{string.Join(", ", expected.Select(x=>x.ToString()))}', got '{got}'")
+            : base(
+                $"Invalid type, expected any of '{string.Join(", ", expected.Select(x => x.ToString()))}', got '{got}'")
         {
-            
-        }
-    }
-    
-    public class InvalidCast : CarpError
-    {
-        public override string DisplayName => "InvalidCast";
-
-        public InvalidCast(CarpObject obj, CarpType newType) : base($"Invalid cast, tried to convert '{obj}' to '{newType}'")
-        {
-            
         }
     }
 
-    public class DivideByZero : CarpError
-    {
-        public override string DisplayName => "DivideByZero";
+    public class InvalidCast(CarpObject obj, CarpType newType) : CarpError(
+        $"Invalid cast, tried to convert '{obj}' to '{newType}'");
 
-        public DivideByZero(CarpInt other) : base($"Attempted to divide {other} by zero")
-        {
-            
-        }
-    }
-    
-    public class InvalidAssignmentTarget : CarpError
-    {
-        public override string DisplayName => "InvalidAssignmentTarget";
+    public class DivideByZero(CarpInt other) : CarpError($"Attempted to divide {other} by zero");
 
-        public InvalidAssignmentTarget(CarpGrammarParser.ExpressionContext target) : base($"Invalid assignment target '{target.GetType().GetFormattedName()}'")
-        {
-            
-        }
-    }
-    
-    public class InvalidProperty : CarpError
-    {
-        public override string DisplayName => "InvalidProperty";
+    public class InvalidAssignmentTarget(CarpGrammarParser.ExpressionContext target) : CarpError(
+        $"Invalid assignment target '{target.GetType().GetFormattedName()}'");
 
-        public InvalidProperty(Signature signature) : base($"Invalid property '{signature}'")
-        {
-            
-        }
-    }
+    public class InvalidProperty(Signature signature) : CarpError($"Invalid property '{signature}'");
 
-    public class InvalidArgumentCount : CarpError
-    {
-        public override string DisplayName => "InvalidArgumentCount";
+    public class InvalidArgumentCount(int given, int expected) : CarpError(
+        $"Invalid argument count, got {given}, expected {expected}");
 
-        public InvalidArgumentCount(int given, int expected) : base($"Invalid argument count, got {given}, expected {expected}")
-        {
-            
-        }
-    }
-    
-    public class ReferenceDoesNotExist : CarpError
-    {
-        public override string DisplayName => "ReferenceDoesNotExist";
+    public class ReferenceDoesNotExist(string name) : CarpError($"Reference '{name}' does not exist in current scope");
 
-        public ReferenceDoesNotExist(string name) : base($"Reference '{name}' does not exist in current scope")
-        {
-            
-        }
-    }
-    
-    public class ReferenceAlreadyDefined : CarpError
-    {
-        public override string DisplayName => "ReferenceAlreadyDefined";
+    public class ReferenceAlreadyDefined(string name) : CarpError(
+        $"Reference '{name}' is already defined in current scope");
 
-        public ReferenceAlreadyDefined(string name) : base($"Reference '{name}' is already defined in current scope")
-        {
-            
-        }
-    }
-    
-    public class PackageNotFound : CarpError
-    {
-        public override string DisplayName => "PackageNotFound";
+    public class PackageNotFound(string[] name, string version) : CarpError(
+        $"Could not find package '{string.Join(",", name)}' with version '{version}'");
 
-        public PackageNotFound(string[] name, string version) : base($"Could not find package '{string.Join(",", name)}' with version '{version}'")
-        {
-            
-        }
-    }
+    public class InvalidParameterCount(int expected, int got) : CarpError(
+        $"Invalid parameter count, expected {expected}, got {got}");
 
-    public class InvalidParameterCount : CarpError
-    {
-        public override string DisplayName => "InvalidParameterCount";
+    public class CastNullToStruct(CarpType type) : CarpError($"Attempted to cast null to struct '{type}'");
 
-        public InvalidParameterCount(int expected, int got) : base($"Invalid parameter count, expected {expected}, got {got}")
-        {
-            
-        }
-    }
-    
-    public class CastNullToStruct : CarpError
-    {
-        public override string DisplayName => "CastNullToStruct";
+    public class VoidFromNonVoidFunction() : CarpError("Void was returned from non-voidable function");
 
-        public CastNullToStruct(CarpType type) : base($"Attempted to cast null to struct '{type}'")
-        {
-            
-        }
-    }
+    public class UnusedBranch(CarpGrammarParser.ExpressionContext expression) : CarpError(
+        $"Unused expression branch, side-effects are not allowed on {expression.GetType().GetFormattedName()}");
 
-    public class VoidFromNonVoidFunction : CarpError
-    {
-        public override string DisplayName => "VoidFromNonVoidFunction";
+    public class IndexOutOfRange(int index) : CarpError($"Index {index} was out of range");
 
-        public VoidFromNonVoidFunction() : base("Void was returned from non-voidable function")
-        {
-            
-        }
-    }
-    public class UnusedBranch : CarpError
-    {
-        public override string DisplayName => "UnusedBranch";
+    public class ReferenceAssignedBeforeDefinition(string name) : CarpError(
+        $"Reference '{name}' assigned before definition");
 
-        public UnusedBranch(CarpGrammarParser.ExpressionContext expression) : base($"Unused expression branch, side-effects are not allowed on {expression.GetType().GetFormattedName()}")
-        {
-            
-        }
-    }
-    public class IndexOutOfRange : CarpError
-    {
-        public override string DisplayName => "IndexOutOfRange";
+    public class UnenclosedFlowControl(CarpFlowControlError err) : CarpError(
+        $"Unenclosed flow control '{err.GetType().Name}'");
 
-        public IndexOutOfRange(int index) : base($"Index {index} was out of range")
-        {
-            
-        }
-    }
-    public class ReferenceAssignedBeforeDefinition : CarpError
-    {
-        public override string DisplayName => "ReferenceAssignedBeforeDefinition";
-        public ReferenceAssignedBeforeDefinition(string name) : base($"Reference '{name}' assigned before definition")
-        {
-            
-        }
-    }
-    public class UnenclosedFlowControl : CarpError
-    {
-        public override string DisplayName => "UnenclosedFlowControl";
-        public UnenclosedFlowControl(CarpFlowControlError err) : base($"Unenclosed flow control '{err.DisplayName}'")
-        {
-            
-        }
-    }
-    public class PreprocessorError : Exception
-    {
-        public PreprocessorError(string message) : base($"Preprocessor throws {message}")
-        {
-            
-        }
-    }
+    public class PreprocessorError(string message) : Exception($"Preprocessor throws {message}");
 
-    public class VagueTypeSpecificationError : CarpError
-    {
-        public override string DisplayName => "VagueTypeSpecificationError";
-        public VagueTypeSpecificationError(CarpObject obj) : base($"Vague typing used, unable to determine automatic type for '{obj}'")
-        {
-            
-        }
-    }
+    public class VagueTypeSpecificationError(CarpObject obj) : CarpError(
+        $"Vague typing used, unable to determine automatic type for '{obj}'");
 
-    public class InvalidOperation(string message) : CarpError(message)
-    {
-        public override string DisplayName => "InvalidOperationError";
-    }
+    public class InvalidOperation(string message) : CarpError(message);
 }
 
-public abstract class CarpFlowControlError : Exception
+public abstract class CarpFlowControlError(string message) : Exception(message)
 {
-    public abstract string DisplayName { get; }
-    public class CarpObjFlowControlError : CarpObject
+
+    public class CarpObjFlowControlError(CarpFlowControlError err) : CarpObject
     {
         public static new CarpType Type = NativeType.Of<CarpObjFlowControlError>("flowControlError");
         public override CarpType GetCarpType() => Type;
 
-        public string ErrorType;
-        public string Message;
-        
-        public CarpObjFlowControlError(CarpFlowControlError err)
-        {
-            this.ErrorType = err.DisplayName;
-            this.Message = err.Message;
-        }
+        public string ErrorType = err.GetType().Name;
+        public string Message = err.Message;
+
         public override CarpString String()
         {
             return new($"flowControlError.{this.ErrorType}");
         }
     }
-    public CarpFlowControlError() : base("Attempted to use flow control") { }
-    public CarpFlowControlError(string message) : base(message) { }
-    
-    public class Break : CarpFlowControlError
+
+    public CarpFlowControlError() : this("Attempted to use flow control")
     {
-        public override string DisplayName => "Break";
-        public Break() : base("Break") { }
     }
-    
-    public class Continue : CarpFlowControlError
-    {
-        public override string DisplayName => "Continue";
-        public Continue() : base("Continue") { }
-    }
+
+    public class Break() : CarpFlowControlError("Break");
+
+    public class Continue() : CarpFlowControlError("Continue");
 
     public class Return : CarpFlowControlError
     {
-        public override string DisplayName => "Return";
         public CarpObject Value;
-        public Return(CarpObject value) : base("Return") { this.Value = value; }
-        public Return() : base("Return") { this.Value = CarpVoid.Instance; }
+
+        public Return(CarpObject value) : base("Return")
+        {
+            this.Value = value;
+        }
+
+        public Return() : base("Return")
+        {
+            this.Value = CarpVoid.Instance;
+        }
     }
 }
