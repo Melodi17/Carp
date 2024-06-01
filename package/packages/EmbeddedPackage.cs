@@ -4,8 +4,12 @@ using Carp.objects.types;
 
 namespace Carp.package.packages;
 
+/// <summary>
+/// These are packages that allow an interface between the Carp language and C# code
+/// </summary>
 public abstract class EmbeddedPackage : Package
 {
+    public CarpInterpreter Interpreter;
     public EmbeddedPackage(IPackageResolver source, string name) : base(source, source,
         name)
     {
@@ -13,6 +17,8 @@ public abstract class EmbeddedPackage : Package
 
     public override CarpStatic Export(CarpInterpreter interpreter)
     {
+        this.Interpreter = interpreter;
+        
         CarpStatic cs = new(this.Name);
 
         // Fetch all fields of this class, with a PackageMemberAttribute

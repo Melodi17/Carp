@@ -41,6 +41,11 @@ public abstract class Package : CarpObject
         interpreter.GlobalScope.Define(Signature.OfVariable(this.Name), CarpStatic.Type, enclosure);
     }
     
+    /// <summary>
+    /// Exports the package to the interpreter
+    /// </summary>
+    /// <param name="interpreter">The sandboxed interpreter to execute within</param>
+    /// <returns>A static, object that contains the package data</returns>
     public abstract CarpStatic Export(CarpInterpreter interpreter);
 
     public override CarpString String() => new(this.Name);

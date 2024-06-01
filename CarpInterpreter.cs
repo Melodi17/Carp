@@ -20,6 +20,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     
     public static CarpInterpreter Instance;
     public IPackageResolver PackageResolver;
+    public Dictionary<string, CarpObject> Resources;
     
     public int CurrentLine { get; private set; } = 0;
     public bool Paused { get; set; } = false;
@@ -44,6 +45,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     {
         this.GlobalScope = new Scope();
         this.PackageResolver = packageResolver;
+        this.Resources = new();
 
         void DefineVarByName(string name, CarpType type, CarpObject value)
         {

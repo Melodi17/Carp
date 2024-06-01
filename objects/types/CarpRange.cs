@@ -53,7 +53,6 @@ public class CarpRange : CarpObject
     {
         if (type.Extends(CarpCollection.Type) && type is GenericCarpType genericCarpType)
         {
-            // TODO: Sort out this casting behaviour
             if (genericCarpType.SubTypes[0] == this._itemType)
                 return this.Iterate().ToCollection();
         }
