@@ -6,16 +6,39 @@
 ### Installation
 
 ### Hello world
+Create a new file, give it the .carp extension, and write the following code:
+```carp
+import std.io
 
+IO.println('Hello, world!')
+```
 
+Now run the file with the Carp interpreter:
+```sh
+carp hello.carp
+````
+
+You should see the output `Hello, world!` printed to the console.
+Alternatively you can go file-less and use the REPL:
+```sh
+carp
+ : import std.io
+ :
+ : IO.println('Hello, world!')
+````
 
 ## Basics
 ### The standard library
 
 
+### Projects
+
+
 
 ## Advanced
 ### Interpreter flags
+
+### The preprocessor
 
 
 

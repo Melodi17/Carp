@@ -1,0 +1,10 @@
+import std.io
+import std.net
+import std.parse
+
+str base_url = 'http://periodicat.ignorelist.com:7356'
+str getelement(str id) -> Net.Http.get(base_url + '/element?id=' + id)
+
+str getprop(str source, str prop) -> Parse.Regex.match('"' + prop + '": ?"(.*?)"', source)
+
+

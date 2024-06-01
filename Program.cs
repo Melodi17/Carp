@@ -71,13 +71,13 @@ internal class Program
             
             CarpObject response = RunString(CarpInterpreter.Instance, arg);
             if (response != CarpVoid.Instance)
-                Console.WriteLine(response.Repr());
+                WriteOutput(response, false);
         }
         else if (arg.Length > 0)
         {
             CarpObject response = RunString(CarpInterpreter.Instance, File.ReadAllText(arg));
             if (response != CarpVoid.Instance && verbose)
-                Console.WriteLine(response.Repr());
+                WriteOutput(response, false);
         }
 
         if (interactive || args.Length == 0)
@@ -95,29 +95,46 @@ internal class Program
 
     private static string ReadLineAdvanced(string prompt)
     {
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.Write(prompt);
+        Console.ForegroundColor = ConsoleColor.White;
         StringBuilder sb = new();
-        while (true)
+        try
         {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            if (key.Key == ConsoleKey.Enter)
+            while (true)
             {
-                Console.WriteLine();
-                return sb.ToString();
-            }
-            else if (key.Key == ConsoleKey.Backspace)
-            {
-                if (sb.Length > 0)
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.Enter)
                 {
-                    Console.Write("\b \b");
-                    sb.Remove(sb.Length - 1, 1);
+                    Console.WriteLine();
+                    return sb.ToString();
+                }
+                else if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (sb.Length > 0)
+                    {
+                        Console.Write("\b \b");
+                        sb.Remove(sb.Length - 1, 1);
+                    }
+                }
+                else if (key.Key == ConsoleKey.Escape)
+                {
+                    // reset text
+                    Console.SetCursorPosition(prompt.Length, Console.CursorTop);
+                    Console.Write(new string(' ', sb.Length));
+                    Console.SetCursorPosition(prompt.Length, Console.CursorTop);
+                    sb.Clear();
+                }
+                else
+                {
+                    Console.Write(key.KeyChar);
+                    sb.Append(key.KeyChar);
                 }
             }
-            else
-            {
-                Console.Write(key.KeyChar);
-                sb.Append(key.KeyChar);
-            }
+        }
+        finally
+        {
+            Console.ResetColor();
         }
     }
 
@@ -125,8 +142,7 @@ internal class Program
     {
         while (true)
         {
-            Console.Write(" : ");
-            string msg = Console.ReadLine();
+            string msg = ReadLineAdvanced(" : ");
             if (msg is null or "exit")
                 break;
             
@@ -134,16 +150,44 @@ internal class Program
             
             while (predictionDepth > 0)
             {
-                Console.Write("   " + string.Concat(Enumerable.Repeat("  ", predictionDepth)));
-                string next = Console.ReadLine();
+                string spacer = "   " + string.Concat(Enumerable.Repeat("  ", predictionDepth));
+                string next = ReadLineAdvanced(spacer);
                 msg += "\n" + next;
                 predictionDepth = CalculateDepth(msg);
             }
 
             CarpObject response = RunString(CarpInterpreter.Instance, msg);
             if (response != CarpVoid.Instance)
-                Console.WriteLine(response.Repr());
+                WriteOutput(response, true);
         }
+    }
+
+    private static void WriteOutput(CarpObject obj, bool interactive)
+    {
+        if (!interactive)
+        {
+            Console.WriteLine(obj.Repr());
+            return;
+        }
+        
+        if (obj is CarpString str)
+            WriteColor(str.Repr(), ConsoleColor.Yellow);
+        
+        else if (obj is CarpInt)
+            WriteColor(obj.Repr(), ConsoleColor.Cyan);
+        
+        else if (obj is CarpBool)
+            WriteColor(obj.Repr(), ConsoleColor.Magenta);
+        
+        else
+            WriteColor(obj.Repr(), ConsoleColor.Gray);
+    }
+    
+    private static void WriteColor(string text, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(text);
+        Console.ResetColor();
     }
 
     public static CarpObject RunString(CarpInterpreter interpreter, string s)
