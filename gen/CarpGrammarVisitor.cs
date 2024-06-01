@@ -598,6 +598,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNamedType([NotNull] CarpGrammarParser.NamedTypeContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>propertyType</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.type"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPropertyType([NotNull] CarpGrammarParser.PropertyTypeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>autoType</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.type"/>.
 	/// </summary>

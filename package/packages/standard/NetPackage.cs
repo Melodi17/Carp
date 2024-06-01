@@ -12,7 +12,7 @@ public class NetPackage(IPackageResolver source) : EmbeddedPackage(source, "Net"
     /// </summary>
     /// <param name="url">The URL to make the request to</param>
     /// <returns>The response from the server</returns>
-    [PackageMember("http.")]
+    [PackageMember("Http.")]
     public CarpString Get(CarpString url)
     {
         string response = this._httpClient.GetStringAsync(url.Native).Result;

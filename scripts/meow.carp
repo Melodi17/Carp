@@ -72,9 +72,9 @@ Rect map_rect = Rect.new(0, 0, 10, 10)
 Vec2 pos2 = Vec2.new(1, 2)
 IO.println(pos2)
 
-IO.clear()
+# IO.clear()
 
-Clean(grid)
+# Clean(grid)
 
 # Render
 while (false) {

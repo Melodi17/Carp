@@ -49,6 +49,18 @@ public class CarpRange : CarpObject
         };
     }
 
+    public override CarpObject Cast(CarpType type)
+    {
+        if (type.Extends(CarpCollection.Type) && type is GenericCarpType genericCarpType)
+        {
+            // TODO: Sort out this casting behaviour
+            if (genericCarpType.SubTypes[0] == this._itemType)
+                return this.Iterate().ToCollection();
+        }
+
+        return base.Cast(type);
+    }
+
     public override CarpString String() 
         => new($"{this._start}..{this._stop}");
 }

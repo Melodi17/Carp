@@ -259,6 +259,7 @@ type
     : key=type ':' value=type # mapType
     | element=type (ASTERISK_RSPACE | ASTERISK_NSPC) # listType
     | main=type '<' subs+=type (',' subs+=type)* '>' # genericType
+    | main=ID ('.' parts+=ID)+ # propertyType
     | ID # namedType
     | LET # autoType
     ;

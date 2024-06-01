@@ -7,6 +7,8 @@ namespace Carp.package.packages.standard;
 
 public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Parse")
 {
+    [PackageMember("Regex.MatchResult")]
+    public CarpType MatchType = CarpMatchResult.Type;
     // [PackageMember("ds.json.")]
     // public CarpObject LoadJson(CarpString json)
     // {
@@ -31,8 +33,8 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
     //     throw new NotImplementedException();
     // }
 
-    [PackageMember("regex.")]
-    public CarpMatch Match(CarpString pattern, CarpString text)
+    [PackageMember("Regex.")]
+    public CarpMatchResult Match(CarpString pattern, CarpString text)
     {
         string patternStr = pattern.Native;
         string textStr = text.Native;
@@ -40,7 +42,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         Match m = Regex.Match(textStr, patternStr);
         if (!m.Success) return new();
         
-        var groups = new List<CarpMatch>();
+        var groups = new List<CarpMatchResult>();
         foreach (Group g in m.Groups)
         {
             groups.Add(new(g.Value, g.Index, g.Length, new()));
@@ -49,17 +51,17 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         return new(m.Value, m.Index, m.Length, groups);
     }
     
-    [PackageMember("regex.")]
+    [PackageMember("Regex.")]
     public CarpCollection Matches(CarpString pattern, CarpString text)
     {
         string patternStr = pattern.Native;
         string textStr = text.Native;
 
         MatchCollection matches = Regex.Matches(textStr, patternStr);
-        var result = new List<CarpMatch>();
+        var result = new List<CarpMatchResult>();
         foreach (Match m in matches)
         {
-            var groups = new List<CarpMatch>();
+            var groups = new List<CarpMatchResult>();
             foreach (Group g in m.Groups)
             {
                 groups.Add(new(g.Value, g.Index, g.Length, new()));
@@ -68,10 +70,10 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
             result.Add(new(m.Value, m.Index, m.Length, groups));
         }
 
-        return new(CarpMatch.Type, result.ToArray());
+        return new(CarpMatchResult.Type, result.ToArray());
     }
     
-    [PackageMember("regex.")]
+    [PackageMember("Regex.")]
     public CarpString Replace(CarpString pattern, CarpString text, CarpString replacement)
     {
         string patternStr = pattern.Native;
@@ -81,7 +83,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         return new(Regex.Replace(textStr, patternStr, replacementStr));
     }
     
-    [PackageMember("regex.")]
+    [PackageMember("Regex.")]
     public CarpCollection Split(CarpString pattern, CarpString text)
     {
         string patternStr = pattern.Native;
@@ -90,7 +92,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         return new(CarpString.Type, Regex.Split(textStr, patternStr).Select(x => new CarpString(x)).ToArray());
     }
     
-    [PackageMember("regex.")]
+    [PackageMember("Regex.")]
     public CarpBool Test(CarpString pattern, CarpString text)
     {
         string patternStr = pattern.Native;
@@ -100,9 +102,9 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
     }
 
 
-    public class CarpMatch : CarpObject
+    public class CarpMatchResult : CarpObject
     {
-        public static new CarpType Type = NativeType.Of<CarpMatch>("match");
+        public static new CarpType Type = NativeType.Of<CarpMatchResult>("match_result");
         public override CarpType GetCarpType() => Type;
 
         public bool Success;
@@ -110,9 +112,9 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         public int? Index;
         public int? Length;
 
-        public List<CarpMatch> Groups = new();
+        public List<CarpMatchResult> Groups = new();
 
-        public CarpMatch(string value, int index, int length, List<CarpMatch> groups)
+        public CarpMatchResult(string value, int index, int length, List<CarpMatchResult> groups)
         {
             this.Value = value;
             this.Index = index;
@@ -121,7 +123,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
             this.Success = true;
         }
 
-        public CarpMatch()
+        public CarpMatchResult()
         {
             this.Success = false;
         }

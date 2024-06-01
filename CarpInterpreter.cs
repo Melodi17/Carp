@@ -1065,6 +1065,27 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         return type;
     }
 
+    public override object VisitPropertyType(CarpGrammarParser.PropertyTypeContext context)
+    {
+        // basically (main).(part).(part)
+        string name = context.main.Text;
+        CarpObject obj = context.ContextScope.Get(Signature.OfVariable(name));
+        
+        foreach (IToken? part in context._parts)
+        {
+            if (obj is not CarpObject co)
+                throw new CarpError.InvalidType(CarpObject.Type, obj.GetCarpType());
+
+            name = part.Text;
+            obj = co.Property(Signature.OfVariable(name));
+        }
+
+        if (obj is not CarpType type)
+            throw new CarpError.InvalidType(CarpType.Type, obj.GetCarpType());
+        
+        return type;
+    }
+
     public override object VisitAutoType(CarpGrammarParser.AutoTypeContext context) => AutoType.Instance;
 
     public override object VisitMapType(CarpGrammarParser.MapTypeContext context)
