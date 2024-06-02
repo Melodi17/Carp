@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Net;
+using Carp.package.packages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -47,31 +48,13 @@ public class GithubPackageResolver : IPackageResolver
         // now caaarp and carp files are handled differently
         if (isArchive)
         {
-            byte[] download = client.GetByteArrayAsync(downloadUrl).Sync();
-            // extract to Zip
-            using MemoryStream stream = new(download);
-            using ZipArchive archive = new(stream);
-            
-            ZipArchiveEntry reelEntry = archive.GetEntry("reel.json")!;
-            using StreamReader reelReader = new(reelEntry.Open());
-            string reelJson = reelReader.ReadToEnd();
-            JObject reel = JObject.Parse(reelJson);
-            string mainFile = reel["main"]!.ToString();
-            
-            ZipArchiveEntry mainEntry = archive.GetEntry(mainFile)!;
-            using StreamReader mainReader = new(mainEntry.Open());
-            string main = mainReader.ReadToEnd();
-            
-            // TODO: change this
-            
-            // Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: main);
-            // return pkg;
+            byte[] data = client.GetByteArrayAsync(downloadUrl).Sync();
+            return new PackedPackage(this, this, repo, data);
         }
         else
         {
             string download = client.GetStringAsync(downloadUrl).Sync();
-            // Package pkg = new(this, Program.DefaultPackageResolver, repo, sourceCode: download);
-            // return pkg;
+            return new SourcePackage(this, this, repo, download);
         }
 
         throw new NotImplementedException();
