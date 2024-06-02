@@ -75,7 +75,7 @@ internal class Program
         }
         else if (arg.Length > 0)
         {
-            CarpObject response = RunString(CarpInterpreter.Instance, File.ReadAllText(arg));
+            CarpObject response = RunFile(CarpInterpreter.Instance, arg);
             if (response != CarpVoid.Instance && verbose)
                 WriteOutput(response, false);
         }
@@ -84,58 +84,21 @@ internal class Program
             Repl();
     }
 
+    private static CarpObject RunFile(CarpInterpreter instance, string path)
+    {
+        bool isArchive = Path.GetExtension(path) == ".caaarp";
+        string code = File.ReadAllText(path, Encoding.UTF8);
+        return RunString(instance, code);
+    }
+
     private static IPackageResolver GetPackageResolver()
     {
         ModularPackageResolver mpr = new();
         mpr.AddResolver("std", new StandardPackageResolver());
         mpr.AddResolver("github", new GithubPackageResolver());
+        mpr.SetDefaultResolver();
 
         return mpr;
-    }
-
-    private static string ReadLineAdvanced(string prompt)
-    {
-        Console.ForegroundColor = ConsoleColor.DarkMagenta;
-        Console.Write(prompt);
-        Console.ForegroundColor = ConsoleColor.White;
-        StringBuilder sb = new();
-        try
-        {
-            while (true)
-            {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Enter)
-                {
-                    Console.WriteLine();
-                    return sb.ToString();
-                }
-                else if (key.Key == ConsoleKey.Backspace)
-                {
-                    if (sb.Length > 0)
-                    {
-                        Console.Write("\b \b");
-                        sb.Remove(sb.Length - 1, 1);
-                    }
-                }
-                else if (key.Key == ConsoleKey.Escape)
-                {
-                    // reset text
-                    Console.SetCursorPosition(prompt.Length, Console.CursorTop);
-                    Console.Write(new string(' ', sb.Length));
-                    Console.SetCursorPosition(prompt.Length, Console.CursorTop);
-                    sb.Clear();
-                }
-                else
-                {
-                    Console.Write(key.KeyChar);
-                    sb.Append(key.KeyChar);
-                }
-            }
-        }
-        finally
-        {
-            Console.ResetColor();
-        }
     }
 
     private static void Repl()
@@ -160,6 +123,19 @@ internal class Program
             if (response != CarpVoid.Instance)
                 WriteOutput(response, true);
         }
+    }
+
+    private static string ReadLineAdvanced(string prompt)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        Console.Write(prompt);
+        Console.ForegroundColor = ConsoleColor.White;
+        
+        string? line = Console.ReadLine();
+        
+        Console.ResetColor();
+        
+        return line ?? "";
     }
 
     private static void WriteOutput(CarpObject obj, bool interactive)

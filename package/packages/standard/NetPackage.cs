@@ -15,8 +15,15 @@ public class NetPackage(IPackageResolver source) : EmbeddedPackage(source, "Net"
     [PackageMember("Http.")]
     public CarpString Get(CarpString url)
     {
-        string response = this._httpClient.GetStringAsync(url.Native).Result;
-        return new(response);
+        try
+        {
+            string response = this._httpClient.GetStringAsync(url.Native).Result;
+            return new(response);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new HttpErrorResponse(url.Native, (int)e.StatusCode, e.Message);
+        }
     }
     
     /// <summary>
@@ -32,4 +39,8 @@ public class NetPackage(IPackageResolver source) : EmbeddedPackage(source, "Net"
         HttpResponseMessage response = this._httpClient.PostAsync(url.Native, stringContent).Result;
         return new(response.Content.ReadAsStringAsync().Result);
     }
+    
+    public class ConnectionFailed(string host) : CarpError($"Failed to connect to {host}");
+    
+    public class HttpErrorResponse(string host, int code, string response) : CarpError($"Failed to connect to {host} with code {code}: {response}");
 }
