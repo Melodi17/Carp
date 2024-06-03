@@ -1,9 +1,12 @@
 // See https://aka.ms/new-console-template for more information
 
+using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Carp.objects.types;
 using Carp.package;
+using Carp.package.packages;
 using Carp.package.resolvers;
 using Carp.preprocessor;
 
@@ -12,8 +15,9 @@ namespace Carp;
 internal class Program
 {
     public static Debugger Debugger;
-    public static IPackageResolver DefaultPackageResolver;
+    public static ModularPackageResolver DefaultPackageResolver;
     public static bool ForceThrow = false;
+
     public static void Main(string[] args)
     {
         bool interactive = args.Contains("-i");
@@ -22,12 +26,12 @@ internal class Program
         bool debug = args.Contains("-d");
         bool help = args.Contains("-h");
         bool forceThrow = args.Contains("-f");
-        
+
         // args without flags
         args = args.Where(x => !x.StartsWith("-") && x.Length != 2).ToArray();
-        
+
         string arg = args.Length > 0 ? string.Join(" ", args) : "";
-        
+
         if (help)
         {
             Console.WriteLine("Carp Programming Language");
@@ -39,17 +43,18 @@ internal class Program
             Console.WriteLine("  -d: Start the Carp debugger.");
             Console.WriteLine("  -h: Display this help menu.");
             Console.WriteLine("  -f: Force the internal errors to trigger the native stacktrace.");
-            Console.WriteLine("File: The path to the Carp script to execute. If no file is provided, Carp will start in REPL mode.");
+            Console.WriteLine(
+                "File: The path to the Carp script to execute. If no file is provided, Carp will start in REPL mode.");
             return;
         }
 
         DefaultPackageResolver = GetPackageResolver();
         CarpInterpreter.Instance = new(DefaultPackageResolver);
         ForceThrow = forceThrow;
-        
+
         Flags.Instance.LoadedFromFile = !line && arg.Length > 0;
         Flags.Instance.ExecutionContext = arg;
-        
+
         if (debug)
         {
             Flags.Instance.Debug = true;
@@ -60,7 +65,7 @@ internal class Program
             while (!Debugger.Attached) Thread.Sleep(50);
             Console.WriteLine("Debugger continuing");
         }
-        
+
         if (line)
         {
             if (arg.Length == 0)
@@ -68,7 +73,7 @@ internal class Program
                 PrintError("No code given");
                 return;
             }
-            
+
             CarpObject response = RunString(CarpInterpreter.Instance, arg);
             if (response != CarpVoid.Instance)
                 WriteOutput(response, false);
@@ -87,30 +92,113 @@ internal class Program
     private static CarpObject RunFile(CarpInterpreter instance, string path)
     {
         bool isArchive = Path.GetExtension(path) == ".caaarp";
+        if (isArchive)
+        {
+            byte[] data = File.ReadAllBytes(path);
+            return RunProject(instance, data).result;
+        }
         string code = File.ReadAllText(path, Encoding.UTF8);
+        SetDefaultResolver(instance.PackageResolver, new FileSystemInternalPackageResolver(Path.GetDirectoryName(path)!));
         return RunString(instance, code);
     }
+    
+    private static (ProjectConfiguration config, CarpObject result) RunProject(CarpInterpreter instance, byte[] data)
+    {
+        using MemoryStream stream = new(data);
+        using ZipArchive archive = new(stream);
+        
+        // get project file
+        ZipArchiveEntry? projEntry = archive.GetEntry(".carpproj");
+        if (projEntry == null)
+            throw new PackedPackage.PackageInvalid("No .carpproj file found in package");
+        
+        ProjectConfiguration projConfig = ProjectConfiguration.Deserialize(projEntry.GetFileDataString());
+        
+        // look for /resources dir
+        ZipArchiveEntry? resourcesEntry = archive.GetEntry("resources");
+        // if it exists, enumerate all files and add them to the interpreter
+        if (resourcesEntry != null)
+        {
+            foreach (ZipArchiveEntry entry in archive.Entries)
+            {
+                if (entry.FullName.StartsWith("resources/"))
+                {
+                    string name = entry.FullName.Substring("resources/".Length);
+                    string ext = Path.GetExtension(name);
+                    name = Path.GetFileNameWithoutExtension(name)
+                        .Replace("/", ".")
+                        .Replace("\\", ".");
+                    
+                    if (ext == ".txt")
+                        instance.Resources[name] = new CarpString(entry.GetFileDataString());
+                    else
+                        throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
+                }
+            }
+        }
+        
+        ZipInternalPackageResolver resolver = new(archive);
+        SetDefaultResolver(instance.PackageResolver, resolver);
+        
+        // main file will be main.carp
+        ZipArchiveEntry? mainEntry = archive.GetEntry("main.carp");
+        if (mainEntry == null)
+            throw new PackedPackage.PackageInvalid("No main.carp file found in package");
+        
+        string mainCode = mainEntry.GetFileDataString();
+        
+        return (projConfig, RunString(instance, mainCode));
+    }
 
-    private static IPackageResolver GetPackageResolver()
+    private static void ConvertScriptToProject(string script)
+    {
+        // make a dir with the file name, change the scripts name to main.carp and put inside the dir
+        string dir = Path.GetFileNameWithoutExtension(script);
+        Directory.CreateDirectory(dir);
+        File.Move(script, Path.Combine(dir, "main.carp"));
+
+        // create a new project file (.carpproj) with the same name as the dir
+        string proj = Path.Combine(dir, ".carpproj");
+        File.WriteAllText(proj, new ProjectConfiguration
+        {
+            Name = dir,
+            Author = Environment.UserName,
+            Version = "0.1.0",
+            Icon = null,
+        }.Serialize());
+    }
+
+    private static void CompileProject(string projectFolder)
+    {
+        // zip the project folder, but exclude the /export folder
+        string zip = Path.ChangeExtension(projectFolder, ".caaarp");
+        using ZipArchive archive = ZipFile.Open(zip, ZipArchiveMode.Create);
+
+        archive.ZipDirectory(projectFolder, new List<Regex> { new("/export") });
+        archive.Dispose();
+    }
+
+    private static ModularPackageResolver GetPackageResolver()
     {
         ModularPackageResolver mpr = new();
         mpr.AddResolver("std", new StandardPackageResolver());
         mpr.AddResolver("github", new GithubPackageResolver());
-        mpr.SetDefaultResolver();
 
         return mpr;
     }
 
     private static void Repl()
     {
+        SetDefaultResolver(CarpInterpreter.Instance.PackageResolver,
+            new FileSystemInternalPackageResolver(Environment.CurrentDirectory));
         while (true)
         {
             string msg = ReadLineAdvanced(" : ");
             if (msg is null or "exit")
                 break;
-            
+
             int predictionDepth = CalculateDepth(msg);
-            
+
             while (predictionDepth > 0)
             {
                 string spacer = "   " + string.Concat(Enumerable.Repeat("  ", predictionDepth));
@@ -130,11 +218,11 @@ internal class Program
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.Write(prompt);
         Console.ForegroundColor = ConsoleColor.White;
-        
+
         string? line = Console.ReadLine();
-        
+
         Console.ResetColor();
-        
+
         return line ?? "";
     }
 
@@ -145,20 +233,20 @@ internal class Program
             Console.WriteLine(obj.Repr());
             return;
         }
-        
+
         if (obj is CarpString str)
             WriteColor(str.Repr(), ConsoleColor.Yellow);
-        
+
         else if (obj is CarpInt)
             WriteColor(obj.Repr(), ConsoleColor.Cyan);
-        
+
         else if (obj is CarpBool)
             WriteColor(obj.Repr(), ConsoleColor.Magenta);
-        
+
         else
             WriteColor(obj.Repr(), ConsoleColor.Gray);
     }
-    
+
     private static void WriteColor(string text, ConsoleColor color)
     {
         Console.ForegroundColor = color;
@@ -176,7 +264,7 @@ internal class Program
         {
             Preprocessor preprocessor = new(s);
             string processed = preprocessor.Process();
-        
+
             AntlrInputStream inputStream = new(processed);
             CarpGrammarLexer lexer = new(inputStream);
             lexer.RemoveErrorListeners();
@@ -184,14 +272,14 @@ internal class Program
 
             CarpGrammarParser parser = new(tokenStream);
 
-            program = parser.program();            
+            program = parser.program();
         }
         catch (Exception e)
         {
             PrintError($"Syntax error on {interpreter.CurrentLine}: {e.Message}");
             return CarpVoid.Instance;
         }
-        
+
         try
         {
             CarpObject obj = interpreter.Visit(program) as CarpObject;
@@ -200,13 +288,13 @@ internal class Program
         catch (CarpError e)
         {
             if (ForceThrow) throw;
-            
+
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }
         catch (CarpFlowControlError fcError)
         {
             if (ForceThrow) throw;
-            
+
             CarpError.UnenclosedFlowControl e = new(fcError);
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }
@@ -227,7 +315,8 @@ internal class Program
 
     public static int CalculateDepth(string text)
     {
-        (string Opening, string Closing)[] delimiters = {
+        (string Opening, string Closing)[] delimiters =
+        {
             ("(", ")"),
             ("{", "}"),
             ("[", "]"),
@@ -247,5 +336,13 @@ internal class Program
         }
 
         return depths.Sum();
+    }
+    
+    private static void SetDefaultResolver(IPackageResolver resolver, IPackageResolver def)
+    {
+        if (resolver is ModularPackageResolver mpr)
+            mpr.SetDefaultResolver(def);
+
+        //throw new("Resolver is not a ModularPackageResolver");
     }
 }

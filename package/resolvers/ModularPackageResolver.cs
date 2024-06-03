@@ -15,16 +15,16 @@ public class ModularPackageResolver : IPackageResolver
         this._defaultResolver = resolver;
     }
     
-    public Package GetPackage(string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
     {
         foreach ((string key, IPackageResolver value) in this._children)
         {
             if (path[0] == key)
-                return value.GetPackage(fullPath, path[1..], version);
+                return value.GetPackageEx(interpreter, fullPath, path[1..], version);
         }
 
         if (this._defaultResolver != null)
-            return this._defaultResolver.GetPackage(fullPath, path);
+            return this._defaultResolver.GetPackageEx(interpreter, fullPath, path);
 
         throw new CarpError.PackageNotFound(fullPath, version);
     }

@@ -1,5 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using System.IO.Compression;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Carp;
 
@@ -59,5 +61,36 @@ public static class Extensions
         if (methodInfo.IsStatic)
             return methodInfo.CreateDelegate(delegateType);
         return methodInfo.CreateDelegate(delegateType, target);
+    }
+    
+    public static void ZipDirectory(this ZipArchive zipArchive, string srcDir, IEnumerable<Regex>  excludeFileList = null, IEnumerable<Regex> excludeDirList = null , string rootDir = "")
+    {
+        if (!Directory.Exists(srcDir)) throw new Exception("source directory for zipping doesn't exit");
+        var dir = new DirectoryInfo(srcDir);
+
+        dir.GetFiles().ToList().ForEach((file) => {
+            if (excludeFileList == null || excludeFileList.Where(rule => rule.IsMatch(file.Name)).Count() == 0)
+            {
+                zipArchive.CreateEntryFromFile(file.FullName, string.IsNullOrEmpty(rootDir) ? file.Name : $@"{rootDir}\{file.Name}");
+            }});
+
+        dir.GetDirectories().ToList().ForEach((directory) => {
+            if (excludeDirList == null || excludeDirList.Where(rule => rule.IsMatch(directory.Name)).Count() == 0)
+            {
+                zipArchive.ZipDirectory(directory.FullName, excludeFileList, excludeDirList, string.IsNullOrEmpty(rootDir) ? $@"{directory.Name}" : $@"{rootDir}\{directory.Name}");
+            }});
+    }
+    
+    public static string GetFileDataString(this ZipArchiveEntry entry)
+    {
+        using StreamReader reader = new(entry.Open());
+        return reader.ReadToEnd();
+    }
+    
+    public static byte[] GetFileDataBytes(this ZipArchiveEntry entry)
+    {
+        using MemoryStream stream = new();
+        entry.Open().CopyTo(stream);
+        return stream.ToArray();
     }
 }

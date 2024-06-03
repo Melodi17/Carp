@@ -5,6 +5,7 @@ using Antlr4.Runtime.Tree;
 using Carp.interpreter;
 using Carp.objects.types;
 using Carp.package;
+using Carp.package.resolvers;
 using Carp.parser;
 
 namespace Carp;
@@ -170,7 +171,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         if (string.IsNullOrEmpty(ver))
             ver = "latest";
 
-        Package pkg = this.PackageResolver.GetPackage(parts, parts, ver);
+        Package pkg = this.PackageResolver.GetPackageEx(this, parts, parts, ver);
         pkg.Include(this);
         
         return null;

@@ -9,7 +9,7 @@ namespace Carp.package.resolvers;
 
 public class StandardPackageResolver : IPackageResolver
 {
-    public Package GetPackage(string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
     {
         string j = string.Join(".", path);
         return j switch

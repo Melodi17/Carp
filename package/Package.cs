@@ -1,5 +1,6 @@
 ﻿using Carp.interpreter;
 using Carp.objects.types;
+using Carp.package.resolvers;
 
 namespace Carp.package;
 

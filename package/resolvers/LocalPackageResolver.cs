@@ -11,7 +11,7 @@ public class LocalPackageResolver : IPackageResolver
     public static readonly string LocalPackagesPath = Path.Join(PackagesPath, "local");
     public static readonly string CachePackagesPath = Path.Join(PackagesPath, "cache");
 
-    public LocalPackageResolver()
+    static LocalPackageResolver()
     {
         Directory.CreateDirectory(PackagesPath);
         
@@ -19,7 +19,7 @@ public class LocalPackageResolver : IPackageResolver
         Directory.CreateDirectory(LocalPackagesPath);
     }
     
-    public Package GetPackage(string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
     {
         throw new NotImplementedException();
     }
