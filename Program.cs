@@ -9,6 +9,9 @@ using Carp.package;
 using Carp.package.packages;
 using Carp.package.resolvers;
 using Carp.preprocessor;
+using Carp.toolkit;
+using CommandLine;
+using Parser = CommandLine.Parser;
 
 namespace Carp;
 
@@ -20,93 +23,77 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        bool interactive = args.Contains("-i");
-        bool line = args.Contains("-c");
-        bool verbose = args.Contains("-v");
-        bool debug = args.Contains("-d");
-        bool help = args.Contains("-h");
-        bool forceThrow = args.Contains("-f");
+        Parser parser = CommandLine.Parser.Default;
+        IExecutableObject? options = null;
+        parser.ParseArguments<ScriptExecutor, ProjectBuilder, ProjectCreator>(args)
+            .WithParsed<IExecutableObject>(o => options = o);
 
-        bool makeProject = args.Contains("-p");
-        bool compileProject = args.Contains("-P");
-
-        // args without flags
-        args = args.Where(x => !x.StartsWith("-") && x.Length != 2).ToArray();
-
-        string arg = args.Length > 0 ? string.Join(" ", args) : "";
-
-        if (help)
-        {
-            Console.WriteLine("Carp Programming Language");
-            Console.WriteLine("Usage: carp [options] [file]");
-            Console.WriteLine("Options:");
-            Console.WriteLine("  -i: Start the Carp REPL after executing the script.");
-            Console.WriteLine("  -c: Execute the Carp code provided in the command line.");
-            Console.WriteLine("  -v: Print the result of the script execution to the console.");
-            Console.WriteLine("  -d: Start the Carp debugger.");
-            Console.WriteLine("  -h: Display this help menu.");
-            Console.WriteLine("  -f: Force the internal errors to trigger the native stacktrace.");
-            Console.WriteLine(
-                "File: The path to the Carp script to execute. If no file is provided, Carp will start in REPL mode.");
+        if (options == null)
             return;
-        }
 
-        if (makeProject)
-        {
-            ConvertScriptToProject(arg);
-            return;
-        }
+        options.Execute();
 
-        if (compileProject)
-        {
-            CompileProject(Environment.CurrentDirectory);
+        if (options is not ScriptExecutor se)
             return;
-        }
 
         DefaultPackageResolver = GetPackageResolver();
         CarpInterpreter.Instance = new(DefaultPackageResolver);
-        ForceThrow = forceThrow;
+        ForceThrow = se.ForceThrow;
+        
+        bool scriptPathGiven = se.SoftScriptPath.Length > 0;
 
-        Flags.Instance.LoadedFromFile = !line && arg.Length > 0;
-        Flags.Instance.ExecutionContext = arg;
+        Flags.Instance.LoadedFromFile = !se.Line && scriptPathGiven;
+        Flags.Instance.ExecutionContext = se.SoftScriptPath;
 
-        if (debug)
+        if (se.Debug)
+            RunDebugger();
+
+        if (se.Line)
         {
-            Flags.Instance.Debug = true;
-            Debugger = new();
-            Debugger.StartAsync();
-            CarpInterpreter.Instance.Paused = true;
-            Console.WriteLine("Debugger started");
-            while (!Debugger.Attached) Thread.Sleep(50);
-            Console.WriteLine("Debugger continuing");
-        }
-
-        if (line)
-        {
-            if (arg.Length == 0)
+            if (!scriptPathGiven)
             {
                 PrintError("No code given");
                 return;
             }
 
-            CarpObject response = RunString(CarpInterpreter.Instance, arg);
+            CarpObject response = RunString(CarpInterpreter.Instance, se.SoftScriptPath);
             if (response != CarpVoid.Instance)
                 WriteOutput(response, false);
         }
-        else if (arg.Length > 0)
+        else if (scriptPathGiven)
         {
-            CarpObject response = RunFile(CarpInterpreter.Instance, arg);
-            if (response != CarpVoid.Instance && verbose)
+            CarpObject response = RunFile(CarpInterpreter.Instance, se.SoftScriptPath);
+            if (response != CarpVoid.Instance && se.Verbose)
                 WriteOutput(response, false);
         }
 
-        if (interactive || args.Length == 0)
+        if (se.Interactive || !scriptPathGiven)
             Repl();
+    }
+
+    private static void RunDebugger()
+    {
+        Flags.Instance.Debug = true;
+        Debugger = new();
+        Debugger.StartAsync();
+        CarpInterpreter.Instance.Paused = true;
+        Console.WriteLine("Debugger started");
+        while (!Debugger.Attached)
+            Thread.Sleep(50);
+        Console.WriteLine("Debugger continuing");
     }
 
     private static CarpObject RunFile(CarpInterpreter instance, string path)
     {
+        bool isProject = !File.Exists(path);
         bool isArchive = Path.GetExtension(path) == ".caaarp";
+        
+        if (isProject)
+        {
+            string file = ProjectBuilder.BuildProject(path);
+            return RunFile(instance, file);
+        }
+        
         if (isArchive)
         {
             byte[] data = File.ReadAllBytes(path);
@@ -167,45 +154,6 @@ internal class Program
         return (projConfig, RunString(instance, mainCode));
     }
 
-    private static void ConvertScriptToProject(string script)
-    {
-        // make a dir with the file name, change the scripts name to main.carp and put inside the dir
-        string dir = Path.GetFileNameWithoutExtension(script);
-        Directory.CreateDirectory(dir);
-        File.Move(script, Path.Combine(dir, "main.carp"));
-
-        // create a new project file (.carpproj) with the same name as the dir
-        string proj = Path.Combine(dir, ".carpproj");
-        File.WriteAllText(proj, new ProjectConfiguration
-        {
-            Name = dir,
-            Author = Environment.UserName,
-            Version = "0.1.0",
-            Icon = null,
-        }.Serialize());
-    }
-
-    private static void CompileProject(string projectFolder)
-    {
-        string projFilePath = Path.Combine(projectFolder, ".carpproj");
-        if (!File.Exists(projFilePath))
-            throw new PackedPackage.PackageInvalid(".carproj file is missing");
-
-        ProjectConfiguration conf = ProjectConfiguration.Deserialize(File.ReadAllText(projFilePath));
-
-        string exportDir = Path.Join(projectFolder, "export");
-        Directory.CreateDirectory(exportDir);
-        
-        // zip the project folder, but exclude the /export folder
-        string zip = Path.Join(exportDir, $"{conf.Name}_{conf.Version}") + ".caaarp";
-        
-        if (File.Exists(zip))
-            File.Delete(zip);
-        
-        using ZipArchive archive = ZipFile.Open(zip, ZipArchiveMode.Create);
-
-        archive.ZipDirectory(projectFolder, new List<Regex> { new("export/") });
-    }
 
     private static ModularPackageResolver GetPackageResolver()
     {
@@ -276,7 +224,7 @@ internal class Program
             WriteColor(obj.Repr(), ConsoleColor.Gray);
     }
 
-    private static void WriteColor(string text, ConsoleColor color)
+    public static void WriteColor(string text, ConsoleColor color)
     {
         Console.ForegroundColor = color;
         Console.WriteLine(text);
