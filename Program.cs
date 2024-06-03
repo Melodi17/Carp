@@ -27,6 +27,9 @@ internal class Program
         bool help = args.Contains("-h");
         bool forceThrow = args.Contains("-f");
 
+        bool makeProject = args.Contains("-p");
+        bool compileProject = args.Contains("-P");
+
         // args without flags
         args = args.Where(x => !x.StartsWith("-") && x.Length != 2).ToArray();
 
@@ -45,6 +48,18 @@ internal class Program
             Console.WriteLine("  -f: Force the internal errors to trigger the native stacktrace.");
             Console.WriteLine(
                 "File: The path to the Carp script to execute. If no file is provided, Carp will start in REPL mode.");
+            return;
+        }
+
+        if (makeProject)
+        {
+            ConvertScriptToProject(arg);
+            return;
+        }
+
+        if (compileProject)
+        {
+            CompileProject(Environment.CurrentDirectory);
             return;
         }
 
@@ -97,23 +112,25 @@ internal class Program
             byte[] data = File.ReadAllBytes(path);
             return RunProject(instance, data).result;
         }
+
         string code = File.ReadAllText(path, Encoding.UTF8);
-        SetDefaultResolver(instance.PackageResolver, new FileSystemInternalPackageResolver(Path.GetDirectoryName(path)!));
+        SetDefaultResolver(instance.PackageResolver,
+            new FileSystemInternalPackageResolver(Path.GetDirectoryName(path)!));
         return RunString(instance, code);
     }
-    
+
     private static (ProjectConfiguration config, CarpObject result) RunProject(CarpInterpreter instance, byte[] data)
     {
         using MemoryStream stream = new(data);
         using ZipArchive archive = new(stream);
-        
+
         // get project file
         ZipArchiveEntry? projEntry = archive.GetEntry(".carpproj");
         if (projEntry == null)
             throw new PackedPackage.PackageInvalid("No .carpproj file found in package");
-        
+
         ProjectConfiguration projConfig = ProjectConfiguration.Deserialize(projEntry.GetFileDataString());
-        
+
         // look for /resources dir
         ZipArchiveEntry? resourcesEntry = archive.GetEntry("resources");
         // if it exists, enumerate all files and add them to the interpreter
@@ -128,7 +145,7 @@ internal class Program
                     name = Path.GetFileNameWithoutExtension(name)
                         .Replace("/", ".")
                         .Replace("\\", ".");
-                    
+
                     if (ext == ".txt")
                         instance.Resources[name] = new CarpString(entry.GetFileDataString());
                     else
@@ -136,17 +153,17 @@ internal class Program
                 }
             }
         }
-        
+
         ZipInternalPackageResolver resolver = new(archive);
         SetDefaultResolver(instance.PackageResolver, resolver);
-        
+
         // main file will be main.carp
         ZipArchiveEntry? mainEntry = archive.GetEntry("main.carp");
         if (mainEntry == null)
             throw new PackedPackage.PackageInvalid("No main.carp file found in package");
-        
+
         string mainCode = mainEntry.GetFileDataString();
-        
+
         return (projConfig, RunString(instance, mainCode));
     }
 
@@ -170,12 +187,24 @@ internal class Program
 
     private static void CompileProject(string projectFolder)
     {
+        string projFilePath = Path.Combine(projectFolder, ".carpproj");
+        if (!File.Exists(projFilePath))
+            throw new PackedPackage.PackageInvalid(".carproj file is missing");
+
+        ProjectConfiguration conf = ProjectConfiguration.Deserialize(File.ReadAllText(projFilePath));
+
+        string exportDir = Path.Join(projectFolder, "export");
+        Directory.CreateDirectory(exportDir);
+        
         // zip the project folder, but exclude the /export folder
-        string zip = Path.ChangeExtension(projectFolder, ".caaarp");
+        string zip = Path.Join(exportDir, $"{conf.Name}_{conf.Version}") + ".caaarp";
+        
+        if (File.Exists(zip))
+            File.Delete(zip);
+        
         using ZipArchive archive = ZipFile.Open(zip, ZipArchiveMode.Create);
 
-        archive.ZipDirectory(projectFolder, new List<Regex> { new("/export") });
-        archive.Dispose();
+        archive.ZipDirectory(projectFolder, new List<Regex> { new("export/") });
     }
 
     private static ModularPackageResolver GetPackageResolver()
@@ -337,7 +366,7 @@ internal class Program
 
         return depths.Sum();
     }
-    
+
     private static void SetDefaultResolver(IPackageResolver resolver, IPackageResolver def)
     {
         if (resolver is ModularPackageResolver mpr)

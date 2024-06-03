@@ -9,3 +9,5 @@ str getprop(str source, str prop) -> Parse.Regex.match('"' + prop + '": ?"(.*?)"
 
 str hydrogen = getelement('h')
 str phase = getprop(hydrogen, 'phase')
+
+IO.println(phase)

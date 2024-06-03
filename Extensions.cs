@@ -68,17 +68,35 @@ public static class Extensions
         if (!Directory.Exists(srcDir)) throw new Exception("source directory for zipping doesn't exit");
         var dir = new DirectoryInfo(srcDir);
 
-        dir.GetFiles().ToList().ForEach((file) => {
-            if (excludeFileList == null || excludeFileList.Where(rule => rule.IsMatch(file.Name)).Count() == 0)
+        dir.GetFiles().ToList().ForEach((file) =>
+        {
+            try
             {
-                zipArchive.CreateEntryFromFile(file.FullName, string.IsNullOrEmpty(rootDir) ? file.Name : $@"{rootDir}\{file.Name}");
-            }});
+                if (excludeFileList == null || excludeFileList.Where(rule => rule.IsMatch(file.Name)).Count() == 0)
+                {
+                    zipArchive.CreateEntryFromFile(file.FullName,
+                        string.IsNullOrEmpty(rootDir) ? file.Name : $@"{rootDir}\{file.Name}");
+                }
+            }
+            catch
+            {
+            }
+        });
 
-        dir.GetDirectories().ToList().ForEach((directory) => {
-            if (excludeDirList == null || excludeDirList.Where(rule => rule.IsMatch(directory.Name)).Count() == 0)
+        dir.GetDirectories().ToList().ForEach((directory) =>
+        {
+            try
             {
-                zipArchive.ZipDirectory(directory.FullName, excludeFileList, excludeDirList, string.IsNullOrEmpty(rootDir) ? $@"{directory.Name}" : $@"{rootDir}\{directory.Name}");
-            }});
+                if (excludeDirList == null || excludeDirList.Where(rule => rule.IsMatch(directory.Name)).Count() == 0)
+                {
+                    zipArchive.ZipDirectory(directory.FullName, excludeFileList, excludeDirList,
+                        string.IsNullOrEmpty(rootDir) ? $@"{directory.Name}" : $@"{rootDir}\{directory.Name}");
+                }
+            }
+            catch
+            {
+            }
+        });
     }
     
     public static string GetFileDataString(this ZipArchiveEntry entry)
