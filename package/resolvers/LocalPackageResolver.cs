@@ -19,7 +19,7 @@ public class LocalPackageResolver : IPackageResolver
         Directory.CreateDirectory(LocalPackagesPath);
     }
     
-    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version)
     {
         throw new NotImplementedException();
     }

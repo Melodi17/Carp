@@ -15,7 +15,7 @@ public class ModularPackageResolver : IPackageResolver
         this._defaultResolver = resolver;
     }
     
-    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version)
     {
         foreach ((string key, IPackageResolver value) in this._children)
         {
@@ -24,7 +24,7 @@ public class ModularPackageResolver : IPackageResolver
         }
 
         if (this._defaultResolver != null)
-            return this._defaultResolver.GetPackageEx(interpreter, fullPath, path);
+            return this._defaultResolver.GetPackageEx(interpreter, fullPath, path, version);
 
         throw new CarpError.PackageNotFound(fullPath, version);
     }

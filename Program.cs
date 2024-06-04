@@ -39,7 +39,7 @@ internal class Program
         DefaultPackageResolver = GetPackageResolver();
         CarpInterpreter.Instance = new(DefaultPackageResolver);
         ForceThrow = se.ForceThrow;
-        
+
         bool scriptPathGiven = se.SoftScriptPath.Length > 0;
 
         Flags.Instance.LoadedFromFile = !se.Line && scriptPathGiven;
@@ -55,6 +55,9 @@ internal class Program
                 PrintError("No code given");
                 return;
             }
+
+            SetDefaultResolver(CarpInterpreter.Instance.PackageResolver,
+                new FileSystemInternalPackageResolver(Environment.CurrentDirectory));
 
             CarpObject response = RunString(CarpInterpreter.Instance, se.SoftScriptPath);
             if (response != CarpVoid.Instance)
@@ -87,13 +90,13 @@ internal class Program
     {
         bool isProject = !File.Exists(path);
         bool isArchive = Path.GetExtension(path) == ".caaarp";
-        
+
         if (isProject)
         {
             string file = ProjectBuilder.BuildProject(path);
             return RunFile(instance, file);
         }
-        
+
         if (isArchive)
         {
             byte[] data = File.ReadAllBytes(path);
@@ -119,27 +122,27 @@ internal class Program
         ProjectConfiguration projConfig = ProjectConfiguration.Deserialize(projEntry.GetFileDataString());
 
         // look for /resources dir
-        ZipArchiveEntry? resourcesEntry = archive.GetEntry("resources");
+        // ZipArchiveEntry? resourcesEntry = archive.GetEntry("resources");
         // if it exists, enumerate all files and add them to the interpreter
-        if (resourcesEntry != null)
+        // if (resourcesEntry != null)
+        // {
+        foreach (ZipArchiveEntry entry in archive.Entries)
         {
-            foreach (ZipArchiveEntry entry in archive.Entries)
+            if (entry.FullName.StartsWith("resources\\") || entry.FullName.StartsWith("resources/"))
             {
-                if (entry.FullName.StartsWith("resources/"))
-                {
-                    string name = entry.FullName.Substring("resources/".Length);
-                    string ext = Path.GetExtension(name);
-                    name = Path.GetFileNameWithoutExtension(name)
-                        .Replace("/", ".")
-                        .Replace("\\", ".");
+                string name = entry.FullName.Substring("resources/".Length);
+                string ext = Path.GetExtension(name);
+                name = Path.GetFileNameWithoutExtension(name)
+                    .Replace("/", ".")
+                    .Replace("\\", ".");
 
-                    if (ext == ".txt")
-                        instance.Resources[name] = new CarpString(entry.GetFileDataString());
-                    else
-                        throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
-                }
+                if (ext == ".txt")
+                    instance.Resources[name] = new CarpString(entry.GetFileDataString());
+                else
+                    throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
             }
         }
+        // }
 
         ZipInternalPackageResolver resolver = new(archive);
         SetDefaultResolver(instance.PackageResolver, resolver);
@@ -168,6 +171,7 @@ internal class Program
     {
         SetDefaultResolver(CarpInterpreter.Instance.PackageResolver,
             new FileSystemInternalPackageResolver(Environment.CurrentDirectory));
+
         while (true)
         {
             string msg = ReadLineAdvanced(" : ");
@@ -241,7 +245,7 @@ internal class Program
         {
             Preprocessor preprocessor = new(s);
             string processed = preprocessor.Process();
-            
+
             AntlrInputStream inputStream = new(processed);
             CarpGrammarLexer lexer = new(inputStream);
             lexer.RemoveErrorListeners();

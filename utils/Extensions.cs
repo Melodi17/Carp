@@ -63,42 +63,6 @@ public static class Extensions
         return methodInfo.CreateDelegate(delegateType, target);
     }
     
-    public static void ZipDirectory(this ZipArchive zipArchive, string srcDir, IEnumerable<Regex>  excludeFileList = null, IEnumerable<Regex> excludeDirList = null , string rootDir = "")
-    {
-        if (!Directory.Exists(srcDir)) throw new Exception("source directory for zipping doesn't exit");
-        var dir = new DirectoryInfo(srcDir);
-
-        dir.GetFiles().ToList().ForEach((file) =>
-        {
-            try
-            {
-                if (excludeFileList == null || excludeFileList.Where(rule => rule.IsMatch(file.Name)).Count() == 0)
-                {
-                    zipArchive.CreateEntryFromFile(file.FullName,
-                        string.IsNullOrEmpty(rootDir) ? file.Name : $@"{rootDir}\{file.Name}");
-                }
-            }
-            catch
-            {
-            }
-        });
-
-        dir.GetDirectories().ToList().ForEach((directory) =>
-        {
-            try
-            {
-                if (excludeDirList == null || excludeDirList.Where(rule => rule.IsMatch(directory.Name)).Count() == 0)
-                {
-                    zipArchive.ZipDirectory(directory.FullName, excludeFileList, excludeDirList,
-                        string.IsNullOrEmpty(rootDir) ? $@"{directory.Name}" : $@"{rootDir}\{directory.Name}");
-                }
-            }
-            catch
-            {
-            }
-        });
-    }
-    
     public static string GetFileDataString(this ZipArchiveEntry entry)
     {
         using StreamReader reader = new(entry.Open());

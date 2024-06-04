@@ -10,16 +10,16 @@ public class ProjectBuilder : IExecutableObject
 {
     [Value(0, MetaName = "Path", HelpText = "The path to the project to build.")]
     public string? ProjectPath { get; set; }
-    
+
     private string GetProjectFolder()
     {
         return this.ProjectPath ?? Directory.GetCurrentDirectory();
     }
-    
+
     public void Execute()
     {
         string zip = BuildProject(this.GetProjectFolder());
-        
+
         Program.WriteColor("Project built successfully", ConsoleColor.Green);
         Program.WriteColor($"Exported to {zip}", ConsoleColor.DarkCyan);
     }
@@ -43,8 +43,41 @@ public class ProjectBuilder : IExecutableObject
 
         using ZipArchive archive = ZipFile.Open(zip, ZipArchiveMode.Create);
 
-        archive.ZipDirectory(projectFolder, new List<Regex> { new("export/") });
-        
+        ZipDirectory(archive, projectFolder);
+
         return zip;
+    }
+
+    public static void ZipDirectory(ZipArchive zipArchive, string srcDir, string rootDir = "")
+    {
+        if (!Directory.Exists(srcDir)) throw new Exception("source directory for zipping doesn't exit");
+        var dir = new DirectoryInfo(srcDir);
+
+        dir.GetFiles().ToList().ForEach((file) =>
+        {
+            try
+            {
+                zipArchive.CreateEntryFromFile(file.FullName,
+                    string.IsNullOrEmpty(rootDir) ? file.Name : $@"{rootDir}\{file.Name}");
+            }
+            catch
+            {
+            }
+        });
+
+        dir.GetDirectories().ToList().ForEach((directory) =>
+        {
+            try
+            {
+                if (directory.Name == "export" && rootDir == "")
+                    return;
+
+                ZipDirectory(zipArchive, directory.FullName,
+                    string.IsNullOrEmpty(rootDir) ? $@"{directory.Name}" : $@"{rootDir}\{directory.Name}");
+            }
+            catch
+            {
+            }
+        });
     }
 }

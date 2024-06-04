@@ -12,7 +12,7 @@ public class GithubPackageResolver : IPackageResolver
     public static string BaseUrl = "https://api.github.com";
     public static string GetReleaseUrl = $"{BaseUrl}/repos/{{owner}}/{{repo}}/releases/tags/{{tag}}";
     public static string GetLatestReleaseUrl = $"{BaseUrl}/repos/{{owner}}/{{repo}}/releases/latest";
-    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version)
     {
         string username = path[0];
         string repo = string.Join(".", path[1]);

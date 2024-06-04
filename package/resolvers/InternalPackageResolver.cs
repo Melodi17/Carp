@@ -6,7 +6,7 @@ namespace Carp.package.resolvers;
 
 public abstract class InternalPackageResolver : IPackageResolver
 {
-    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version)
     {
         (string name, byte[] content) = FetchPackage(path, version, out bool isPackage);
 

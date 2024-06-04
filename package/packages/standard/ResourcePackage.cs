@@ -2,12 +2,14 @@
 
 namespace Carp.package.packages.standard;
 
-public class ResourcePackage(IPackageResolver source) : EmbeddedPackage(source, "Resource")
+public class ResourcePackage(IPackageResolver source, Dictionary<string, CarpObject> resourceCollection) : EmbeddedPackage(source, "Resource")
 {
+    private readonly Dictionary<string, CarpObject> _resourceCollection = resourceCollection;
+    
     [PackageMember]
-    public CarpObject GetResource(CarpString name)
+    public CarpObject Load(CarpString name)
     {
-        if (this.Interpreter.Resources.TryGetValue(name.Native, out CarpObject? resource))
+        if (this._resourceCollection.TryGetValue(name.Native, out CarpObject? resource))
             return resource;
         
         throw new ResourceNotFound(name);

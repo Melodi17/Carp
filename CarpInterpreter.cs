@@ -79,7 +79,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         CarpExternalFunc importFunc = new(CarpVoid.Type, (CarpString name, CarpString ver) =>
         {
-            string[] parts = name.Native.Split(".")
+            string[] parts = name.Native.Trim('\r').Split(".")
                 .Select(x => x.Replace('/', '.'))
                 .ToArray();
 

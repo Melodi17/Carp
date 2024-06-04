@@ -9,7 +9,7 @@ namespace Carp.package.resolvers;
 
 public class StandardPackageResolver : IPackageResolver
 {
-    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
+    public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version)
     {
         string j = string.Join(".", path);
         return j switch
@@ -19,6 +19,7 @@ public class StandardPackageResolver : IPackageResolver
             "math" => new MathPackage(this),
             "net" => new NetPackage(this),
             "parse" => new ParsePackage(this),
+            "resource" => new ResourcePackage(this, interpreter.Resources),
             _ => throw new CarpError.PackageNotFound(fullPath, version),
         };
     }
