@@ -76,6 +76,20 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             => obj.GetCarpType());
         
         this.GlobalScope.Define(Signature.OfMethod("t", tFunc), CarpFunc.Type, tFunc);
+
+        CarpExternalFunc importFunc = new(CarpVoid.Type, (CarpString name, CarpString ver) =>
+        {
+            string[] parts = name.Native.Split(".")
+                .Select(x => x.Replace('/', '.'))
+                .ToArray();
+
+            string verString = ver.Native;
+            
+            Package pkg = this.PackageResolver.GetPackageEx(this, parts, parts, verString);
+            pkg.Include(this);
+        });
+        
+        this.GlobalScope.Define(Signature.OfMethod("import", importFunc), CarpFunc.Type, importFunc);
     }
     
     public void Step() => this._step = true;
@@ -160,22 +174,22 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         return obj.CastEx(type) as T;
     }
 
-    public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
-    {
-        string path = string.Join("", context._loc.Select(x => x.Text));
-        string[] parts = path!.Split(".")
-            .Select(x => x.Replace('/', '.'))
-            .ToArray();
-
-        string ver = string.Join("", context._ver?.Select(x => x.Text) ?? Array.Empty<string>());
-        if (string.IsNullOrEmpty(ver))
-            ver = "latest";
-
-        Package pkg = this.PackageResolver.GetPackageEx(this, parts, parts, ver);
-        pkg.Include(this);
-        
-        return null;
-    }
+    // public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
+    // {
+    //     string path = string.Join("", context._loc.Select(x => x.Text));
+    //     string[] parts = path!.Split(".")
+    //         .Select(x => x.Replace('/', '.'))
+    //         .ToArray();
+    //
+    //     string ver = string.Join("", context?._ver.Select(x => x.Text) ?? Array.Empty<string>());
+    //     if (string.IsNullOrEmpty(ver))
+    //         ver = "latest";
+    //
+    //     Package pkg = this.PackageResolver.GetPackageEx(this, parts, parts, ver);
+    //     pkg.Include(this);
+    //     
+    //     return null;
+    // }
 
     public override object VisitProgram(CarpGrammarParser.ProgramContext context)
     {

@@ -30,7 +30,9 @@ public class PackedPackage : Package
         //
         // Program.(interpreter, mainCode);
         // return new(this.Name, interpreter.GlobalScope);
-        throw new NotImplementedException();
+
+        Program.RunProject(interpreter, this.Data);
+        return new(this.Name, interpreter.GlobalScope);
     }
     
     public class PackageInvalid(string message) : CarpError(message);

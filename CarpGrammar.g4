@@ -75,7 +75,7 @@ YIELD : 'yield' ;
 CLASS : 'class' ;
 STRUCT : 'struct' ;
 LET : 'let' ;
-IMPORT : 'import' ;
+//IMPORT : 'import' ;
 
 ID : [a-zA-Z][a-zA-Z0-9_]* ;
 //STRING : '\'' (~['\\])* '\'' ;
@@ -100,8 +100,8 @@ generic_block
     ;
 
 statement
-    : IMPORT loc+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT)* (':' ver+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT | COLON))? ';' # importStatement
-    | definition_with_attr # definitionStatement
+//    : IMPORT loc+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT)* (':' ver+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT | COLON)+)? ';' # importStatement
+    : definition_with_attr # definitionStatement
     | expression # expressionStatement
     | flow_control # flowControlStatement
     ;

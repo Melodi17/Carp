@@ -283,11 +283,21 @@ public class Preprocessor
             if (token.Type == PrimitiveTokenType.Identifier
                 && token.Value == "import")
             {
-                sb.Append("import");
-                // do whatever
-                sb.Append(UntilNewlineStr());
-                // allow main parser to differentiate
-                sb.Append(";");
+                // read space
+                string junk = ReadJunk();
+                if (junk.Length == 0)
+                {
+                    sb.Append("import");
+                    continue;
+                }
+                
+                string[] parts = UntilNewlineStr().Split(':');
+
+                string name = parts[0];
+                string ver = parts.Length > 1 ? parts[1] : "latest";
+
+                sb.Append($"import('{name}', '{ver}')");
+                
                 continue;
             }
             if (token.Type == PrimitiveTokenType.Operator

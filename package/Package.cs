@@ -39,7 +39,12 @@ public abstract class Package : CarpObject
     {
         CarpInterpreter subInterpreter = new(this.Utilized);
         CarpStatic enclosure = this.Export(subInterpreter);
-        interpreter.GlobalScope.Define(Signature.OfVariable(this.Name), CarpStatic.Type, enclosure);
+        Signature sig = Signature.OfVariable(this.Name);
+
+        if (interpreter.GlobalScope.Has(sig))
+            throw new PackageAlreadyPresent(this.Name);
+        
+        interpreter.GlobalScope.Define(sig, CarpStatic.Type, enclosure);
     }
     
     /// <summary>
@@ -53,3 +58,5 @@ public abstract class Package : CarpObject
     
     // TODO: Rewrite this to handle asset loading
 }
+
+public class PackageAlreadyPresent(string name) : CarpError($"Package {name}, or a identical-namespaced package is already present.");

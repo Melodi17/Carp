@@ -23,7 +23,7 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        Parser parser = CommandLine.Parser.Default;
+        Parser parser = Parser.Default;
         IExecutableObject? options = null;
         parser.ParseArguments<ScriptExecutor, ProjectBuilder, ProjectCreator>(args)
             .WithParsed<IExecutableObject>(o => options = o);
@@ -106,7 +106,7 @@ internal class Program
         return RunString(instance, code);
     }
 
-    private static (ProjectConfiguration config, CarpObject result) RunProject(CarpInterpreter instance, byte[] data)
+    public static (ProjectConfiguration config, CarpObject result) RunProject(CarpInterpreter instance, byte[] data)
     {
         using MemoryStream stream = new(data);
         using ZipArchive archive = new(stream);
@@ -241,7 +241,7 @@ internal class Program
         {
             Preprocessor preprocessor = new(s);
             string processed = preprocessor.Process();
-
+            
             AntlrInputStream inputStream = new(processed);
             CarpGrammarLexer lexer = new(inputStream);
             lexer.RemoveErrorListeners();
