@@ -20,6 +20,7 @@ public class StandardPackageResolver : IPackageResolver
             "net" => new NetPackage(this),
             "parse" => new ParsePackage(this),
             "resource" => new ResourcePackage(this, interpreter.Resources),
+            "system" => new SystemPackage(this),
             _ => throw new CarpError.PackageNotFound(fullPath, version),
         };
     }
