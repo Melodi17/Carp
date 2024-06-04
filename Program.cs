@@ -319,7 +319,7 @@ internal class Program
     {
         if (resolver is ModularPackageResolver mpr)
             mpr.SetDefaultResolver(def);
-
-        //throw new("Resolver is not a ModularPackageResolver");
+        else
+            throw new("Resolver is not a ModularPackageResolver");
     }
 }

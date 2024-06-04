@@ -19,8 +19,8 @@ public static class PackageResolverExtensions
         {
             return Path.GetExtension(cachePath) switch
             {
-                ".carp" => new SourcePackage(resolver, resolver, fullPath[^1], File.ReadAllText(cachePath)),
-                ".caaarp" => new PackedPackage(resolver, resolver, fullPath[^1], File.ReadAllBytes(cachePath)),
+                ".carp" => new SourcePackage(resolver, interpreter.PackageResolver, fullPath[^1], File.ReadAllText(cachePath)),
+                ".caaarp" => new PackedPackage(resolver, interpreter.PackageResolver, fullPath[^1], File.ReadAllBytes(cachePath)),
                 _ => throw new CarpError.PackageNotFound(fullPath, version)
             };
         }

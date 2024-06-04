@@ -26,8 +26,8 @@ public class GithubPackageResolver : IPackageResolver
         
         // now caaarp and carp files are handled differently
         return isArchive
-            ? new PackedPackage(this, this, repo, downloadedPackage)
-            : new SourcePackage(this, this, repo, Encoding.UTF8.GetString(downloadedPackage));
+            ? new PackedPackage(this, interpreter.PackageResolver, repo, downloadedPackage)
+            : new SourcePackage(this, interpreter.PackageResolver, repo, Encoding.UTF8.GetString(downloadedPackage));
     }
 
     private static byte[] DownloadPackage(HttpClient client, string[] fullPath, string version, string username,

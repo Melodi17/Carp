@@ -8,14 +8,14 @@ public abstract class InternalPackageResolver : IPackageResolver
 {
     public Package GetPackage(CarpInterpreter interpreter, string[] fullPath, string[] path, string version = "latest")
     {
-        (string name, byte[] content) = FetchPackage(path, version, out bool isArchive);
+        (string name, byte[] content) = FetchPackage(path, version, out bool isPackage);
 
-        return isArchive
+        return isPackage
             ? new PackedPackage(this, interpreter.PackageResolver, name, content)
             : new SourcePackage(this, interpreter.PackageResolver, name, Encoding.UTF8.GetString(content));
     }
 
-    public abstract (string name, byte[] content) FetchPackage(string[] path, string version, out bool isPackage);
+    protected abstract (string name, byte[] content) FetchPackage(string[] path, string version, out bool isPackage);
 }
 
 public class FileSystemInternalPackageResolver : InternalPackageResolver
@@ -27,7 +27,7 @@ public class FileSystemInternalPackageResolver : InternalPackageResolver
 
     public string BasePath { get; }
 
-    public override (string, byte[]) FetchPackage(string[] path, string version, out bool isPackage)
+    protected override (string, byte[]) FetchPackage(string[] path, string version, out bool isPackage)
     {
         string packagePath = Path.Join(new[] { this.BasePath }.Concat(path).ToArray());
         packagePath += version == "latest" ? "" : $"_{version}";
@@ -57,9 +57,9 @@ public class ZipInternalPackageResolver : InternalPackageResolver
 
     public ZipArchive Archive { get; }
 
-    public override (string name, byte[] content) FetchPackage(string[] path, string version, out bool isPackage)
+    protected override (string name, byte[] content) FetchPackage(string[] path, string version, out bool isPackage)
     {
-        string packagePath = Path.Join(path) + version == "latest" ? "" : $"_{version}";
+        string packagePath = Path.Join(path) + (version == "latest" ? "" : $"_{version}");
 
         ZipArchiveEntry? entry = this.Archive.GetEntry(packagePath + ".carp");
         if (entry != null)
