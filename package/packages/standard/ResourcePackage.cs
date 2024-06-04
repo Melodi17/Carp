@@ -14,6 +14,12 @@ public class ResourcePackage(IPackageResolver source, Dictionary<string, CarpObj
         
         throw new ResourceNotFound(name);
     }
+    
+    [PackageMember]
+    public CarpObject List()
+    {
+        return new CarpCollection(CarpString.Type, this._resourceCollection.Keys.Select(x => new CarpString(x)).ToArray());
+    }
 
     public class ResourceNotFound(CarpString resource) : CarpError($"Resource '{resource.Native}' not found in package");
 }

@@ -735,7 +735,18 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitCastExpression(CarpGrammarParser.CastExpressionContext context)
     {
-        return base.VisitCastExpression(context);
+        CarpObject obj = this.GetObject(context, context.obj);
+        CarpType type = this.GetObject<CarpType>(context, context.type());
+
+        return obj.CastEx(type);
+    }
+
+    public override object VisitCompareTypeExpression(CarpGrammarParser.CompareTypeExpressionContext context)
+    {
+        CarpObject obj = this.GetObject(context, context.obj);
+        CarpType type = this.GetObject<CarpType>(context, context.type());
+
+        return CarpBool.Of(obj.GetCarpType().Extends(type));
     }
 
     public override object VisitParenthesizedExpression(CarpGrammarParser.ParenthesizedExpressionContext context)

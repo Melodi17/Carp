@@ -1,7 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Dynamic;
+using System.Text.RegularExpressions;
 using Carp.interpreter;
 using Carp.objects.types;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Carp.package.packages.standard;
 
@@ -9,25 +11,64 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 {
     [PackageMember("Regex.MatchResult")]
     public CarpType MatchType = CarpMatchResult.Type;
-    // [PackageMember("ds.json.")]
-    // public CarpObject LoadJson(CarpString json)
-    // {
-    //     throw new NotImplementedException();
-    // }
+    
+    [PackageMember("Json.")]
+    public CarpObject LoadJson(CarpString json)
+    {
+        string jsonStr = json.Native;
+        dynamic? obj = JsonConvert.DeserializeObject(jsonStr);
+
+        return LayerToCarp(obj);
+    }
+
+    private CarpObject LayerToCarp(dynamic? d)
+    {
+        if (d is null) return CarpNull.Instance;
+        if (d is bool b) return CarpBool.Of(b);
+        
+        if (d is string) return new CarpString(d);
+        
+        if (d is int i) return new CarpInt(i);
+        if (d is long i64) return new CarpInt(i64);
+        if (d is double doub) return new CarpInt(doub);
+        
+        if (d is JArray arr)
+        {
+            List<CarpObject> result = new();
+            foreach (dynamic item in arr)
+                result.Add(LayerToCarp(item));
+
+            return new CarpCollection(CarpObject.Type, result.ToArray());
+        }
+        
+        if (d is JObject obj)
+        {
+            Dictionary<CarpObject, CarpObject> result = new();
+            foreach ((string key, JToken? value) in obj)
+                result.Add(new CarpString(key), this.LayerToCarp(value));
+
+            return new CarpMap(CarpString.Type, CarpObject.Type, result);
+        }
+
+        if (d is JValue jv)
+            return this.LayerToCarp(jv.Value);
+        
+        throw new("Could not deserialize JSON object into Carp object");
+    }
     //
-    // [PackageMember("ds.json.")]
+    // [PackageMember("Json.")]
     // public CarpObject LoadJsonStructure(CarpString json, CarpType structure)
     // {
     //     throw new NotImplementedException();
     // }
     //
-    // [PackageMember("ds.json.")]
+    // [PackageMember("Json.")]
     // public CarpObject StoreJson(CarpObject ds)
     // {
     //     throw new NotImplementedException();
     // }
     //
-    // [PackageMember("ds.json.")]
+    // [PackageMember("Json.")]
     // public CarpObject StoreJsonStructure(CarpObject ds)
     // {
     //     throw new NotImplementedException();
@@ -42,7 +83,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         Match m = Regex.Match(textStr, patternStr);
         if (!m.Success) return new();
         
-        var groups = new List<CarpMatchResult>();
+        List<CarpMatchResult> groups = new();
         foreach (Group g in m.Groups)
         {
             groups.Add(new(g.Value, g.Index, g.Length, new()));
@@ -58,10 +99,10 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         string textStr = text.Native;
 
         MatchCollection matches = Regex.Matches(textStr, patternStr);
-        var result = new List<CarpMatchResult>();
+        List<CarpMatchResult> result = new();
         foreach (Match m in matches)
         {
-            var groups = new List<CarpMatchResult>();
+            List<CarpMatchResult> groups = new();
             foreach (Group g in m.Groups)
             {
                 groups.Add(new(g.Value, g.Index, g.Length, new()));

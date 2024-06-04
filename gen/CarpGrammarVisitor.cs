@@ -370,6 +370,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitEndRangeExpression([NotNull] CarpGrammarParser.EndRangeExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>compareTypeExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCompareTypeExpression([NotNull] CarpGrammarParser.CompareTypeExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="CarpGrammarParser.expression_list"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

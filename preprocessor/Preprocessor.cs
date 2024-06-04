@@ -300,7 +300,12 @@ public class Preprocessor
                 
                 continue;
             }
-            if (token.Type == PrimitiveTokenType.Operator
+            else if (token.Type == PrimitiveTokenType.Operator && token.Value == "*" &&
+                     (!stream.HasNext || stream.Peek().Value == "\n"))
+            {
+                sb.Append("* ");
+            }
+            else if (token.Type == PrimitiveTokenType.Operator
                 && token.Value == "#")
             {
                 if (stream.HasNext && stream.Peek().Type == PrimitiveTokenType.Identifier)

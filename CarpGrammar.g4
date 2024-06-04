@@ -25,6 +25,7 @@ GREATER_THAN_EQUALS : '>=' ;
 PIPE : '|' ;
 AMPERSAND : '&' ;
 TILDE : '~' ;
+TILDE_TILDE : '~~' ;
 AT : '@' ;
 
 BANG : '!' ;
@@ -164,6 +165,7 @@ definition
 expression
     : constant # constantExpression
     | obj=expression '~' dest=type # castExpression
+    | obj=expression TILDE_TILDE dest=type # compareTypeExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects

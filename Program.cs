@@ -7,6 +7,7 @@ using Antlr4.Runtime;
 using Carp.objects.types;
 using Carp.package;
 using Carp.package.packages;
+using Carp.package.packages.standard;
 using Carp.package.resolvers;
 using Carp.preprocessor;
 using Carp.toolkit;
@@ -124,8 +125,6 @@ internal class Program
         // look for /resources dir
         // ZipArchiveEntry? resourcesEntry = archive.GetEntry("resources");
         // if it exists, enumerate all files and add them to the interpreter
-        // if (resourcesEntry != null)
-        // {
         foreach (ZipArchiveEntry entry in archive.Entries)
         {
             if (entry.FullName.StartsWith("resources\\") || entry.FullName.StartsWith("resources/"))
@@ -136,13 +135,14 @@ internal class Program
                     .Replace("/", ".")
                     .Replace("\\", ".");
 
-                if (ext == ".txt")
+                string[] textFormats = {".txt", ".json"};
+                
+                if (textFormats.Contains(ext))
                     instance.Resources[name] = new CarpString(entry.GetFileDataString());
                 else
                     throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
             }
         }
-        // }
 
         ZipInternalPackageResolver resolver = new(archive);
         SetDefaultResolver(instance.PackageResolver, resolver);
@@ -174,7 +174,7 @@ internal class Program
 
         while (true)
         {
-            string msg = ReadLineAdvanced(" : ");
+            string? msg = ReadLineAdvanced(" : ");
             if (msg is null or "exit")
                 break;
 
@@ -183,7 +183,9 @@ internal class Program
             while (predictionDepth > 0)
             {
                 string spacer = "   " + string.Concat(Enumerable.Repeat("  ", predictionDepth));
-                string next = ReadLineAdvanced(spacer);
+                string? next = ReadLineAdvanced(spacer);
+                if (next is null)
+                    break;
                 msg += "\n" + next;
                 predictionDepth = CalculateDepth(msg);
             }
@@ -194,7 +196,7 @@ internal class Program
         }
     }
 
-    private static string ReadLineAdvanced(string prompt)
+    private static string? ReadLineAdvanced(string prompt)
     {
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.Write(prompt);
@@ -204,7 +206,7 @@ internal class Program
 
         Console.ResetColor();
 
-        return line ?? "";
+        return line;
     }
 
     private static void WriteOutput(CarpObject obj, bool interactive)
@@ -214,6 +216,8 @@ internal class Program
             Console.WriteLine(obj.Repr());
             return;
         }
+        
+        WriteColor(" > ", ConsoleColor.DarkGray, end: "");
 
         if (obj is CarpString str)
             WriteColor(str.Repr(), ConsoleColor.Yellow);
@@ -228,10 +232,10 @@ internal class Program
             WriteColor(obj.Repr(), ConsoleColor.Gray);
     }
 
-    public static void WriteColor(string text, ConsoleColor color)
+    public static void WriteColor(string text, ConsoleColor color, string end = "\n")
     {
         Console.ForegroundColor = color;
-        Console.WriteLine(text);
+        Console.Write(text + end);
         Console.ResetColor();
     }
 

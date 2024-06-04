@@ -98,6 +98,8 @@ public class CarpMap : CarpObject
             "remove" => new CarpExternalFunc(CarpVoid.Type, this.Remove),
             "clear" => new CarpExternalFunc(CarpVoid.Type, this.Clear),
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
+            "keys" => new CarpCollection(this._keyType, this._value.Keys.ToArray()),
+            "values" => new CarpCollection(this._valueType, this._value.Values.ToArray()),
             _ => throw new CarpError.InvalidProperty(signature),
         };
     }
