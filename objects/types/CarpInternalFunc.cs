@@ -69,7 +69,17 @@ public class CarpInternalFunc : CarpFunc
             scope.Define(Signature.OfVariable(name), this._parameters.ElementAt(index).Value, obj);
         }
 
-        CarpObject returnVal = CarpInterpreter.Instance.GetObject(scope, this._block);
+        CarpObject returnVal = CarpVoid.Instance;
+        try
+        {
+            object? obj = CarpInterpreter.Instance.Visit(this._block, scope);
+            if (obj is CarpObject co)
+                returnVal = co;
+        }
+        catch (CarpFlowControlError.Return returnError)
+        {
+            returnVal = returnError.Value;
+        }
 
         if (this.ReturnType == CarpVoid.Type)
             return CarpVoid.Instance;

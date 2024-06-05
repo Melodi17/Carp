@@ -6,7 +6,6 @@ str* files = FS.listdir('.')
 IO.println(files)
 
 str nativenametocarpname(str name) {
-    IO.println(name)
     if name == 'CarpObject' -> return 'obj'
     if name == 'CarpString' -> return 'str'
     if name == 'CarpChar' -> return 'chr'
@@ -40,13 +39,14 @@ for str file : files {
         str newargs = ''
         for str arg : args.split(', ') {
             str* parts = arg.split(' ')
+            if parts.length < 2 -> continue
             newargs += nativenametocarpname(parts[0]) + ' ' + parts[1] + ', '
         }
 
-        if newargs.length > 0 -> newargs = newargs[..(newargs.length - 3)]
+        if newargs.length > 0 -> newargs = newargs[..(newargs.length - 2)]
 
         # # $1\n$2 $3($4)\n\n
-        str sub_doc = '# ' + summary + '\n' + type + ' ' + name + '(' + args + ')\n\n'
+        str sub_doc = '# ' + summary + '\n' + type + ' ' + name + '(' + newargs + ')\n\n'
         IO.println(sub_doc)
         doc += sub_doc
     }

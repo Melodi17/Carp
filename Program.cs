@@ -239,7 +239,7 @@ internal class Program
         Console.ResetColor();
     }
 
-    public static CarpObject RunString(CarpInterpreter interpreter, string s)
+    public static CarpObject? RunString(CarpInterpreter interpreter, string s)
     {
         if (s.Trim().Length == 0)
             return CarpVoid.Instance;
@@ -269,7 +269,7 @@ internal class Program
 
         try
         {
-            CarpObject obj = interpreter.Visit(program) as CarpObject;
+            CarpObject? obj = interpreter.Visit(program) as CarpObject;
             return obj;
         }
         catch (CarpError e)
