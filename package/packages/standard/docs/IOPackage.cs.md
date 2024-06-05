@@ -1,17 +1,41 @@
-# Writes a line to the output.
+```carp
 void println(obj str)
+```
+> Writes a line to the output.
 
-# Writes a string to the output, without a newline.
+---
+
+```carp
 void printw(obj str)
+```
+> Writes a string to the output, without a newline.
 
-# Reads a line from the input.
+---
+
+```carp
 str readln(obj str)
+```
+> Reads a line from the input.
 
-# Reads a character from the input.
+---
+
+```carp
 chr readw(bool hideKeyStrokes)
+```
+> Reads a character from the input.
 
-# Clears the output.
+---
+
+```carp
 void clear()
+```
+> Clears the output.
 
-# Move the cursor to the specified position.
+---
+
+```carp
 void move(int x, int y)
+```
+> Move the cursor to the specified position.
+
+---

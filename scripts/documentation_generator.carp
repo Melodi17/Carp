@@ -50,7 +50,8 @@ for str file : files {
         if newargs.length > 0 -> newargs = newargs[..(newargs.length - 2)]
 
         # # $1\n$2 $3($4)\n\n
-        str sub_doc = '# ' + summary + '\n' + type + ' ' + name + '(' + newargs + ')\n\n'
+        # str sub_doc = '# ' + summary + '\n' + type + ' ' + name + '(' + newargs + ')\n\n'
+        str sub_doc = '```carp\n' + type + ' ' + name + '(' + newargs + ')\n```\n> ' + summary + '\n\n---\n\n'
         IO.println(sub_doc)
         doc += sub_doc
     }
