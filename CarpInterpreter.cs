@@ -58,6 +58,9 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         DefineVarByName("chr", CarpType.Type, CarpChar.Type);
         DefineVarByName("bool", CarpType.Type, CarpBool.Type);
         DefineVarByName("obj", CarpType.Type, CarpObject.Type);
+        DefineVarByName("range", CarpType.Type, CarpRange.Type);
+        DefineVarByName("enum", CarpType.Type, CarpEnum.Type);
+        DefineVarByName("type", CarpType.Type, CarpType.Type);
         DefineVarByName("null", CarpNull.Type, CarpNull.Instance);
         DefineVarByName("void", CarpType.Type, CarpVoid.Type);
 
@@ -173,23 +176,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         return obj.CastEx(type) as T;
     }
-
-    // public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
-    // {
-    //     string path = string.Join("", context._loc.Select(x => x.Text));
-    //     string[] parts = path!.Split(".")
-    //         .Select(x => x.Replace('/', '.'))
-    //         .ToArray();
-    //
-    //     string ver = string.Join("", context?._ver.Select(x => x.Text) ?? Array.Empty<string>());
-    //     if (string.IsNullOrEmpty(ver))
-    //         ver = "latest";
-    //
-    //     Package pkg = this.PackageResolver.GetPackageEx(this, parts, parts, ver);
-    //     pkg.Include(this);
-    //     
-    //     return null;
-    // }
 
     public override object VisitProgram(CarpGrammarParser.ProgramContext context)
     {

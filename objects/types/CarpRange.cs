@@ -61,5 +61,5 @@ public class CarpRange : CarpObject
     }
 
     public override CarpString String() 
-        => new($"{this._start}..{this._stop}");
+        => new($"range<{this._itemType}>({this._start}..{this._stop})");
 }

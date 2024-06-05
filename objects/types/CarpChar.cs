@@ -2,7 +2,7 @@
 
 public class CarpChar : CarpObject
 {
-    public static new CarpType Type = NativeType.Of<CarpChar>("char");
+    public static new CarpType Type = NativeType.Of<CarpChar>("chr");
     public override CarpType GetCarpType() => Type;
 
     private readonly char _value;
