@@ -1,0 +1,61 @@
+import std.io
+import std.fs
+import std.parse
+
+str* files = FS.listdir('.')
+IO.println(files)
+
+str nativenametocarpname(str name) {
+    IO.println(name)
+    if name == 'CarpObject' -> return 'obj'
+    if name == 'CarpString' -> return 'str'
+    if name == 'CarpChar' -> return 'chr'
+    if name == 'CarpInt' -> return 'int'
+    if name == 'CarpBool' -> return 'bool'
+    if name == 'void' -> return 'void'
+    if name == 'CarpCollection' -> return '!' + name + '!*'
+    if name == 'CarpMap' -> return '!' + name + '!:!' + name + '!'
+
+    return '!' + name + '!'
+}
+
+for str file : files {
+    if !file.endswith('.cs') -> continue
+
+    str file_content = FS.readfile(file)
+    file_content = file_content.replace('\r\n', '\n')
+
+    str pattern = '/// <summary>\\n */// (.+?)\\n(?:[^[]*?)\\[PackageMember(?:\\(".*?"\\))?\\]\\n *public ([a-zA-Z_][a-zA-Z0-9_]*) ([a-zA-Z_][a-zA-Z0-9_]*)\\((.*?)\\)'
+    Parse.Regex.MatchResult* matches = Parse.Regex.matches(pattern, file_content)
+
+    str doc = ''
+
+    for Parse.Regex.MatchResult match : matches {
+        str summary = match.groups[1].value
+        str type = match.groups[2].value
+        str name = match.groups[3].value
+        str args = match.groups[4].value
+
+        type = nativenametocarpname(type)
+        str newargs = ''
+        for str arg : args.split(', ') {
+            str* parts = arg.split(' ')
+            newargs += nativenametocarpname(parts[0]) + ' ' + parts[1] + ', '
+        }
+
+        if newargs.length > 0 -> newargs = newargs[..(newargs.length - 3)]
+
+        # # $1\n$2 $3($4)\n\n
+        str sub_doc = '# ' + summary + '\n' + type + ' ' + name + '(' + args + ')\n\n'
+        IO.println(sub_doc)
+        doc += sub_doc
+    }
+
+    if doc.length == 0 -> continue
+
+    # Remove last two newlines
+    doc = doc[..(doc.length - 2)]
+
+    IO.println(doc)
+    # FS.writefile(file + '.doc.md', doc)
+}

@@ -55,8 +55,6 @@ public abstract class Package : CarpObject
     public abstract CarpStatic Export(CarpInterpreter interpreter);
 
     public override CarpString String() => new(this.Name);
-    
-    // TODO: Rewrite this to handle asset loading
 }
 
 public class PackageAlreadyPresent(string name) : CarpError($"Package {name}, or a identical-namespaced package is already present.");

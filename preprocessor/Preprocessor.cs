@@ -107,63 +107,30 @@ public class Preprocessor
             
             else if (ch == '\'')
             {
-                // string str = Until('\'');
-                // str += Next();
-                // yield return new(ch + str, PrimitiveTokenType.Constant);
+                // string, support escaping quotes
+                StringBuilder sb = new();
                 
-                // lets add escaping support
-                StringBuilder text = new();
-                bool escaped = false;
-                while (!(!escaped && Peek() == '\''))
+                while (Peek() != '\'' && Peek() != '\0')
                 {
                     char c = Next();
                     if (c == '\\')
                     {
-                        escaped = true;
-                        continue;
-                    }
-                
-                    if (escaped)
-                    {
-                        text.Append('\\');
-                        text.Append(c);
-                        // switch (c)
-                        // {
-                        //     // case 'n':
-                        //     //     text.Append('\n');
-                        //     //     break;
-                        //     // case 't':
-                        //     //     text.Append('\t');
-                        //     //     break;
-                        //     // case 'r':
-                        //     //     text.Append('\r');
-                        //     //     break;
-                        //     case '\\':
-                        //         text.Append('\\');
-                        //         break;
-                        //     case '\'':
-                        //         text.Append('\'');
-                        //         break;
-                        //     // case '0':
-                        //     //     text.Append('\0');
-                        //     //     break;
-                        //     default:
-                        //         throw new CarpError.PreprocessorError($"Unknown escape sequence \\{c}");
-                        // }
-                        escaped = false;
+                        char next = Next();
+                        if (next == '\'')
+                            sb.Append('\'');
+                        else
+                        {
+                            sb.Append(c);
+                            sb.Append(next);
+                        }
                     }
                     else
-                        text.Append(c);
+                        sb.Append(c);
                 }
+
+                Next(); // consume the last quote
                 
-                // string textStr = text.ToString();
-                // if (textStr.Contains("\'"))
-                // {
-                //     // this is a complex string
-                // }
-                
-                
-                yield return new(ch + text.ToString() + Next(), PrimitiveTokenType.Constant);
+                yield return new($"'{sb}'", PrimitiveTokenType.Constant);
             }
 
             else

@@ -11,6 +11,8 @@
         
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>carp</ToolCommandName>
+        <PackageProjectUrl>https://github.com/Melodi17/Carp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Melodi17/Carp</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

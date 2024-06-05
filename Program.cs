@@ -249,6 +249,8 @@ internal class Program
         {
             Preprocessor preprocessor = new(s);
             string processed = preprocessor.Process();
+            
+            // Console.WriteLine(processed);
 
             AntlrInputStream inputStream = new(processed);
             CarpGrammarLexer lexer = new(inputStream);

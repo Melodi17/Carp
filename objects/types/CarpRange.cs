@@ -7,8 +7,8 @@ public class CarpRange : CarpObject
     public static new CarpType Type = NativeType.Of<CarpRange>("range");
     public override CarpType GetCarpType() => Type.With(this._itemType);
     
-    private CarpObject _start;
-    private CarpObject _stop;
+    public CarpObject Start;
+    public CarpObject Stop;
 
     private CarpType _itemType;
     
@@ -16,16 +16,16 @@ public class CarpRange : CarpObject
     public CarpRange(CarpType itemType, CarpObject start, CarpObject stop)
     {
         this._itemType = itemType;
-        this._start = start.CastEx(itemType);
-        this._stop = stop.CastEx(itemType);
+        this.Start = start.CastEx(itemType);
+        this.Stop = stop.CastEx(itemType);
     }
 
     public override CarpIterator Iterate()
     {
         IEnumerable<CarpObject> Iter()
         {
-            CarpObject cur = this._start;
-            while (cur.Less(this._stop).Native)
+            CarpObject cur = this.Start;
+            while (cur.Less(this.Stop).Native)
             {
                 yield return cur;
                 CarpObject t = cur.Step();
@@ -42,9 +42,9 @@ public class CarpRange : CarpObject
     {
         return signature.Name switch
         {
-            "start" => this._start,
-            "stop" => this._stop,
-            "length" => this._stop.Subtract(this._start),
+            "start" => this.Start,
+            "stop" => this.Stop,
+            "length" => this.Stop.Subtract(this.Start),
             _ => throw new CarpError.InvalidProperty(signature),
         };
     }
@@ -61,5 +61,5 @@ public class CarpRange : CarpObject
     }
 
     public override CarpString String() 
-        => new($"range<{this._itemType}>({this._start}..{this._stop})");
+        => new($"range<{this._itemType}>({this.Start}..{this.Stop})");
 }

@@ -58,7 +58,7 @@ public class CarpEnumerableIterator : CarpIterator
     public CarpEnumerableIterator(CarpType itemType, IEnumerable<CarpObject> enumerable) : base(itemType)
     {
         this._enumerator = enumerable.GetEnumerator();
-        this._enumerator.MoveNext();
+        this._exhausted = !this._enumerator.MoveNext();
     }
 
     public override CarpObject Next()

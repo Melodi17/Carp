@@ -82,6 +82,16 @@ public class CarpString : CarpObject
         if (args.Length != 1)
             throw new CarpError.InvalidParameterCount(1, args.Length);
 
+        if (args[0] is CarpRange range)
+        {
+            if (range.Start is not CarpInt start)
+                throw new CarpError.InvalidType(CarpInt.Type, range.Start.GetCarpType());
+            if (range.Stop is not CarpInt end)
+                throw new CarpError.InvalidType(CarpInt.Type, range.Stop.GetCarpType());
+
+            return new CarpString(this._value.Substring(start.NativeInt, end.NativeInt - start.NativeInt));
+        }
+
         if (args[0] is not CarpInt)
             args[0] = args[0].CastEx(CarpInt.Type);
 
@@ -98,6 +108,14 @@ public class CarpString : CarpObject
         string[] chunks = this._value.Split(delim._value);
         return new(CarpString.Type, chunks.Select(x => new CarpString(x)).ToArray());
     }
+    
+    private CarpString Replace(CarpString source, CarpString replacement)
+    {
+        return new(this._value.Replace(source._value, replacement._value));
+    }
+    
+    private CarpBool StartsWith(CarpString prefix) => CarpBool.Of(this._value.StartsWith(prefix._value));
+    private CarpBool EndsWith(CarpString suffix) => CarpBool.Of(this._value.EndsWith(suffix._value));
 
     public override CarpObject Property(Signature signature)
     {
@@ -109,6 +127,9 @@ public class CarpString : CarpObject
             "clean" => new CarpString(this._value.Trim()),
             "split" => new CarpExternalFunc(CarpCollection.Type, this.Split),
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
+            "replace" => new CarpExternalFunc(CarpString.Type, this.Replace),
+            "startswith" => new CarpExternalFunc(CarpBool.Type, this.StartsWith),
+            "endswith" => new CarpExternalFunc(CarpBool.Type, this.EndsWith),
             _ => throw new CarpError.InvalidProperty(signature),
         };
     }

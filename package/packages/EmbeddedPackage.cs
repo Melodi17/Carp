@@ -85,6 +85,7 @@ public abstract class EmbeddedPackage : Package
 public class PackageMemberAttribute(string? name = null) : Attribute
 {
     public string? Name = name;
+    public string? ReturnType;
 }
 
 public class StandardPackageAttribute : Attribute

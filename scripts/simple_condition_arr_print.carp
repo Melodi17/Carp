@@ -1,8 +1,0 @@
-﻿int n = 5
-if false {
-    str* arr = ['a', 'b', 'c', 'd', 'e']
-    p(arr)
-}
-else {
-    p(n)
-}
