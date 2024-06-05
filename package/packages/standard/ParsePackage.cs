@@ -9,9 +9,16 @@ namespace Carp.package.packages.standard;
 
 public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Parse")
 {
-    [PackageMember("Regex.MatchResult")]
-    public CarpType MatchType = CarpMatchResult.Type;
-    
+    /// <summary>
+    /// Represents the type of a match result in regular expressions.
+    /// </summary>
+    [PackageMember("Regex.MatchResult")] public CarpType MatchType = CarpMatchResult.Type;
+
+    /// <summary>
+    /// Loads a JSON string and converts it into a Carp object.
+    /// </summary>
+    /// <param name="json">The JSON string to load.</param>
+    /// <returns>The Carp object representation of the JSON string.</returns>
     [PackageMember("Json.")]
     public CarpObject LoadJson(CarpString json)
     {
@@ -21,17 +28,22 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
         return LayerToCarp(obj);
     }
 
+    /// <summary>
+    /// Converts a dynamic object into a Carp object.
+    /// </summary>
+    /// <param name="d">The dynamic object to convert.</param>
+    /// <returns>The Carp object representation of the dynamic object.</returns>
     private CarpObject LayerToCarp(dynamic? d)
     {
         if (d is null) return CarpNull.Instance;
         if (d is bool b) return CarpBool.Of(b);
-        
+
         if (d is string) return new CarpString(d);
-        
+
         if (d is int i) return new CarpInt(i);
         if (d is long i64) return new CarpInt(i64);
         if (d is double doub) return new CarpInt(doub);
-        
+
         if (d is JArray arr)
         {
             List<CarpObject> result = new();
@@ -40,7 +52,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
             return new CarpCollection(CarpObject.Type, result.ToArray());
         }
-        
+
         if (d is JObject obj)
         {
             Dictionary<CarpObject, CarpObject> result = new();
@@ -52,28 +64,16 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         if (d is JValue jv)
             return this.LayerToCarp(jv.Value);
-        
+
         throw new("Could not deserialize JSON object into Carp object");
     }
-    //
-    // [PackageMember("Json.")]
-    // public CarpObject LoadJsonStructure(CarpString json, CarpType structure)
-    // {
-    //     throw new NotImplementedException();
-    // }
-    //
-    // [PackageMember("Json.")]
-    // public CarpObject StoreJson(CarpObject ds)
-    // {
-    //     throw new NotImplementedException();
-    // }
-    //
-    // [PackageMember("Json.")]
-    // public CarpObject StoreJsonStructure(CarpObject ds)
-    // {
-    //     throw new NotImplementedException();
-    // }
 
+    /// <summary>
+    /// Matches a regular expression pattern against a text.
+    /// </summary>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="text">The text to match against.</param>
+    /// <returns>The result of the match.</returns>
     [PackageMember("Regex.")]
     public CarpMatchResult Match(CarpString pattern, CarpString text)
     {
@@ -82,7 +82,7 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         Match m = Regex.Match(textStr, patternStr);
         if (!m.Success) return new();
-        
+
         List<CarpMatchResult> groups = new();
         foreach (Group g in m.Groups)
         {
@@ -91,7 +91,13 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         return new(m.Value, m.Index, m.Length, groups);
     }
-    
+
+    /// <summary>
+    /// Matches a regular expression pattern against a text and returns all matches.
+    /// </summary>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="text">The text to match against.</param>
+    /// <returns>A collection of all match results.</returns>
     [PackageMember("Regex.")]
     public CarpCollection Matches(CarpString pattern, CarpString text)
     {
@@ -113,7 +119,14 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         return new(CarpMatchResult.Type, result.ToArray());
     }
-    
+
+    /// <summary>
+    /// Replaces all occurrences of a regular expression pattern in a text with a replacement string.
+    /// </summary>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="text">The text to replace in.</param>
+    /// <param name="replacement">The replacement string.</param>
+    /// <returns>The text with all occurrences of the pattern replaced.</returns>
     [PackageMember("Regex.")]
     public CarpString Replace(CarpString pattern, CarpString text, CarpString replacement)
     {
@@ -123,7 +136,13 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         return new(Regex.Replace(textStr, patternStr, replacementStr));
     }
-    
+
+    /// <summary>
+    /// Splits a text into an array of strings based on a regular expression pattern.
+    /// </summary>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="text">The text to split.</param>
+    /// <returns>A collection of strings that are split based on the pattern.</returns>
     [PackageMember("Regex.")]
     public CarpCollection Split(CarpString pattern, CarpString text)
     {
@@ -132,7 +151,13 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         return new(CarpString.Type, Regex.Split(textStr, patternStr).Select(x => new CarpString(x)).ToArray());
     }
-    
+
+    /// <summary>
+    /// Tests if a regular expression pattern matches a text.
+    /// </summary>
+    /// <param name="pattern">The regular expression pattern.</param>
+    /// <param name="text">The text to test against.</param>
+    /// <returns>A boolean indicating whether the pattern matches the text.</returns>
     [PackageMember("Regex.")]
     public CarpBool Test(CarpString pattern, CarpString text)
     {

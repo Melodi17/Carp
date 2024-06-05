@@ -25,7 +25,7 @@ public class NetPackage(IPackageResolver source) : EmbeddedPackage(source, "Net"
             throw new HttpErrorResponse(url.Native, (int)e.StatusCode, e.Message);
         }
     }
-    
+
     /// <summary>
     /// Makes a POST request to the specified URL with the specified content.
     /// </summary>
@@ -35,12 +35,25 @@ public class NetPackage(IPackageResolver source) : EmbeddedPackage(source, "Net"
     [PackageMember("http.")]
     public CarpString Post(CarpString url, CarpString content)
     {
-        StringContent stringContent = new(content.Native);
-        HttpResponseMessage response = this._httpClient.PostAsync(url.Native, stringContent).Result;
-        return new(response.Content.ReadAsStringAsync().Result);
+        try
+        {
+            StringContent stringContent = new(content.Native);
+            HttpResponseMessage response = this._httpClient.PostAsync(url.Native, stringContent).Result;
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpErrorResponse(url.Native, (int)response.StatusCode, response.ReasonPhrase);
+            }
+
+            return new(response.Content.ReadAsStringAsync().Result);
+        }
+        catch (HttpRequestException e)
+        {
+            throw new ConnectionFailed(url.Native);
+        }
     }
-    
+
     public class ConnectionFailed(string host) : CarpError($"Failed to connect to {host}");
-    
-    public class HttpErrorResponse(string host, int code, string response) : CarpError($"Failed to connect to {host} with code {code}: {response}");
+
+    public class HttpErrorResponse(string host, int code, string response)
+        : CarpError($"Failed to connect to {host} with code {code}: {response}");
 }
