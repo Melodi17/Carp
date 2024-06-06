@@ -20,7 +20,6 @@ internal class Program
 {
     public static Debugger Debugger;
     public static ModularPackageResolver DefaultPackageResolver;
-    public static bool ForceThrow = false;
 
     public static void Main(string[] args)
     {
@@ -39,7 +38,10 @@ internal class Program
 
         DefaultPackageResolver = GetPackageResolver();
         CarpInterpreter.Instance = new(DefaultPackageResolver);
-        ForceThrow = se.ForceThrow;
+        Flags.Instance.ForceThrow = se.ForceThrow;
+        Flags.Instance.DefaultNonStructs = se.DefaultNonStructs;
+        Flags.Instance.ImplicitCasting = se.ImplicitCasting;
+        Flags.Instance.StrictWarnings = se.StrictWarnings;
 
         bool scriptPathGiven = se.SoftScriptPath.Length > 0;
 
@@ -274,13 +276,13 @@ internal class Program
         }
         catch (CarpError e)
         {
-            if (ForceThrow) throw;
+            if (Flags.Instance.ForceThrow) throw;
 
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
         }
         catch (CarpFlowControlError fcError)
         {
-            if (ForceThrow) throw;
+            if (Flags.Instance.ForceThrow) throw;
 
             CarpError.UnenclosedFlowControl e = new(fcError);
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");

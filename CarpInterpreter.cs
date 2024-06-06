@@ -750,7 +750,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject obj = this.GetObject(context, context.obj);
         CarpType type = this.GetObject<CarpType>(context, context.type());
 
-        return obj.CastEx(type);
+        return obj.CastEx(type, isImplicit: false);
     }
 
     public override object VisitCompareTypeExpression(CarpGrammarParser.CompareTypeExpressionContext context)
@@ -937,6 +937,12 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             throw new CarpError.UnparseableInt(num);
 
         return new CarpInt(d);
+    }
+
+    public override object VisitCharConstant(CarpGrammarParser.CharConstantContext context)
+    {
+        char value = context.CHAR().GetText().Last();
+        return new CarpChar(value);
     }
 
     public override object VisitStringConstant(CarpGrammarParser.StringConstantContext context)

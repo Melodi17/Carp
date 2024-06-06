@@ -28,9 +28,20 @@ public class CarpString : CarpObject
     {
         if (other is not CarpInt ci)
             throw new CarpError.InvalidType(CarpInt.Type, other.GetCarpType());
-        
+
         return new CarpString(
             string.Join("", Enumerable.Repeat(this._value, ci.NativeInt)));
+    }
+
+    public override CarpObject Divide(CarpObject other)
+    {
+        // split it
+        if (other is not CarpString or CarpChar)
+            throw new CarpError.InvalidType(new List<CarpType>() { CarpChar.Type, CarpString.Type },
+                other.GetCarpType());
+
+        string[] chunks = this._value.Split(other.String().Native);
+        return new CarpCollection(CarpString.Type, chunks.Select(x => new CarpString(x)).ToArray());
     }
 
     public override CarpObject Cast(CarpType t)
@@ -51,8 +62,8 @@ public class CarpString : CarpObject
         {
             return new CarpChar(this._value.First());
         }
-        
-        
+
+
         if (t == CarpBool.Type)
         {
             if (this._value == "true")
@@ -82,7 +93,7 @@ public class CarpString : CarpObject
         if (args.Length != 1)
             throw new CarpError.InvalidParameterCount(1, args.Length);
 
-        if (args[0] is CarpRange range)
+        if (args[0] is CarpRange range && range.ItemType == CarpInt.Type)
         {
             if (range.Start is not CarpInt start)
                 throw new CarpError.InvalidType(CarpInt.Type, range.Start.GetCarpType());
@@ -103,17 +114,18 @@ public class CarpString : CarpObject
     }
 
     private CarpBool Contains(CarpString inner) => CarpBool.Of(this._value.Contains(inner._value));
+
     private CarpCollection Split(CarpString delim)
     {
         string[] chunks = this._value.Split(delim._value);
         return new(CarpString.Type, chunks.Select(x => new CarpString(x)).ToArray());
     }
-    
+
     private CarpString Replace(CarpString source, CarpString replacement)
     {
         return new(this._value.Replace(source._value, replacement._value));
     }
-    
+
     private CarpBool StartsWith(CarpString prefix) => CarpBool.Of(this._value.StartsWith(prefix._value));
     private CarpBool EndsWith(CarpString suffix) => CarpBool.Of(this._value.EndsWith(suffix._value));
 
@@ -136,7 +148,7 @@ public class CarpString : CarpObject
 
     public override CarpString String() => new(this._value);
     public override string Repr() => $"'{this._value}'";
-    
+
     public override CarpBool Match(CarpObject other)
     {
         if (other is not CarpString cs)

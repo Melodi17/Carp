@@ -439,6 +439,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStringConstant([NotNull] CarpGrammarParser.StringConstantContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>charConstant</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.constant"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCharConstant([NotNull] CarpGrammarParser.CharConstantContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>trueConstant</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.constant"/>.
 	/// </summary>

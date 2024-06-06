@@ -16,7 +16,7 @@ public abstract class CarpWarning : CarpError
         warnings.Add(this.Key);
         
         
-        if (Flags.Instance.TreatWarningsAsErrors)
+        if (Flags.Instance.StrictWarnings)
             throw this;
         
         Console.WriteLine($"Warning: {this.Message}");

@@ -36,6 +36,7 @@ public abstract class CarpType : CarpObject
     {
         return signature.Name switch {
             "name" => this.String(),
+            "base" => this._baseType,
             "is_struct" => CarpBool.Of(this.IsStruct),
             _ => throw new CarpError.InvalidProperty(signature),
         };
@@ -50,7 +51,7 @@ public abstract class CarpType : CarpObject
         return left.Equals(right);
     }
     public static bool operator !=(CarpType left, CarpType right) => !(left == right);
-    
+
     public static CarpType HighestCommonType(CarpType[] arr)
     {
         if (arr.Length == 0) return CarpObject.Type;

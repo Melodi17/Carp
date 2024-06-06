@@ -101,6 +101,14 @@ public class CarpInt : CarpObject
         return new CarpEnumerableIterator(CarpInt.Type, Iter());
     }
 
+    public override CarpObject Cast(CarpType t)
+    {
+        if (t == CarpChar.Type)
+            return new CarpChar((char)this._value);
+
+        return base.Cast(t);
+    }
+
     public override CarpString String()
     {
         // Tostring it, but if it ends with .0, remove it

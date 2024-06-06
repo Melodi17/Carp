@@ -40,6 +40,9 @@ public abstract class CarpObject
         // throw new CarpError.PrimitiveIncompatible("Cast", this);
         if (type == CarpObject.Type)
             return this;
+        
+        if (type == CarpType.Type)
+            return this.GetCarpType();
 
         if (type == CarpString.Type)
             return this.String();

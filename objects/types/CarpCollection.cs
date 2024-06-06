@@ -36,7 +36,18 @@ public class CarpCollection : CarpObject
     {
         if (args.Length != 1)
             throw new CarpError.InvalidParameterCount(1, args.Length);
-
+        
+        if (args[0] is CarpRange range && range.ItemType == CarpInt.Type)
+        {
+            if (range.Start is not CarpInt start)
+                throw new CarpError.InvalidType(CarpInt.Type, range.Start.GetCarpType());
+            if (range.Stop is not CarpInt end)
+                throw new CarpError.InvalidType(CarpInt.Type, range.Stop.GetCarpType());
+            
+            int count = end.NativeInt - start.NativeInt;
+            return new CarpCollection(this._itemType, this._value.GetRange(start.NativeInt, count).ToArray());
+        }
+        
         if (args[0] is not CarpInt)
             args[0] = args[0].CastEx(CarpInt.Type);
 
@@ -99,11 +110,13 @@ public class CarpCollection : CarpObject
             "length" => new CarpInt(this._value.Count),
             "append" => new CarpExternalFunc(CarpVoid.Type, this.Append),
             "remove" => new CarpExternalFunc(CarpVoid.Type, this.Remove),
-            "remove_at" => new CarpExternalFunc(CarpVoid.Type, this.RemoveAt),
+            "removeat" => new CarpExternalFunc(CarpVoid.Type, this.RemoveAt),
             "insert" => new CarpExternalFunc(CarpVoid.Type, this.Insert),
             "clear" => new CarpExternalFunc(CarpVoid.Type, this.Clear),
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
             "within" => new CarpExternalFunc(CarpBool.Type, this.Within),
+            "first" => this._value.Count > 0 ? this._value[0] : CarpNull.Instance,
+            "last" => this._value.Count > 0 ? this._value[^1] : CarpNull.Instance,
             _ => throw new CarpError.InvalidProperty(signature),
         };
     }

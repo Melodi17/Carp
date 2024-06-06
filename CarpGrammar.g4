@@ -84,6 +84,7 @@ INT : '-'? ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
 WS : [ \t\r\n]+ -> skip ;
 COMMENT : '#' .*? [\n] -> skip ;
 STRING : '\'' SHORT_STRING_ITEM_FOR_SINGLE_QUOTE* '\'' ;
+CHAR : '`' . ;
     
 fragment SHORT_STRING_ITEM_FOR_SINGLE_QUOTE : SHORT_STRING_CHAR_NO_SINGLE_QUOTE | ('\\' .);
 fragment SHORT_STRING_CHAR_NO_SINGLE_QUOTE : ~[\\'];
@@ -206,6 +207,7 @@ compoundAssignment
 constant
     : INT # intConstant
     | STRING # stringConstant
+    | CHAR # charConstant
     | TRUE # trueConstant
     | FALSE # falseConstant
     | NULL # nullConstant

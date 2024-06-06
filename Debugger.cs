@@ -128,7 +128,7 @@ public class Debugger
                     
                     StringBuilder sb = new();
                     sb.Append($"flags,");
-                    sb.Append($"treat_warnings_as_errors: {f.TreatWarningsAsErrors},");
+                    sb.Append($"treat_warnings_as_errors: {f.StrictWarnings},");
                     sb.Append($"debug: {f.Debug},");
                     sb.Append($"implicit_casting: {f.ImplicitCasting},");
                     sb.Append($"loaded_from_file: {f.LoadedFromFile},");

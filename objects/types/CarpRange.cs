@@ -5,17 +5,17 @@ namespace Carp.objects.types;
 public class CarpRange : CarpObject
 {
     public static new CarpType Type = NativeType.Of<CarpRange>("range");
-    public override CarpType GetCarpType() => Type.With(this._itemType);
+    public override CarpType GetCarpType() => Type.With(this.ItemType);
     
     public CarpObject Start;
     public CarpObject Stop;
 
-    private CarpType _itemType;
+    public CarpType ItemType;
     
     [CarpGenericConstructor]
     public CarpRange(CarpType itemType, CarpObject start, CarpObject stop)
     {
-        this._itemType = itemType;
+        this.ItemType = itemType;
         this.Start = start.CastEx(itemType);
         this.Stop = stop.CastEx(itemType);
     }
@@ -29,13 +29,13 @@ public class CarpRange : CarpObject
             {
                 yield return cur;
                 CarpObject t = cur.Step();
-                if (!t.GetCarpType().Extends(this._itemType)) // Might wanna replace with a cast?
+                if (!t.GetCarpType().Extends(this.ItemType)) // Might wanna replace with a cast?
                     throw new CarpError.RangeNotCompatible(cur.GetCarpType());
                 cur = t;
             }
         }
 
-        return new CarpEnumerableIterator(this._itemType, Iter());
+        return new CarpEnumerableIterator(this.ItemType, Iter());
     }
 
     public override CarpObject Property(Signature signature)
@@ -43,7 +43,7 @@ public class CarpRange : CarpObject
         return signature.Name switch
         {
             "start" => this.Start,
-            "stop" => this.Stop,
+            "end" => this.Stop,
             "length" => this.Stop.Subtract(this.Start),
             _ => throw new CarpError.InvalidProperty(signature),
         };
@@ -53,7 +53,7 @@ public class CarpRange : CarpObject
     {
         if (type.Extends(CarpCollection.Type) && type is GenericCarpType genericCarpType)
         {
-            if (genericCarpType.SubTypes[0] == this._itemType)
+            if (genericCarpType.SubTypes[0] == this.ItemType)
                 return this.Iterate().ToCollection();
         }
 
@@ -61,5 +61,5 @@ public class CarpRange : CarpObject
     }
 
     public override CarpString String() 
-        => new($"range<{this._itemType}>({this.Start}..{this.Stop})");
+        => new($"range<{this.ItemType}>({this.Start}..{this.Stop})");
 }

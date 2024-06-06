@@ -6,14 +6,14 @@ obj loadjson(str json)
 ---
 
 ```carp
-MatchResult match(str pattern, str text)
+!CarpMatchResult! match(str pattern, str text)
 ```
 > Converts a dynamic object into a Carp object.
 
 ---
 
 ```carp
-MatchResult* matches(str pattern, str text)
+!CarpCollection!* matches(str pattern, str text)
 ```
 > Matches a regular expression pattern against a text and returns all matches.
 
@@ -27,7 +27,7 @@ str replace(str pattern, str text, str replacement)
 ---
 
 ```carp
-str* split(str pattern, str text)
+!CarpCollection!* split(str pattern, str text)
 ```
 > Splits a text into an array of strings based on a regular expression pattern.
 

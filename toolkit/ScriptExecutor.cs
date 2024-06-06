@@ -22,6 +22,15 @@ public class ScriptExecutor : IExecutableObject
     
     [Option('f', "force-throw", HelpText = "Force the internal errors to trigger the native stacktrace.")]
     public bool ForceThrow { get; set; }
+    
+    [Option("strict-warnings", HelpText = "Treat warnings as errors")]
+    public bool StrictWarnings { get; set; }
+    
+    [Option("default-non-structs", Default = true, HelpText = "Allow non-struct objects to be auto-initialized")]
+    public bool DefaultNonStructs { get; set; }
+    
+    [Option("implicit-casts", Default = true, HelpText = "Enable implicit casting/type coercion")]
+    public bool ImplicitCasting { get; set; }
 
     public string SoftScriptPath => this.ScriptPath ?? "";
 

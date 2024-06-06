@@ -6,7 +6,7 @@ str readfile(str path)
 ---
 
 ```carp
-str* readfilelines(str path)
+!CarpCollection!* readfilelines(str path)
 ```
 > Reads all lines from a file at the given path.
 
@@ -20,7 +20,7 @@ void writefile(str path, str cont)
 ---
 
 ```carp
-void writefilelines(str path, str* cont)
+void writefilelines(str path, !CarpCollection!* cont)
 ```
 > Writes the specified lines to a file at the given path.
 
@@ -55,14 +55,14 @@ void deletedir(str path)
 ---
 
 ```carp
-str* listdir(str path)
+!CarpCollection!* listdir(str path)
 ```
 > Lists all files in a directory at the given path.
 
 ---
 
 ```carp
-str* listdirs(str path)
+!CarpCollection!* listdirs(str path)
 ```
 > Lists all directories in a directory at the given path.
 
