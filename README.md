@@ -23,7 +23,7 @@
 2. Run the following to install it from NuGet
 
    ```bash
-   $ dotnet tool install --global carp
+   $ dotnet tool install --global Carp
    ```
 
 3. Check carp is installed
