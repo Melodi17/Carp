@@ -62,3 +62,5 @@ carp
  : IO.println('Hello, world!')
 ````
 
+### Documentation
+For more documentation refer to [Docs](https://github.com/Melodi17/Carp/blob/master/DOCS.md)
