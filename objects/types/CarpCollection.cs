@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Text;
 using Carp.interpreter;
 
@@ -12,7 +12,6 @@ public class CarpCollection : CarpObject
     private readonly CarpType _itemType;
     private List<CarpObject> _value;
     public List<CarpObject> Native => this._value;
-    
 
     [CarpGenericConstructor]
     public CarpCollection(CarpType itemType)
@@ -75,7 +74,6 @@ public class CarpCollection : CarpObject
         return value;
     }
 
-
     private CarpBool Contains(CarpObject inner) => CarpBool.Of(this._value.Contains(inner));
     private CarpBool Within(CarpInt index) 
         => CarpBool.Of(index.NativeInt >= 0 && index.NativeInt < this._value.Count);
@@ -101,7 +99,6 @@ public class CarpCollection : CarpObject
     }
 
     private void Clear() => this._value.Clear();
-
 
     public override CarpObject Property(Signature signature)
     {

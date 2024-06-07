@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 
 namespace Carp.toolkit;
 
@@ -36,6 +36,5 @@ public class ScriptExecutor : IExecutableObject
 
     public void Execute()
     {
-        
     }
 }
