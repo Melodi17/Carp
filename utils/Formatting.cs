@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Carp;
 
@@ -14,10 +14,8 @@ public static class Formatting
     }
     public static string ToSnakeCase(this string text)
     {
-        if(text == null) {
-            throw new ArgumentNullException(nameof(text));
-        }
-        if(text.Length < 2) {
+        ArgumentNullException.ThrowIfNull(text);
+        if (text.Length < 2) {
             return text.ToLowerInvariant();
         }
         var sb = new StringBuilder();

@@ -1,4 +1,4 @@
-﻿using Carp.interpreter;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
@@ -29,7 +29,6 @@ public class CarpWinded : CarpObject
         }
         return new(CarpObject.Type, result.ToArray());
     }
-
 
     private CarpBool All(CarpCollection collection) => CarpBool.Of(collection.Native.All(x => (x.CastEx(CarpBool.Type) as CarpBool)!.Native));
 

@@ -1,10 +1,9 @@
-﻿using Carp.interpreter;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
 public class CarpClass : CarpType
 {
-    
     private List<CarpGrammarParser.Definition_with_attrContext> _staticDefinitions;
     private List<CarpGrammarParser.Definition_with_attrContext> _nonStaticDefinitions;
     private Scope _scope;

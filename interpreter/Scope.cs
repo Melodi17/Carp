@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Carp.objects.types;
 
 namespace Carp.interpreter;
@@ -129,7 +129,6 @@ public class Scope : IScope, IDisposable
     {
         this._values.Clear();
     }
-
 
     public override string ToString() =>
         "Scope{" + string.Join(", ", this._values.Select(x => $"{x.Key}: {x.Value.type}")) + "}";

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
@@ -34,7 +34,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             if (!this.Paused) return true;
 
             if (!this._step) return false;
-
 
             this._step = false;
             return true;
@@ -627,7 +626,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
                 : nonStaticDefinitions).Add(def);
         }
 
-
         CarpClass clazz = new(new(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
         scope.Define(Signature.OfVariable(name), clazz.GetCarpType(), clazz);
     }
@@ -951,7 +949,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // crop surrounding quotes
         value = value[1..^1];
 
-
         // StringBuilder sb = new();
         // bool escaped = false;
         // foreach (char c in value)
@@ -1070,7 +1067,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         return new CarpCollection(type, arr);
     }
-
 
     public override object VisitMap(CarpGrammarParser.MapContext context)
     {

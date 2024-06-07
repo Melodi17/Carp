@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 using System.Text.RegularExpressions;
 using Carp.interpreter;
 using Carp.objects.types;
@@ -166,7 +166,6 @@ public class ParsePackage(IPackageResolver source) : EmbeddedPackage(source, "Pa
 
         return CarpBool.Of(Regex.IsMatch(textStr, patternStr));
     }
-
 
     public class CarpMatchResult : CarpObject
     {

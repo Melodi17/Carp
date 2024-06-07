@@ -159,7 +159,6 @@ internal class Program
         return (projConfig, RunString(instance, mainCode));
     }
 
-
     private static ModularPackageResolver GetPackageResolver()
     {
         ModularPackageResolver mpr = new();
@@ -223,13 +222,10 @@ internal class Program
 
         if (obj is CarpString str)
             WriteColor(str.Repr(), ConsoleColor.Yellow);
-
         else if (obj is CarpInt)
             WriteColor(obj.Repr(), ConsoleColor.Cyan);
-
         else if (obj is CarpBool)
             WriteColor(obj.Repr(), ConsoleColor.Magenta);
-
         else
             WriteColor(obj.Repr(), ConsoleColor.Gray);
     }
