@@ -1,4 +1,6 @@
 # Carp
+[![CodeFactor](https://www.codefactor.io/repository/github/melodi17/carp/badge/master)](https://www.codefactor.io/repository/github/melodi17/carp/overview/master)
+[![](https://github.com/Melodi17/Carp/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Melodi17/Carp/actions/workflows/dotnet.yml)
 
 > Currently Carp is in its first public release, it may not be the most stable language for large projects, please report any issues through the GitHub issues page.
 
