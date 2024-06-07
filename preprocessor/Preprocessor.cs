@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 
@@ -92,19 +92,16 @@ public class Preprocessor
             {
                 yield return new(ch.ToString(), PrimitiveTokenType.Junk);
             }
-            
             else if (char.IsLetter(ch) || ch == '_')
             {
                 string id = UntilNotId();
                 yield return new(ch + id, PrimitiveTokenType.Identifier);
             }
-            
             else if (char.IsNumber(ch))
             {
                 string num = UntilNotId();
                 yield return new(ch + num, PrimitiveTokenType.Constant);
             }
-            
             else if (ch == '\'')
             {
                 // string, support escaping quotes
@@ -132,7 +129,6 @@ public class Preprocessor
                 
                 yield return new($"'{sb}'", PrimitiveTokenType.Constant);
             }
-
             else
             {
                 yield return new(ch.ToString(), PrimitiveTokenType.Operator);
@@ -140,8 +136,6 @@ public class Preprocessor
             ch = Next();
         }
     }
-    
-    
 
     public string Process()
     {

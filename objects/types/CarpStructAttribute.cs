@@ -1,4 +1,4 @@
-﻿namespace Carp.objects.types;
+namespace Carp.objects.types;
 
 public class CarpStructAttribute : Attribute
 {
@@ -12,5 +12,4 @@ public class CarpStructAttribute : Attribute
 
 public class CarpGenericConstructorAttribute : Attribute
 {
-    
 }

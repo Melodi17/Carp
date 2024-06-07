@@ -1,4 +1,4 @@
-﻿namespace Carp;
+namespace Carp;
 
 public abstract class CarpWarning : CarpError
 {
@@ -14,8 +14,7 @@ public abstract class CarpWarning : CarpError
             return;
 
         warnings.Add(this.Key);
-        
-        
+
         if (Flags.Instance.StrictWarnings)
             throw this;
         

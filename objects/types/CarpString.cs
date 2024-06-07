@@ -1,4 +1,4 @@
-﻿using Carp.interpreter;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
@@ -62,7 +62,6 @@ public class CarpString : CarpObject
         {
             return new CarpChar(this._value.First());
         }
-
 
         if (t == CarpBool.Type)
         {

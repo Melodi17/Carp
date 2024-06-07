@@ -1,4 +1,4 @@
-﻿using Carp.interpreter;
+using Carp.interpreter;
 using Carp.objects.types;
 
 namespace Carp;
@@ -106,7 +106,6 @@ public abstract class CarpError(string message) : Exception(message)
 
 public abstract class CarpFlowControlError(string message) : Exception(message)
 {
-
     public class CarpObjFlowControlError(CarpFlowControlError err) : CarpObject
     {
         public static new CarpType Type = NativeType.Of<CarpObjFlowControlError>("flowControlError");
