@@ -66,3 +66,6 @@ carp
 
 ### Documentation
 For more documentation refer to [Docs](https://github.com/Melodi17/Carp/blob/master/DOCS.md)
+
+### Contributing
+As the language is still very early, contributions would be very much appricated. Some ideas include; more standard libraries, bugfixes or new features.
