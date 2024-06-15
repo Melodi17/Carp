@@ -96,7 +96,7 @@ public class Program
         Console.WriteLine("Debugger continuing");
     }
 
-    private static CarpObject RunFile(CarpInterpreter instance, string path)
+    public static CarpObject RunFile(CarpInterpreter instance, string path)
     {
         bool isProject = !File.Exists(path);
         bool isArchive = Path.GetExtension(path) == ".caaarp";
@@ -199,7 +199,7 @@ public class Program
         return mpr;
     }
 
-    private static void Repl()
+    public static void Repl()
     {
         SetDefaultResolver(CarpInterpreter.Instance.PackageResolver,
             new FileSystemInternalPackageResolver(Environment.CurrentDirectory));
@@ -261,7 +261,7 @@ public class Program
             WriteColor(obj.Repr(), ConsoleColor.Gray);
     }
 
-    public static void WriteColor(string text, ConsoleColor color, string end = "\n")
+    internal static void WriteColor(string text, ConsoleColor color, string end = "\n")
     {
         Console.ForegroundColor = color;
         Console.Write(text + end);
@@ -322,7 +322,7 @@ public class Program
         return CarpVoid.Instance;
     }
 
-    public static void PrintError(string text)
+    internal static void PrintError(string text)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.Error.WriteLine(text);
