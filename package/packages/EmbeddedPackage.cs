@@ -11,7 +11,8 @@ namespace Carp.package.packages;
 public abstract class EmbeddedPackage : Package
 {
     public CarpInterpreter Interpreter;
-    public EmbeddedPackage(IPackageResolver source, string name) : base(source, source,
+
+    protected EmbeddedPackage(IPackageResolver source, string name) : base(source, source,
         name)
     {
     }
@@ -88,11 +89,7 @@ public class PackageMemberAttribute(string? name = null) : Attribute
     public string? ReturnType;
 }
 
-public class StandardPackageAttribute : Attribute
+public class PackageAttribute(string name) : Attribute
 {
-    public string Name;
-    public StandardPackageAttribute(string name)
-    {
-        this.Name = name;
-    }
+    public string Name = name;
 }

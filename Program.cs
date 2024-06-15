@@ -68,6 +68,13 @@ internal class Program
         }
         else if (scriptPathGiven)
         {
+            // if file doesnt exist, and a dir doesnt exist, throw error
+            if (!File.Exists(se.SoftScriptPath) && !Directory.Exists(se.SoftScriptPath))
+            {
+                PrintError("Script or project could not be found");
+                return;
+            }
+            
             CarpObject response = RunFile(CarpInterpreter.Instance, se.SoftScriptPath);
             if (response != CarpVoid.Instance && se.Verbose)
                 WriteOutput(response, false);
@@ -93,7 +100,7 @@ internal class Program
     {
         bool isProject = !File.Exists(path);
         bool isArchive = Path.GetExtension(path) == ".caaarp";
-
+        
         if (isProject)
         {
             string file = ProjectBuilder.BuildProject(path);
@@ -123,6 +130,7 @@ internal class Program
             throw new PackedPackage.PackageInvalid("No .carpproj file found in package");
 
         ProjectConfiguration projConfig = ProjectConfiguration.Deserialize(projEntry.GetFileDataString());
+        List<string> remainingAssemblies = projConfig.Assemblies?.ToList() ?? new();
 
         // look for /resources dir
         // ZipArchiveEntry? resourcesEntry = archive.GetEntry("resources");
@@ -141,10 +149,33 @@ internal class Program
                 
                 if (textFormats.Contains(ext))
                     instance.Resources[name] = new CarpString(entry.GetFileDataString());
+                // else if (ext == ".dll" && remainingAssemblies.Contains(name))
+                // {
+                //     CarpAssembly assemblyObj = new(entry.GetFileDataBytes());
+                //     instance.Resources[name] = assemblyObj;
+                //     SetSpecificResolver(instance.PackageResolver, assemblyObj.Name, assemblyObj);
+                //     remainingAssemblies.Remove(name);
+                // }
                 else
                     throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
             }
         }
+        
+        // check path for remaining assemblies
+        // foreach (string assembly in remainingAssemblies)
+        // {
+        //     string path = assembly + ".dll";
+        //     if (File.Exists(path))
+        //     {
+        //         CarpAssembly assemblyObj = new(File.ReadAllBytes(path));
+        //         instance.Resources[assembly] = assemblyObj;
+        //         SetSpecificResolver(instance.PackageResolver, assemblyObj.Name, assemblyObj);
+        //         remainingAssemblies.Remove(assembly);
+        //     }
+        // }
+        //
+        // if (remainingAssemblies.Count > 0)
+        //     throw new PackedPackage.PackageInvalid($"Missing assemblies: {string.Join(", ", remainingAssemblies)}");
 
         ZipInternalPackageResolver resolver = new(archive);
         SetDefaultResolver(instance.PackageResolver, resolver);
@@ -327,6 +358,14 @@ internal class Program
     {
         if (resolver is ModularPackageResolver mpr)
             mpr.SetDefaultResolver(def);
+        else
+            throw new("Resolver is not a ModularPackageResolver");
+    }
+    
+    private static void SetSpecificResolver(IPackageResolver resolver, string name, IPackageResolver def)
+    {
+        if (resolver is ModularPackageResolver mpr)
+            mpr.AddResolver(name, def);
         else
             throw new("Resolver is not a ModularPackageResolver");
     }
