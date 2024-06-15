@@ -16,7 +16,7 @@ using Parser = CommandLine.Parser;
 
 namespace Carp;
 
-internal class Program
+public class Program
 {
     public static Debugger Debugger;
     public static ModularPackageResolver DefaultPackageResolver;

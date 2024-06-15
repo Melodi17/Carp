@@ -48,11 +48,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         this.PackageResolver = packageResolver;
         this.Resources = new();
 
-        void DefineVarByName(string name, CarpType type, CarpObject value)
-        {
-            this.GlobalScope.Define(Signature.OfVariable(name), type, value);
-        }
-
         DefineVarByName("int", CarpType.Type, CarpInt.Type);
         DefineVarByName("str", CarpType.Type, CarpString.Type);
         DefineVarByName("chr", CarpType.Type, CarpChar.Type);
@@ -75,12 +70,12 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // color has color stuff, like 'hi %red%etc%reset%'
         // refract has reflection stuff, e.g get type
 
-        CarpExternalFunc tFunc = new(CarpType.Type, (CarpObject obj)
-            => obj.GetCarpType());
+        // CarpExternalFunc tFunc = new(CarpType.Type, (CarpObject obj)
+        //     => obj.GetCarpType());
+        //
+        // this.GlobalScope.Define(Signature.OfMethod("t", tFunc), CarpFunc.Type, tFunc);
 
-        this.GlobalScope.Define(Signature.OfMethod("t", tFunc), CarpFunc.Type, tFunc);
-
-        CarpExternalFunc importFunc = new(CarpVoid.Type, (CarpString name, CarpString ver) =>
+        DefineFuncByName("import", new CarpExternalFunc(CarpVoid.Type, (CarpString name, CarpString ver) =>
         {
             string[] parts = name.Native.Trim('\r').Split(".")
                 .Select(x => x.Replace('/', '.'))
@@ -90,9 +85,17 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
             Package pkg = this.PackageResolver.GetPackageEx(this, parts, parts, verString);
             pkg.Include(this);
-        });
-
-        this.GlobalScope.Define(Signature.OfMethod("import", importFunc), CarpFunc.Type, importFunc);
+        }));
+    }
+    
+    public void DefineVarByName(string name, CarpType type, CarpObject value)
+    {
+        this.GlobalScope.Define(Signature.OfVariable(name), type, value);
+    }
+    
+    public void DefineFuncByName(string name, CarpFunc func)
+    {
+        this.GlobalScope.Define(Signature.OfMethod(name, func), CarpFunc.Type, func);
     }
 
     public void Step() => this._step = true;
