@@ -4,8 +4,18 @@
 
 > Currently Carp is in its first public release, it may not be the most stable language for large projects, please report any issues through the GitHub issues page.
 
-### Whats new in version 1.0.5?
-
+### What's new in version 1.0.4/5?
+These versions were focused on fixing bugs, and adding more support.
+- Added `byte_sequence` primitive for storing bytes
+- Increased publicity of the methods, allowing for usage as an embedded language
+- Unknown resource extensions now default to `byte_sequence`
+- Resource extensions supported include text formats: `.txt`, `.json`, `.yaml`, `.dat`, `.xml`
+- Fixed initialization of native types with the `.new` method
+- Added trigonometric functions to the `std.math` package
+- Added support for non-bool values in logical operators (e.g. `'hi' | null` will return the non-null value)
+- Added a new method to collections and maps `.get(tkey key, tvalue default)` that returns a default value if the key is not found
+- Fixed issues with map set-indexing new values and removing non-existent ones
+- Fixed issue when creating empty maps, since it'd assume its a collection
 
 ### Features
 
