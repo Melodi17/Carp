@@ -16,6 +16,7 @@ These versions were focused on fixing bugs, and adding more support.
 - Added a new method to collections and maps `.get(tkey key, tvalue default)` that returns a default value if the key is not found
 - Fixed issues with map set-indexing new values and removing non-existent ones
 - Fixed issue when creating empty maps, since it'd assume its a collection
+- Added support for all behaviour overrides in user-defined types
 
 ### Features
 

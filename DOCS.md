@@ -1,4 +1,7 @@
 ﻿# Learning Carp
+> Reference manual and instruction guide for Carp
+> 
+> _Version `1.0.6` for Carp `1.0.5`_
 
 This is a reference manual and instruction guide filled with samples and explanations learning Carp.
 
@@ -251,6 +254,7 @@ Properties:
 - `.contains(tvalue item)` `bool` Checks if the collection contains an item
 - `.within(int index)` `bool` Checks if the index is within the bounds of the collection
 - `.clear()` `void` Clears the collection
+- `.get(int index, tvalue default)` `tvalue` Gets the item at a specified index, if a range is passed, it will return a sub-collection based on that range
 
 Overrides:
 - `add` Collection overrides the add method allow merging two collections of the same type
@@ -267,6 +271,7 @@ Properties:
 - `.remove(tkey key)` `void` Removes an item from the map
 - `.contains(tkey key)` `bool` Checks if the map contains a key
 - `.clear()` `void` Clears the map
+- `.get(tkey key, tvalue default)` `tvalue` Gets the value at a specified key, if the key is not found, it will return the default value
 
 ##### Range `range`
 Ranges are represented as `start..end`, they must be the same type and the object must override `Less`, `Subtract` and `Step`. As a generic type, their type is referenced as `range<tvalue>`
@@ -293,6 +298,16 @@ Properties:
 - `.name` `str` Gets the name of the type
 - `.base` `type` Gets the base type of the type
 - `.is_struct` `bool` Checks if the type is a struct
+
+
+##### Byte Sequence `byte_sequence`
+Byte sequences are a collection of bytes. They have no representation in the language, but can be used to store binary data. Any resources of an unknown type will default to a byte sequence.
+
+Properties:
+- `.length` `int` Calculates the length of the byte sequence
+
+Overrides:
+- `index` Byte Sequence overrides the index method to get the byte at a specified index, if a range is passed, it will return a sub-sequence based on that range. Note that the byte returned will be in the form of an integer, not a character.
 
 ### Comments
 
@@ -340,7 +355,7 @@ bool is_int = my_num ~~ int
 # value is true
 
 # Type storage
-type my_type = t('hi')
+type my_type = 'hi' ~ type
 # value is str
 ```
 
@@ -377,6 +392,12 @@ bool less_than_or_equal = 5 <= 5
 # Logical operators
 bool and = true & false
 bool or = true | false
+
+# Note that logical operators work on not only booleans, but also other objects,
+# Where it will compare them with null (null being false and anything else being true)
+# For example, null | 5 will return 5, as null is falsey
+str value = null | 'hi'
+# value is 'hi'
 
 bool not = !true
 bool inverse = -num
@@ -441,6 +462,7 @@ class MyClass {
     void print_prop() -> IO.println(this.my_prop)
     
     # Constructors are used to initialize the object
+    # Also! You can have multiple constructors with different arguments
     void init(int prop) -> this.my_prop = prop
 }
 
@@ -473,6 +495,28 @@ struct Vec2 {
     str string() -> 'Vec2(' + this.x + ', ' + this.y + ')'
 }
 ```
+
+#### Overriding
+Classes and structs can override special methods to change how operators and other operations work on them. The following methods can be overridden:
+- `init` `void` - Constructor, this is called when the object is created, you can have multiple constructors with different arguments
+- `string` `str` - String representation of the object, casting to a string or using `IO.println` will call this method
+- `property(str prop)` `obj` - Gets a property of the object, this is called when using the `.` operator
+- `setproperty(str prop, obj value)` `obj` - Sets a property of the object, this is called when assigning to a `.` property
+- `call(obj* args)` `obj` - Calls the object as a function, this is called when using the `()` operator
+- `index(obj index)` `obj` - Gets an index of the object, this is called when using the `[]` operator
+- `setindex(obj index, obj value)` `obj` - Sets an index of the object, this is called when assigning to a `[]` index
+- `add(obj value)` `obj` - Adds a value to the object, this is called when using the `+` operator
+- `subtract(obj value)` `obj` - Subtracts a value from the object, this is called when using the `-` operator
+- `multiply(obj value)` `obj` - Multiplies the object by a value, this is called when using the `*` operator
+- `divide(obj value)` `obj` - Divides the object by a value, this is called when using the `/` operator
+- `modulus(obj value)` `obj` - Gets the remainder of the object divided by a value, this is called when using the `%` operator
+- `less(obj value)` `bool` - Checks if the object is less than a value, this is called when using the `<` operator
+- `greater(obj value)` `bool` - Checks if the object is greater than a value, this is called when using the `>` operator
+- `pow(obj value)` `obj` - Raises the object to the power of a value, this is called when using the `^` operator
+- `match(obj value)` `bool` - Checks if the object matches a value, a default implementation exists for this, this is called when using the `==` operator
+- `step()` `obj` - Gets the next value of the object, this is used in `range` objects and can be used for iteration
+- `negate()` `obj` - Gets the inverse of the object, this is called when using the `-` operator
+- `iterate()` `obj*` - Gets an iterator for the object, this is called when using the `for` loop or a winded expression
 
 
 
@@ -648,6 +692,55 @@ int sqrt(int num)
 int pow(int num, int pow)
 ```
 > Raises a specified number to the power of another specified number.
+
+---
+
+```carp
+int sin(int num)
+```
+> The sine of a specified number.
+
+---
+
+```carp
+int cos(int num)
+```
+> The cosine of a specified number.
+
+---
+
+```carp
+int tan(int num)
+```
+> The tangent of a specified number.
+
+---
+
+```carp
+int asin(int num)
+```
+> The arcsine of a specified number.
+
+---
+
+```carp
+int acos(int num)
+```
+> The arccosine of a specified number.
+
+---
+
+```carp
+int atan(int num)
+```
+> The arctangent of a specified number.
+
+---
+
+```carp
+int linearinterpolation(int a, int b, int t)
+```
+> Linearly interpolates between two values based on a specified index (t).
 
 </details>
 
