@@ -4,6 +4,7 @@
 
 > Currently Carp is in its first public release, it may not be the most stable language for large projects, please report any issues through the GitHub issues page.
 
+### Whats new in version 1.0.5?
 
 
 ### Features

@@ -710,15 +710,27 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitLogicalExpression(CarpGrammarParser.LogicalExpressionContext context)
     {
-        CarpBool left = this.GetObject<CarpBool>(context, context.left);
+        // CarpBool left = this.GetObject<CarpBool>(context, context.left);
+        CarpObject left = this.GetObject<CarpObject>(context, context.left);
         Logical op = this.GetLogical(context.op);
 
-        CarpBool GetRight() => this.GetObject<CarpBool>(context, context.right);
+        // CarpBool GetRight() => this.GetObject<CarpBool>(context, context.right);
+        CarpObject GetRight() => this.GetObject<CarpObject>(context, context.right);
 
+        bool Truthy(CarpObject obj)
+        {
+            return obj switch
+            {
+                CarpBool b => b.Native,
+                CarpNull => false,
+                _ => true
+            };
+        }
+        
         return op switch
         {
-            Logical.And => left.Native ? GetRight() : left,
-            Logical.Or => left.Native ? left : GetRight(),
+            Logical.And => Truthy(left) ? GetRight() : left,
+            Logical.Or => Truthy(left) ? left : GetRight(),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

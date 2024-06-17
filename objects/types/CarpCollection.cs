@@ -114,8 +114,18 @@ public class CarpCollection : CarpObject
             "within" => new CarpExternalFunc(CarpBool.Type, this.Within),
             "first" => this._value.Count > 0 ? this._value[0] : CarpNull.Instance,
             "last" => this._value.Count > 0 ? this._value[^1] : CarpNull.Instance,
+            "get" => new CarpExternalFunc(this._itemType, this.Get),
             _ => throw new CarpError.InvalidProperty(signature),
         };
+    }
+    
+    private CarpObject Get(CarpInt index, CarpObject def)
+    {
+        int i = index.NativeInt;
+        if (i < 0 || i >= this._value.Count)
+            return def.CastEx(this._itemType);
+
+        return this._value[i];
     }
 
     public override CarpObject Cast(CarpType type)

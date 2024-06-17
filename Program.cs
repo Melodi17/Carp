@@ -145,7 +145,7 @@ public class Program
                     .Replace("/", ".")
                     .Replace("\\", ".");
 
-                string[] textFormats = {".txt", ".json"};
+                string[] textFormats = {".txt", ".json", ".yaml", ".dat", ".xml"};
                 
                 if (textFormats.Contains(ext))
                     instance.Resources[name] = new CarpString(entry.GetFileDataString());

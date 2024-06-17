@@ -100,8 +100,18 @@ public class CarpMap : CarpObject
             "contains" => new CarpExternalFunc(CarpBool.Type, this.Contains),
             "keys" => new CarpCollection(this._keyType, this._value.Keys.ToArray()),
             "values" => new CarpCollection(this._valueType, this._value.Values.ToArray()),
+            "get" => new CarpExternalFunc(this._valueType, this.Get),
             _ => throw new CarpError.InvalidProperty(signature),
         };
+    }
+
+    private CarpObject Get(CarpObject key, CarpObject def)
+    {
+        CarpObject index = key.CastEx(this._keyType);
+        if (!this._value.ContainsKeySlow(index))
+            return def.CastEx(this._valueType);
+
+        return this._value.GetValueSlow(index);
     }
 
     public override CarpString String()
