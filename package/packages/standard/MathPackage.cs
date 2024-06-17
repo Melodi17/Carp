@@ -105,4 +105,25 @@ public class MathPackage(IPackageResolver source) : EmbeddedPackage(source, "Mat
     /// <returns>The result of raising the base to the power of the exponent.</returns>
     [PackageMember]
     public CarpInt Pow(CarpInt num, CarpInt pow) => new((int)Math.Pow(num.Native, pow.Native));
+    
+    [PackageMember]
+    public CarpInt Sin(CarpInt num) => new(Math.Sin(num.Native));
+    
+    [PackageMember]
+    public CarpInt Cos(CarpInt num) => new(Math.Cos(num.Native));
+    
+    [PackageMember]
+    public CarpInt Tan(CarpInt num) => new(Math.Tan(num.Native));
+    
+    [PackageMember]
+    public CarpInt Asin(CarpInt num) => new(Math.Asin(num.Native));
+    
+    [PackageMember]
+    public CarpInt Acos(CarpInt num) => new(Math.Acos(num.Native));
+    
+    [PackageMember]
+    public CarpInt Atan(CarpInt num) => new(Math.Atan(num.Native));
+    
+    [PackageMember]
+    public CarpInt LinearInterpolation(CarpInt a, CarpInt b, CarpInt t) => new(a.Native + (b.Native - a.Native) * t.Native);
 }

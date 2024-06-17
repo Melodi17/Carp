@@ -54,6 +54,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         DefineVarByName("bool", CarpType.Type, CarpBool.Type);
         DefineVarByName("obj", CarpType.Type, CarpObject.Type);
         DefineVarByName("range", CarpType.Type, CarpRange.Type);
+        DefineVarByName("byte_sequence", CarpType.Type, CarpByteSequence.Type);
         DefineVarByName("enum", CarpType.Type, CarpEnum.Type);
         DefineVarByName("type", CarpType.Type, CarpType.Type);
         DefineVarByName("null", CarpNull.Type, CarpNull.Instance);

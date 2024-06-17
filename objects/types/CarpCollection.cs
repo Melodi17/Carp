@@ -120,10 +120,18 @@ public class CarpCollection : CarpObject
 
     public override CarpObject Cast(CarpType type)
     {
-        if (type.Extends(CarpCollection.Type) && type is GenericCarpType genericCarpType)
+        if (type.Extends(CarpMap.Type) && type is GenericCarpType genericCarpType)
+        {
+            // if we are empty, convert to empty map
+            
+            if (this._value.Count == 0)
+                return new CarpMap(genericCarpType.SubTypes[0], genericCarpType.SubTypes[1]);
+        }
+        
+        if (type.Extends(CarpCollection.Type) && type is GenericCarpType genericCarpType1)
         {
             // TODO: Sort out this casting behaviour
-            return new CarpCollection(genericCarpType.SubTypes[0], this._value.ToArray());
+            return new CarpCollection(genericCarpType1.SubTypes[0], this._value.ToArray());
         }
         // if (type == CarpCollection<CarpObject>.Type)
         //     return new CarpCollection<CarpObject>(this._value.Select(x => x as CarpObject).ToList());

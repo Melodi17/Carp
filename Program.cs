@@ -157,7 +157,8 @@ public class Program
                 //     remainingAssemblies.Remove(name);
                 // }
                 else
-                    throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
+                    instance.Resources[name] = new CarpByteSequence(entry.GetFileDataBytes());
+                    //throw new PackedPackage.PackageInvalid($"Unsupported resource type: {ext}");
             }
         }
         
@@ -190,7 +191,7 @@ public class Program
         return (projConfig, RunString(instance, mainCode));
     }
 
-    private static ModularPackageResolver GetPackageResolver()
+    public static ModularPackageResolver GetPackageResolver()
     {
         ModularPackageResolver mpr = new();
         mpr.AddResolver("std", new StandardPackageResolver());
@@ -354,7 +355,7 @@ public class Program
         return depths.Sum();
     }
 
-    private static void SetDefaultResolver(IPackageResolver resolver, IPackageResolver def)
+    public static void SetDefaultResolver(IPackageResolver resolver, IPackageResolver def)
     {
         if (resolver is ModularPackageResolver mpr)
             mpr.SetDefaultResolver(def);
@@ -362,7 +363,7 @@ public class Program
             throw new("Resolver is not a ModularPackageResolver");
     }
     
-    private static void SetSpecificResolver(IPackageResolver resolver, string name, IPackageResolver def)
+    public static void SetSpecificResolver(IPackageResolver resolver, string name, IPackageResolver def)
     {
         if (resolver is ModularPackageResolver mpr)
             mpr.AddResolver(name, def);

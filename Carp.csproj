@@ -13,8 +13,8 @@
         <ToolCommandName>carp</ToolCommandName>
         <PackageProjectUrl>https://github.com/Melodi17/Carp</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Melodi17/Carp</RepositoryUrl>
-        <Version>1.0.3</Version>
-        <AssemblyVersion>1.0.3</AssemblyVersion>
+        <Version>1.0.4</Version>
+        <AssemblyVersion>1.0.4</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup>

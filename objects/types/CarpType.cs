@@ -38,6 +38,7 @@ public abstract class CarpType : CarpObject
             "name" => this.String(),
             "base" => this._baseType,
             "is_struct" => CarpBool.Of(this.IsStruct),
+            "new" => new CarpExternalFunc(this, (CarpObject[] args) => this.Instantiate(args), true),
             _ => throw new CarpError.InvalidProperty(signature),
         };
     }
