@@ -1,4 +1,5 @@
-﻿using Carp.interpreter;
+﻿using System.Text;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
@@ -45,6 +46,37 @@ public class CarpByteSequence : CarpObject
         return new CarpInt(this._value[index]);
     }
 
+    public override CarpObject Property(Signature signature)
+    {
+        return signature.Name switch
+        {
+            "length" => new CarpInt(this._value.Length),
+            "decode" => new CarpExternalFunc(CarpString.Type, this.Decode),
+            _ => throw new CarpError.InvalidProperty(signature),
+        };
+    }
+
+    private CarpString Decode(CarpString format)
+    {
+        Encoding enc = EncodingFromName(format);
+
+        return new(enc.GetString(this._value));
+    }
+
+    public static Encoding EncodingFromName(CarpString format)
+    {
+        Encoding enc = format.Native switch
+        {
+            "utf8" => Encoding.UTF8,
+            "utf32" => Encoding.UTF32,
+            "unicode" => Encoding.Unicode,
+            "bigendianunicode" => Encoding.BigEndianUnicode,
+            "latin" => Encoding.Latin1,
+            "ascii" => Encoding.ASCII
+        };
+        return enc;
+    }
+    
     public override CarpBool Match(CarpObject other)
     {
         if (other is not CarpByteSequence cbs)

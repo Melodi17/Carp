@@ -1,3 +1,4 @@
+using System.Text;
 using Carp.interpreter;
 
 namespace Carp.objects.types;
@@ -141,8 +142,16 @@ public class CarpString : CarpObject
             "replace" => new CarpExternalFunc(CarpString.Type, this.Replace),
             "startswith" => new CarpExternalFunc(CarpBool.Type, this.StartsWith),
             "endswith" => new CarpExternalFunc(CarpBool.Type, this.EndsWith),
+            "encode" => new CarpExternalFunc(CarpByteSequence.Type, this.Encode),
             _ => throw new CarpError.InvalidProperty(signature),
         };
+    }
+    
+    private CarpByteSequence Encode(CarpString format)
+    {
+        Encoding enc = CarpByteSequence.EncodingFromName(format);
+
+        return new(enc.GetBytes(this._value));
     }
 
     public override CarpString String() => new(this._value);
