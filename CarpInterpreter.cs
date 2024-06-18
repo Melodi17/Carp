@@ -408,7 +408,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
                 CarpObject cur = iterator.Next();
 
                 if (type != AutoType.Instance && cur.GetCarpType() != type)
-                    // TODO: Test this out
                     cur = cur.CastEx(type);
 
                 if (type == AutoType.Instance)
