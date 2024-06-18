@@ -200,6 +200,7 @@ compoundAssignment
     | MINUS_EQUALS # subtractCompound
     | ASTERISK_EQUALS # multiplyCompound
     | SLASH_EQUALS # divideCompound
+    | ASTERISK_LSPACE EQUALS # multiplyCompound
     | CARET_EQUALS # powerCompound
     | PERCENT_EQUALS # modulusCompound
     ;
