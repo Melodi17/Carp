@@ -38,7 +38,7 @@ public class Preprocessor
     
     public Preprocessor(string source)
     {
-        this._source = source;
+        this._source = source.Replace("\r", "");
     }
 
     public IEnumerable<PrimitiveToken> FastLex()
@@ -86,8 +86,12 @@ public class Preprocessor
         }
 
         char ch = Next();
+        bool seenComment = false;
         while (ch != '\0')
         {
+            if (ch == '#') seenComment = true;
+            if (ch == '\n') seenComment = false;
+            
             if (junk.Contains(ch))
             {
                 yield return new(ch.ToString(), PrimitiveTokenType.Junk);
@@ -102,7 +106,7 @@ public class Preprocessor
                 string num = UntilNotId();
                 yield return new(ch + num, PrimitiveTokenType.Constant);
             }
-            else if (ch == '\'')
+            else if (ch == '\'' && !seenComment)
             {
                 // string, support escaping quotes
                 StringBuilder sb = new();

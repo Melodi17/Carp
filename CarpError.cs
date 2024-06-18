@@ -3,10 +3,43 @@ using Carp.objects.types;
 
 namespace Carp;
 
-// TODO: Rewrite errors to use errorinst.Error() and add line numbers
 public abstract class CarpError(string message) : Exception(message)
 {
     public string DisplayName => this.GetType().Name;
+    private List<StackFrame> _stackTrace = new();
+    public IReadOnlyList<StackFrame> StackTrace => this._stackTrace;
+    
+    public void AddStackFrame(StackFrame frame)
+    {
+        if (this._stackTrace.Contains(frame))
+            return;
+        
+        this._stackTrace.Add(frame);
+    }
+
+    public class StackFrame
+    {
+        public readonly CarpInterpreter Interpreter;
+        public readonly int Line;
+        public string LineContent => this.Interpreter.ExecutionContext?[this.Line - 1].Trim() ?? "not found";
+        
+        public StackFrame(CarpInterpreter interpreter, int line)
+        {
+            this.Interpreter = interpreter;
+            this.Line = line;
+        }
+
+        public override string ToString()
+        {
+            return $"{this.Line} |  {this.LineContent}";
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return obj is StackFrame frame && frame.Interpreter == this.Interpreter && frame.Line == this.Line;
+        }
+    }
+    
     public class CarpObjError : CarpObject
     {
         public static new CarpType Type = NativeType.Of<CarpObjError>("error");

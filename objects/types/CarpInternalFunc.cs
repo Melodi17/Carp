@@ -10,19 +10,22 @@ public class CarpInternalFunc : CarpFunc
 
     private CarpGrammarParser.Generic_blockContext _block;
     private Dictionary<string, CarpType> _parameters;
+    public readonly CarpInterpreter Interpreter;
     private IScope _scope;
 
-    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters, CarpGrammarParser.Generic_blockContext block) 
+    public CarpInternalFunc(CarpInterpreter interpreter, CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters, CarpGrammarParser.Generic_blockContext block) 
         : base(returnType, parameters.Values.ToArray())
     {
+        this.Interpreter = interpreter;
         this._scope = scope;
         this._parameters = parameters;
         this._block = block;
     }
     
-    public CarpInternalFunc(CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters) 
+    public CarpInternalFunc(CarpInterpreter interpreter, CarpType returnType, IScope scope, Dictionary<string, CarpType> parameters) 
         : base(returnType, parameters.Values.ToArray())
     {
+        this.Interpreter = interpreter;
         this._scope = scope;
         this._parameters = parameters;
         this._block = null;
@@ -72,10 +75,15 @@ public class CarpInternalFunc : CarpFunc
         CarpObject returnVal = CarpVoid.Instance;
         try
         {
-            object? obj = CarpInterpreter.Instance.Visit(this._block, scope);
+            object? obj = this.Interpreter.Visit(this._block, scope);
             if (obj is CarpObject co)
                 returnVal = co;
         }
+        // catch (CarpError ce)
+        // {
+        //     ce.StackTrace.Add(new(this._interpreter, this._block.Start.Line));
+        //     throw;
+        // }
         catch (CarpFlowControlError.Return returnError)
         {
             returnVal = returnError.Value;
@@ -103,6 +111,6 @@ public class CarpInternalFunc : CarpFunc
         Scope boundScope = new(this._scope);
         boundScope.Define(Signature.OfVariable("this"), obj.GetCarpType(), obj);
         
-        return new(this.ReturnType, boundScope, this._parameters, this._block);
+        return new(this.Interpreter, this.ReturnType, boundScope, this._parameters, this._block);
     }
 }

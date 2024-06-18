@@ -275,10 +275,11 @@ public class Program
             return CarpVoid.Instance;
 
         CarpGrammarParser.ProgramContext program;
+        string processed;
         try
         {
             Preprocessor preprocessor = new(s);
-            string processed = preprocessor.Process();
+            processed = preprocessor.Process();
             
             // Console.WriteLine(processed);
 
@@ -299,14 +300,17 @@ public class Program
 
         try
         {
+            interpreter.ExecutionContext = processed.Split("\n");
             CarpObject? obj = interpreter.Visit(program) as CarpObject;
             return obj;
         }
         catch (CarpError e)
         {
+            e.AddStackFrame(new(interpreter, interpreter.CurrentLine));
+            
             if (Flags.Instance.ForceThrow) throw;
-
-            PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
+            
+            PrintError(e);
         }
         catch (CarpFlowControlError fcError)
         {
@@ -314,6 +318,8 @@ public class Program
 
             CarpError.UnenclosedFlowControl e = new(fcError);
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
+            if (interpreter.ExecutionContext != null)
+                PrintError($"\t--->  {interpreter.ExecutionContext[interpreter.CurrentLine - 1]}");
         }
         catch (NotImplementedException)
         {
@@ -321,6 +327,13 @@ public class Program
         }
 
         return CarpVoid.Instance;
+    }
+
+    public static void PrintError(CarpError e)
+    {
+        PrintError($"{e.DisplayName}: {e.Message}");
+        foreach (CarpError.StackFrame frame in e.StackTrace.AsEnumerable().Reverse())
+            PrintError($"\t--->  {frame}");
     }
 
     internal static void PrintError(string text)

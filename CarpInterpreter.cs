@@ -41,6 +41,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     }
 
     public IScope GlobalScope { get; set; }
+    public string[]? ExecutionContext { get; set; }
 
     public CarpInterpreter(IPackageResolver packageResolver)
     {
@@ -103,6 +104,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public object Visit(ScopedParserRuleContext tree, IScope scopeContext)
     {
+        this.CurrentLine = tree.Start.Line;
         tree.ContextScope = scopeContext;
         return this.Visit(tree);
     }
@@ -126,7 +128,6 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public void Execute(IScope parentScope, ScopedParserRuleContext child)
     {
-        this.CurrentLine = child.Start.Line;
         if (Flags.Instance.Debug && Program.Debugger.Attached)
         {
             if (Program.Debugger.Breakpoints.Contains(this.CurrentLine))
@@ -562,7 +563,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         // we are going to violate the rules here to prevent having to make MAJOR changes to the code to support non-carp objects to C# objects
 
-        CarpInternalFunc func = new(returnType, context.ContextScope, args, body);
+        CarpInternalFunc func = new(this, returnType, context.ContextScope, args, body);
 
         context.ContextScope.Define(Signature.OfMethod(name, func), func.GetCarpType(), func);
 
@@ -630,7 +631,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
                 : nonStaticDefinitions).Add(def);
         }
 
-        CarpClass clazz = new(new(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
+        CarpClass clazz = new(this, new(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
         scope.Define(Signature.OfVariable(name), clazz.GetCarpType(), clazz);
     }
 
@@ -649,7 +650,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpGrammarParser.Generic_blockContext body = context.body;
         body.ContextScope = context.ContextScope;
 
-        CarpInternalFunc func = new(AutoType.Instance, context.ContextScope, args, body);
+        CarpInternalFunc func = new(this, AutoType.Instance, context.ContextScope, args, body);
 
         return func;
     }
@@ -746,7 +747,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         CarpObject left = this.GetObject(context, context.left);
         Binary op = this.GetBinary(context.op);
         CarpObject right = this.GetObject(context, context.right);
-
+        
         return op switch
         {
             Binary.Add => left.Add(right),
@@ -784,11 +785,19 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitCallExpression(CarpGrammarParser.CallExpressionContext context)
     {
         CarpObject callee = this.GetObject(context, context.obj);
-
+        
         CarpObject[] args = this.GetExpressionList(context, context.parameters);
 
-        CarpObject obj = callee.Call(args);
-        return obj;
+        try
+        {
+            CarpObject obj = callee.Call(args);
+            return obj;
+        }
+        catch (CarpError ce)
+        {
+            ce.AddStackFrame(new(this, context.Start.Line));
+            throw;
+        }
     }
 
     public override object VisitInfixExpression(CarpGrammarParser.InfixExpressionContext context)
