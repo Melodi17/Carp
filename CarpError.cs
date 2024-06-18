@@ -21,7 +21,7 @@ public abstract class CarpError(string message) : Exception(message)
     {
         public readonly CarpInterpreter Interpreter;
         public readonly int Line;
-        public string LineContent => this.Interpreter.ExecutionContext?[this.Line - 1].Trim() ?? "not found";
+        public string LineContent => this.Interpreter.ExecutionContext!.GetAtLocation(this.Line - 1) ?? "not found";
         
         public StackFrame(CarpInterpreter interpreter, int line)
         {
@@ -31,7 +31,7 @@ public abstract class CarpError(string message) : Exception(message)
 
         public override string ToString()
         {
-            return $"{this.Line} |  {this.LineContent}";
+            return $"{this.Interpreter.ExecutionContext!.Source}  {this.Line} |  {this.LineContent}";
         }
         
         public override bool Equals(object obj)

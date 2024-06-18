@@ -17,6 +17,7 @@ public class SourcePackage : Package
 
     public override CarpStatic Export(CarpInterpreter interpreter)
     {
+        interpreter.ExecutionContext = new(this.Name, this.SourceCode.Split("\n"));
         Program.RunString(interpreter, this.SourceCode);
         return new(this.Name, interpreter.GlobalScope);
     }

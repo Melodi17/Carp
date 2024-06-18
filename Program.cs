@@ -58,6 +58,8 @@ public class Program
                 PrintError("No code given");
                 return;
             }
+            
+            CarpInterpreter.Instance.ExecutionContext = new("<line>", se.SoftScriptPath.Split("\n"));
 
             SetDefaultResolver(CarpInterpreter.Instance.PackageResolver,
                 new FileSystemInternalPackageResolver(Environment.CurrentDirectory));
@@ -114,6 +116,9 @@ public class Program
         }
 
         string code = File.ReadAllText(path, Encoding.UTF8);
+        
+        instance.ExecutionContext = new(path, code.Split("\n"));
+        
         SetDefaultResolver(instance.PackageResolver,
             new FileSystemInternalPackageResolver(Path.GetDirectoryName(path)!));
         return RunString(instance, code);
@@ -187,6 +192,8 @@ public class Program
             throw new PackedPackage.PackageInvalid("No main.carp file found in package");
 
         string mainCode = mainEntry.GetFileDataString();
+        
+        instance.ExecutionContext = new(projConfig.Name, mainCode.Split("\n"));
 
         return (projConfig, RunString(instance, mainCode));
     }
@@ -202,6 +209,9 @@ public class Program
 
     public static void Repl()
     {
+        CarpExecutionContext ctx = new("<repl>", Array.Empty<string>());
+        CarpInterpreter.Instance.ExecutionContext = ctx;
+        
         SetDefaultResolver(CarpInterpreter.Instance.PackageResolver,
             new FileSystemInternalPackageResolver(Environment.CurrentDirectory));
 
@@ -223,6 +233,12 @@ public class Program
                 predictionDepth = CalculateDepth(msg);
             }
 
+            int prevLength = ctx.Content.Length;
+            ctx.Content = ctx.Content.Concat(msg.Split("\n")).ToArray();
+            
+            // add prevLength amount of \n to the start of msg for padding the errors
+            msg = string.Concat(Enumerable.Repeat("\n", prevLength)) + msg;
+            
             CarpObject response = RunString(CarpInterpreter.Instance, msg);
             if (response != CarpVoid.Instance)
                 WriteOutput(response, true);
@@ -300,13 +316,13 @@ public class Program
 
         try
         {
-            interpreter.ExecutionContext = processed.Split("\n");
+            interpreter.ExecutionContext ??= new("<anonymous>", processed.Split("\n"));
             CarpObject? obj = interpreter.Visit(program) as CarpObject;
             return obj;
         }
         catch (CarpError e)
         {
-            e.AddStackFrame(new(interpreter, interpreter.CurrentLine));
+            // e.AddStackFrame(new(interpreter, interpreter.CurrentLine));
             
             if (Flags.Instance.ForceThrow) throw;
             
@@ -319,7 +335,7 @@ public class Program
             CarpError.UnenclosedFlowControl e = new(fcError);
             PrintError($"{e.DisplayName} on {interpreter.CurrentLine}: {e.Message}");
             if (interpreter.ExecutionContext != null)
-                PrintError($"\t--->  {interpreter.ExecutionContext[interpreter.CurrentLine - 1]}");
+                PrintError($"\t--->  {fcError.StackTrace?.Last()}");
         }
         catch (NotImplementedException)
         {
@@ -332,7 +348,7 @@ public class Program
     public static void PrintError(CarpError e)
     {
         PrintError($"{e.DisplayName}: {e.Message}");
-        foreach (CarpError.StackFrame frame in e.StackTrace.AsEnumerable().Reverse())
+        foreach (CarpError.StackFrame frame in e.StackTrace)
             PrintError($"\t--->  {frame}");
     }
 

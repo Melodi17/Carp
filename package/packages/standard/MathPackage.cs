@@ -95,7 +95,7 @@ public class MathPackage(IPackageResolver source) : EmbeddedPackage(source, "Mat
     /// <param name="num">The number to find the square root of.</param>
     /// <returns>The square root of the specified number.</returns>
     [PackageMember]
-    public CarpInt Sqrt(CarpInt num) => new((int)Math.Sqrt(num.Native));
+    public CarpInt Sqrt(CarpInt num) => new(Math.Sqrt(num.Native));
 
     /// <summary>
     /// Raises a specified number to the power of another specified number.
@@ -104,7 +104,7 @@ public class MathPackage(IPackageResolver source) : EmbeddedPackage(source, "Mat
     /// <param name="pow">The exponent.</param>
     /// <returns>The result of raising the base to the power of the exponent.</returns>
     [PackageMember]
-    public CarpInt Pow(CarpInt num, CarpInt pow) => new((int)Math.Pow(num.Native, pow.Native));
+    public CarpInt Pow(CarpInt num, CarpInt pow) => new(Math.Pow(num.Native, pow.Native));
     
     [PackageMember]
     public CarpInt Sin(CarpInt num) => new(Math.Sin(num.Native));

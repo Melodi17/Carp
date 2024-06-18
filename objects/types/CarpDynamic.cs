@@ -25,15 +25,7 @@ public class CarpDynamic : CarpObject
             if (f is not CarpFunc func)
                 throw new CarpError.InvalidType(CarpFunc.Type, f.GetCarpType());
 
-            try
-            {
-                return func.Call(args);
-            }
-            catch (CarpError e)
-            {
-                e.AddStackFrame(new(this._interpreter, this._interpreter.CurrentLine));
-                throw;
-            }
+            return func.Call(args);
         }
 
         return null;
