@@ -4,7 +4,7 @@
 
 > Currently Carp is in early public releases, it may not be the most stable language for large projects, please report any issues through the GitHub issues page.
 
-### What's new in version 1.0.6?
+### What's new in version 1.0.6? [...](https://github.com/Melodi17/Carp/blob/master/UPDATES.md)
 This version was based on making the language more debuggable and fixing some small issues.
 - Fixed issue with the `*=` compound operator not being recognized in some circumstances by the parser
 - Added stacktraces to errors, making it easier to debug, it now shows the line number, line content, source (e.g interpreter or file name) for each level of the stack to the error:
