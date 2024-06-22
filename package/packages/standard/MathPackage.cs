@@ -1,4 +1,4 @@
-﻿using Carp.objects.types;
+using Carp.objects.types;
 
 namespace Carp.package.packages.standard;
 
@@ -125,5 +125,5 @@ public class MathPackage(IPackageResolver source) : EmbeddedPackage(source, "Mat
     public CarpInt Atan(CarpInt num) => new(Math.Atan(num.Native));
     
     [PackageMember]
-    public CarpInt LinearInterpolation(CarpInt a, CarpInt b, CarpInt t) => new(a.Native + (b.Native - a.Native) * t.Native);
+    public CarpInt LinearInterpolation(CarpInt a, CarpInt b, CarpInt t) => new(a.Native + ((b.Native - a.Native) * t.Native));
 }

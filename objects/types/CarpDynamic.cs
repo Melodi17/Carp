@@ -1,4 +1,4 @@
-﻿using Carp.interpreter;
+using Carp.interpreter;
 
 namespace Carp.objects.types;
 
@@ -270,7 +270,6 @@ public class CarpDynamic : CarpObject
 
         return base.Iterate();
     }
-
 
     public override CarpType GetCarpType() => this._class;
 }
