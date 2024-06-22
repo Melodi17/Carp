@@ -16,6 +16,14 @@ public abstract class CarpFunc : CarpObject
     
     public override abstract CarpObject Call(CarpObject[] args);
 
+    public override CarpObject Cast(CarpType type)
+    {
+        if (type == CarpFunc.Type)
+            return this;
+        
+        return base.Cast(type);
+    }
+
     public override CarpString String() 
         => new($"func<{this.ReturnType.String().Native}>");
 }

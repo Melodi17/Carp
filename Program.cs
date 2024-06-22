@@ -194,7 +194,6 @@ public class Program
         string mainCode = mainEntry.GetFileDataString();
         
         instance.ExecutionContext = new("main", mainCode.Split("\n"));
-
         return (projConfig, RunString(instance, mainCode));
     }
 

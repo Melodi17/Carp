@@ -108,11 +108,15 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         tree.ContextScope = scopeContext;
         try
         {
-            return this.Visit(tree);   
+            return this.Visit(tree);
         }
         catch (CarpError ce)
         {
-            ce.AddStackFrame(new(this, tree.Start.Line));
+            if (tree is CarpGrammarParser.StatementContext
+                    // or CarpGrammarParser.EnclosedBlockContext
+                    // or CarpGrammarParser.LambdaBlockContext
+                )
+                ce.AddStackFrame(new(this, tree.Start.Line));
             throw;
         }
     }

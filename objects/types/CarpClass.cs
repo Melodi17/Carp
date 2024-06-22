@@ -17,7 +17,7 @@ public class CarpClass : CarpType
         
         // Create static definitions
         foreach (CarpGrammarParser.Definition_with_attrContext def in staticDefinitions)
-            CarpInterpreter.Instance.Execute(this._scope, CarpInterpreter.Instance.GetDefinition(scope, def).definitionContext);
+            this._interpreter.Execute(this._scope, this._interpreter.GetDefinition(scope, def).definitionContext);
     }
 
     public override CarpObject Instantiate(CarpObject[] args, bool isImplicit = false)
@@ -28,7 +28,7 @@ public class CarpClass : CarpType
         
         // Create non-static definitions
         foreach (CarpGrammarParser.Definition_with_attrContext def in this._nonStaticDefinitions)
-            this._interpreter.Execute(scope, CarpInterpreter.Instance.GetDefinition(this._scope, def).definitionContext);
+            this._interpreter.Execute(scope, this._interpreter.GetDefinition(this._scope, def).definitionContext);
         
         // Call constructor
         Signature sig = Signature.InitMethod.WithSpecific(CarpVoid.Type, args.Select(x => x.GetCarpType()).ToArray());

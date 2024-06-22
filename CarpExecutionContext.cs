@@ -11,5 +11,10 @@ public class CarpExecutionContext
         this.Content = content;
     }
 
-    public string GetAtLocation(int location) => this.Content[location].Trim().Replace("\r", "");
+    public string GetAtLocation(int location)
+    {
+        if (location < 0 || location >= this.Content.Length)
+            return "<OUT OF BOUNDS>";
+        return this.Content[location].Trim().Replace("\r", "");
+    }
 }
