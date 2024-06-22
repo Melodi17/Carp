@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
@@ -17,6 +18,8 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     static CarpInterpreter()
     {
         Marshal.AddEnum("static");
+        
+        Marshal.DefineProperty(Signature.OfMethod("id"), CarpFunc.Type, new CarpExternalFunc(CarpString.Type, GetObjectID));
     }
 
     public static CarpInterpreter Instance;
@@ -27,6 +30,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public bool Paused { get; set; } = false;
     private bool _step = false;
 
+    private static readonly Dictionary<CarpObject, CarpString> _objectIDs = new();
     private bool Next
     {
         get
@@ -38,6 +42,23 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
             this._step = false;
             return true;
         }
+    }
+    
+    public static CarpString GetObjectID(CarpObject obj)
+    {
+        if (_objectIDs.TryGetValue(obj, out CarpString? objectId))
+            return objectId;
+
+        // Generate a new object ID
+        objectId = new(Guid.NewGuid().ToString());
+        
+        // If, in the rare case, the object ID is already in use, generate a new one
+        while (_objectIDs.ContainsValue(objectId))
+            objectId = new(Guid.NewGuid().ToString());
+        
+        _objectIDs[obj] = objectId;
+        
+        return objectId;
     }
 
     public IScope GlobalScope { get; set; }

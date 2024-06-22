@@ -18,7 +18,7 @@ public abstract class CarpFunc : CarpObject
 
     public override CarpObject Cast(CarpType type)
     {
-        if (type == CarpFunc.Type)
+        if (type.Extends(CarpFunc.Type))
             return this;
         
         return base.Cast(type);
