@@ -133,11 +133,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         }
         catch (CarpError ce)
         {
-            if (tree is CarpGrammarParser.StatementContext
-                    // or CarpGrammarParser.EnclosedBlockContext
-                    // or CarpGrammarParser.LambdaBlockContext
-                )
-                ce.AddStackFrame(new(this, tree.Start.Line));
+            ce.AddStackFrame(new(this, tree.Start.Line));
             throw;
         }
     }
@@ -641,6 +637,22 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), true);
 
+        return null;
+    }
+
+    public override object VisitEnumDefinition(CarpGrammarParser.EnumDefinitionContext context)
+    {
+        (string name, Modifier modifiers) = this.GetName(context.key);
+
+        CarpStatic enumObj = new(name);
+        foreach (CarpGrammarParser.NameContext evc in context._values)
+        {
+            (string enumName, _) = this.GetName(evc);
+            enumObj.AddEnum(enumName);
+        }
+        
+        context.ContextScope.Define(Signature.OfVariable(name), enumObj.GetCarpType(), enumObj);
+        
         return null;
     }
 

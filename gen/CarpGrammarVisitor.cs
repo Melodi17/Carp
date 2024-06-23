@@ -209,6 +209,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStructDefinition([NotNull] CarpGrammarParser.StructDefinitionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>enumDefinition</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEnumDefinition([NotNull] CarpGrammarParser.EnumDefinitionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>mapExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// </summary>

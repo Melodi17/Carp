@@ -76,6 +76,7 @@ YIELD : 'yield' ;
 CLASS : 'class' ;
 STRUCT : 'struct' ;
 LET : 'let' ;
+FIXED : 'fixed' ;
 //IMPORT : 'import' ;
 
 ID : [a-zA-Z][a-zA-Z0-9_]* ;
@@ -161,6 +162,7 @@ definition
     | type name # variableDefinition
     | CLASS name '{' definitions+=definition_with_attr* '}' # classDefinition
     | STRUCT name '{' definitions+=definition_with_attr* '}' # structDefinition
+    | FIXED key=name '{' values+=name* '}' # enumDefinition
     ;
 
 expression
