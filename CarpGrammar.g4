@@ -73,8 +73,7 @@ RETURN : 'return' ;
 BREAK : 'break' ;
 CONTINUE : 'continue' ;
 YIELD : 'yield' ;
-CLASS : 'class' ;
-STRUCT : 'struct' ;
+STRUCTURE : 'define' ;
 LET : 'let' ;
 FIXED : 'fixed' ;
 //IMPORT : 'import' ;
@@ -160,9 +159,7 @@ definition
     | rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
     | type name '=' value=expression # initializedVariableDefinition
     | type name # variableDefinition
-    | CLASS name '{' definitions+=definition_with_attr* '}' # classDefinition
-    | STRUCT name '{' definitions+=definition_with_attr* '}' # structDefinition
-    | FIXED key=name '{' values+=name* '}' # enumDefinition
+    | STRUCTURE name ':' (interhits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # structureDefinition
     ;
 
 expression
