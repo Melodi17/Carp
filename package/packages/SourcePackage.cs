@@ -9,14 +9,16 @@ namespace Carp.package.packages;
 public class SourcePackage : Package
 {
     public readonly string SourceCode;
-    
-    public SourcePackage(IPackageResolver source, IPackageResolver utilized, string name, string sourceCode) : base(source, utilized, name)
+    public Dictionary<string, CarpObject> Resources;
+    public SourcePackage(IPackageResolver source, IPackageResolver utilized, string name, string sourceCode, Dictionary<string, CarpObject> resources) : base(source, utilized, name)
     {
         this.SourceCode = sourceCode;
+        this.Resources = resources;
     }
 
     public override CarpStatic Export(CarpInterpreter interpreter)
     {
+        interpreter.Resources = this.Resources;
         interpreter.ExecutionContext = new(this.Name, this.SourceCode.Split("\n"));
         Program.RunString(interpreter, this.SourceCode);
         return new(this.Name, interpreter.GlobalScope);
