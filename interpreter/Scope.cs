@@ -63,6 +63,20 @@ public class Scope : IScope, IDisposable
 
         throw new CarpError.ReferenceDoesNotExist(name.ToString());
     }
+    public CarpObject SetLocal(Signature name, CarpObject value)
+    {
+        if (this._values.ContainsKey(name))
+        {
+            var (type, _) = this._values[name];
+            if (!value.GetCarpType().Extends(type))
+                value = value.CastEx(type);
+
+            this._values[name] = (type, value);
+        }
+        else
+            this._values[name] = (value.GetCarpType(), value);
+        return value;
+    }
 
     public CarpObject Set(Signature name, CarpObject value)
     {

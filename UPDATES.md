@@ -3,6 +3,7 @@
 
 ### What's new in version 1.0.6?
 This version was based on making the language more debuggable and fixing some small issues.
+- Added scope patch that allows methods to use the return type of their contained class/struct
 - Fixed issue with the `*=` compound operator not being recognized in some circumstances by the parser
 - Added stacktraces to errors, making it easier to debug, it now shows the line number, line content, source (e.g interpreter or file name) for each level of the stack to the error:
    ```

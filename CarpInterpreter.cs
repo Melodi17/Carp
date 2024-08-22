@@ -17,7 +17,9 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     static CarpInterpreter()
     {
-        Marshal.AddEnum("static");
+        Marshal.AddEnum("static"); // static member
+        Marshal.AddEnum("protected"); // prevents overriding in subclasses 
+        Marshal.AddEnum("abstract"); // must be implemented in subclass
         
         Marshal.DefineProperty(Signature.OfMethod("id"), CarpFunc.Type, new CarpExternalFunc(CarpString.Type, GetObjectID));
     }
@@ -228,6 +230,14 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public T GetObject<T>(ScopedParserRuleContext parent, ScopedParserRuleContext child) where T : CarpObject
     {
         CarpObject obj = this.GetObject(parent, child);
+        CarpType type = NativeType.Find<T>();
+
+        return obj.CastEx(type) as T;
+    }
+    
+    public T GetObject<T>(IScope scope, ScopedParserRuleContext child) where T : CarpObject
+    {
+        CarpObject obj = this.GetObject(scope, child);
         CarpType type = NativeType.Find<T>();
 
         return obj.CastEx(type) as T;
@@ -626,7 +636,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
         (string name, Modifier modifiers) = this.GetName(context.name());
 
-        this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), false);
+        this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), context._inherits.ToList(), false);
 
         return null;
     }
@@ -635,7 +645,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     {
         (string name, Modifier modifiers) = this.GetName(context.name());
 
-        this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), true);
+        this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), context._inherits.ToList(), true);
 
         return null;
     }
@@ -657,7 +667,8 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     }
 
     private void MakeObject(string name, Modifier modifiers, IScope scope,
-        List<CarpGrammarParser.Definition_with_attrContext> definitions, bool isStruct)
+        List<CarpGrammarParser.Definition_with_attrContext> definitions, List<CarpGrammarParser.TypeContext> inheritedTypes,
+        bool isStruct)
     {
         // Split static and dynamic
         List<CarpGrammarParser.Definition_with_attrContext> staticDefinitions = new();
@@ -674,8 +685,14 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
                 ? staticDefinitions
                 : nonStaticDefinitions).Add(def);
         }
+        
+        CarpType[] inherited = inheritedTypes.Select(x => GetObject<CarpType>(scope, x)).ToArray();
+        
+        CarpType parent = inherited.FirstOrDefault() ?? CarpObject.Type;
+        CarpType[] interfaces = inherited.Skip(1).ToArray();
 
-        CarpClass clazz = new(this, new(name), isStruct, scope, staticDefinitions, nonStaticDefinitions);
+        CarpClass clazz = new(this, new(name), isStruct, scope, parent, interfaces,
+            staticDefinitions, nonStaticDefinitions);
         scope.Define(Signature.OfVariable(name), clazz.GetCarpType(), clazz);
     }
 
