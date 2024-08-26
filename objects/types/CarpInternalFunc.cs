@@ -104,13 +104,6 @@ public class CarpInternalFunc : CarpFunc
         return returnVal;
     }
     
-    public CarpInternalFunc Bind(CarpObject obj)
-    {
-        // TODO: dont think we need this anymore :/
-        // set this
-        Scope boundScope = new(this._scope);
-        boundScope.Define(Signature.OfVariable("this"), obj.GetCarpType(), obj);
-        
-        return new(this.Interpreter, this.ReturnType, boundScope, this._parameters, this._block);
-    }
+    public CarpInternalFunc Bind(IScope scope) =>
+        new(this.Interpreter, this.ReturnType, scope, this._parameters, this._block);
 }

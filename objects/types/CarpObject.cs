@@ -32,6 +32,7 @@ public abstract class CarpObject
     public virtual CarpObject Index(CarpObject[] args) { throw new CarpError.PrimitiveIncompatible("Index", this); }
     public virtual CarpObject SetIndex(CarpObject[] args, CarpObject value) { throw new CarpError.PrimitiveIncompatible("SetIndex", this); }
 
+    public virtual CarpCollection Members() => new(CarpMember.Type);
     public virtual CarpObject Property(Signature signature) { throw new CarpError.PrimitiveIncompatible("Property", this); }
     public virtual CarpObject SetProperty(Signature name, CarpObject value) { throw new CarpError.PrimitiveIncompatible("SetProperty", this); }
     

@@ -13,13 +13,16 @@ namespace Carp;
 
 public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 {
-    private static readonly CarpStatic Marshal = new("marshal");
+    public static readonly CarpStatic Marshal = new("marshal");
+    public static readonly CarpEnum Static;
+    public static readonly CarpEnum Protected;
+    public static readonly CarpEnum Abstract;
 
     static CarpInterpreter()
     {
-        Marshal.AddEnum("static"); // static member
-        Marshal.AddEnum("protected"); // prevents overriding in subclasses 
-        Marshal.AddEnum("abstract"); // must be implemented in subclass
+        Static = Marshal.AddEnum("static"); // static member
+        Protected = Marshal.AddEnum("protected"); // prevents overriding in subclasses 
+        Abstract = Marshal.AddEnum("abstract"); // must be implemented in subclass
         
         Marshal.DefineProperty(Signature.OfMethod("id"), CarpFunc.Type, new CarpExternalFunc(CarpString.Type, GetObjectID));
     }
@@ -560,7 +563,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     public override object VisitInitializedVariableDefinition(
         CarpGrammarParser.InitializedVariableDefinitionContext context)
     {
-        (string name, Modifier modifiers) = this.GetName(context.name());
+        (string name, Modifier modifiers) = this.GetName(context.key);
         CarpType type = this.GetObject<CarpType>(context, context.type());
         CarpObject value = this.GetObject(context, context.value);
 
@@ -577,7 +580,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitVariableDefinition(CarpGrammarParser.VariableDefinitionContext context)
     {
-        (string name, Modifier modifiers) = this.GetName(context.name());
+        (string name, Modifier modifiers) = this.GetName(context.key);
         CarpType type = this.GetObject<CarpType>(context, context.type());
 
         if (type == AutoType.Instance)
@@ -593,7 +596,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitFunctionDefinition(CarpGrammarParser.FunctionDefinitionContext context)
     {
-        (string name, Modifier modifiers) = this.GetName(context.name());
+        (string name, Modifier modifiers) = this.GetName(context.key);
         Dictionary<string, CarpType> args = this.GetTypeNameList(context, context.values);
         CarpType returnType = this.GetObject<CarpType>(context, context.rtype);
         CarpGrammarParser.Generic_blockContext body = context.body;
@@ -610,7 +613,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitEmptyFunctionDefinition(CarpGrammarParser.EmptyFunctionDefinitionContext context)
     {
-        (string name, Modifier modifiers) = this.GetName(context.name());
+        (string name, Modifier modifiers) = this.GetName(context.key);
 
         Dictionary<string, CarpType> args = this.GetTypeNameList(context, context.values);
         CarpType returnType = this.GetObject<CarpType>(context, context.rtype);
@@ -634,7 +637,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
     {
         // TODO: Remember about attrs!
 
-        (string name, Modifier modifiers) = this.GetName(context.name());
+        (string name, Modifier modifiers) = this.GetName(context.key);
 
         this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), context._inherits.ToList(), false);
 
@@ -643,7 +646,7 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
 
     public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context)
     {
-        (string name, Modifier modifiers) = this.GetName(context.name());
+        (string name, Modifier modifiers) = this.GetName(context.key);
 
         this.MakeObject(name, modifiers, context.ContextScope, context._definitions.ToList(), context._inherits.ToList(), true);
 
@@ -673,15 +676,13 @@ public class CarpInterpreter : CarpGrammarBaseVisitor<object>
         // Split static and dynamic
         List<CarpGrammarParser.Definition_with_attrContext> staticDefinitions = new();
         List<CarpGrammarParser.Definition_with_attrContext> nonStaticDefinitions = new();
-
-        CarpEnum staticEnum = Marshal.Enum("static");
-
+        
         foreach (CarpGrammarParser.Definition_with_attrContext def in definitions)
         {
             (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) =
                 this.GetDefinition(scope, def);
 
-            (attrs.Any(x => x.Equals(staticEnum))
+            (attrs.Any(x => x.Equals(Static))
                 ? staticDefinitions
                 : nonStaticDefinitions).Add(def);
         }

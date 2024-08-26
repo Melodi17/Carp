@@ -53,9 +53,11 @@ public class CarpStatic : CarpObject
         return this._scope.Has(signature);
     }
 
-    public void AddEnum(string name)
+    public CarpEnum AddEnum(string name)
     {
-        this.DefineProperty(Signature.OfVariable(name), CarpEnum.Type, CarpEnum.Of(this, name));
+        CarpEnum e = CarpEnum.Of(this, name);
+        this.DefineProperty(Signature.OfVariable(name), CarpEnum.Type, e);
+        return e;
     }
 
     public CarpEnum Enum(string name)

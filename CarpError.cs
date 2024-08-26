@@ -135,6 +135,11 @@ public abstract class CarpError(string message) : Exception(message)
         $"Vague typing used, unable to determine automatic type for '{obj}'");
 
     public class InvalidOperation(string message) : CarpError(message);
+
+    public class MissingImplementation(string name) : CarpError($"Missing implementation for '{name}'");
+    
+    public class InvalidImplementation(string name) : CarpError($"Invalid implementation for '{name}', cannot override parent's protected member");
+    
 }
 
 public abstract class CarpFlowControlError(string message) : Exception(message)

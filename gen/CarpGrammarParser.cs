@@ -1389,14 +1389,15 @@ public partial class CarpGrammarParser : Parser {
 	}
 	public partial class EmptyFunctionDefinitionContext : DefinitionContext {
 		public TypeContext rtype;
+		public NameContext key;
 		public Type_name_listContext @values;
-		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
-			return GetRuleContext<NameContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(CarpGrammarParser.LPAREN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(CarpGrammarParser.RPAREN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
+			return GetRuleContext<NameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Type_name_listContext type_name_list() {
 			return GetRuleContext<Type_name_listContext>(0);
@@ -1411,15 +1412,16 @@ public partial class CarpGrammarParser : Parser {
 	}
 	public partial class FunctionDefinitionContext : DefinitionContext {
 		public TypeContext rtype;
+		public NameContext key;
 		public Type_name_listContext @values;
 		public Generic_blockContext body;
-		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
-			return GetRuleContext<NameContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(CarpGrammarParser.LPAREN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(CarpGrammarParser.RPAREN, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
+			return GetRuleContext<NameContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Type_name_listContext type_name_list() {
 			return GetRuleContext<Type_name_listContext>(0);
@@ -1436,14 +1438,15 @@ public partial class CarpGrammarParser : Parser {
 		}
 	}
 	public partial class InitializedVariableDefinitionContext : DefinitionContext {
+		public NameContext key;
 		public ExpressionContext value;
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUALS() { return GetToken(CarpGrammarParser.EQUALS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
 			return GetRuleContext<NameContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUALS() { return GetToken(CarpGrammarParser.EQUALS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
@@ -1456,6 +1459,7 @@ public partial class CarpGrammarParser : Parser {
 		}
 	}
 	public partial class VariableDefinitionContext : DefinitionContext {
+		public NameContext key;
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
 		}
@@ -1492,17 +1496,18 @@ public partial class CarpGrammarParser : Parser {
 		}
 	}
 	public partial class ClassDefinitionContext : DefinitionContext {
+		public NameContext key;
 		public TypeContext _type;
 		public IList<TypeContext> _interhits = new List<TypeContext>();
 		public IList<TypeContext> _inherits = new List<TypeContext>();
 		public Definition_with_attrContext _definition_with_attr;
 		public IList<Definition_with_attrContext> _definitions = new List<Definition_with_attrContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CLASS() { return GetToken(CarpGrammarParser.CLASS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACE() { return GetToken(CarpGrammarParser.LBRACE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACE() { return GetToken(CarpGrammarParser.RBRACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
 			return GetRuleContext<NameContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACE() { return GetToken(CarpGrammarParser.LBRACE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACE() { return GetToken(CarpGrammarParser.RBRACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(CarpGrammarParser.COLON, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext[] type() {
 			return GetRuleContexts<TypeContext>();
@@ -1529,17 +1534,18 @@ public partial class CarpGrammarParser : Parser {
 		}
 	}
 	public partial class StructDefinitionContext : DefinitionContext {
+		public NameContext key;
 		public TypeContext _type;
 		public IList<TypeContext> _interhits = new List<TypeContext>();
 		public IList<TypeContext> _inherits = new List<TypeContext>();
 		public Definition_with_attrContext _definition_with_attr;
 		public IList<Definition_with_attrContext> _definitions = new List<Definition_with_attrContext>();
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode STRUCT() { return GetToken(CarpGrammarParser.STRUCT, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACE() { return GetToken(CarpGrammarParser.LBRACE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACE() { return GetToken(CarpGrammarParser.RBRACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
 			return GetRuleContext<NameContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACE() { return GetToken(CarpGrammarParser.LBRACE, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACE() { return GetToken(CarpGrammarParser.RBRACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON() { return GetToken(CarpGrammarParser.COLON, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext[] type() {
 			return GetRuleContexts<TypeContext>();
@@ -1582,7 +1588,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 219;
 				((FunctionDefinitionContext)_localctx).rtype = type(0);
 				State = 220;
-				name();
+				((FunctionDefinitionContext)_localctx).key = name();
 				State = 221;
 				Match(LPAREN);
 				State = 222;
@@ -1600,7 +1606,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 226;
 				((EmptyFunctionDefinitionContext)_localctx).rtype = type(0);
 				State = 227;
-				name();
+				((EmptyFunctionDefinitionContext)_localctx).key = name();
 				State = 228;
 				Match(LPAREN);
 				State = 229;
@@ -1616,7 +1622,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 232;
 				type(0);
 				State = 233;
-				name();
+				((InitializedVariableDefinitionContext)_localctx).key = name();
 				State = 234;
 				Match(EQUALS);
 				State = 235;
@@ -1630,7 +1636,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 237;
 				type(0);
 				State = 238;
-				name();
+				((VariableDefinitionContext)_localctx).key = name();
 				}
 				break;
 			case 5:
@@ -1640,7 +1646,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 240;
 				Match(CLASS);
 				State = 241;
-				name();
+				((ClassDefinitionContext)_localctx).key = name();
 				State = 251;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
@@ -1699,7 +1705,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 262;
 				Match(STRUCT);
 				State = 263;
-				name();
+				((StructDefinitionContext)_localctx).key = name();
 				State = 273;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
