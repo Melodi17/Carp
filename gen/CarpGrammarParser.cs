@@ -1498,7 +1498,6 @@ public partial class CarpGrammarParser : Parser {
 	public partial class ClassDefinitionContext : DefinitionContext {
 		public NameContext key;
 		public TypeContext _type;
-		public IList<TypeContext> _interhits = new List<TypeContext>();
 		public IList<TypeContext> _inherits = new List<TypeContext>();
 		public Definition_with_attrContext _definition_with_attr;
 		public IList<Definition_with_attrContext> _definitions = new List<Definition_with_attrContext>();
@@ -1536,7 +1535,6 @@ public partial class CarpGrammarParser : Parser {
 	public partial class StructDefinitionContext : DefinitionContext {
 		public NameContext key;
 		public TypeContext _type;
-		public IList<TypeContext> _interhits = new List<TypeContext>();
 		public IList<TypeContext> _inherits = new List<TypeContext>();
 		public Definition_with_attrContext _definition_with_attr;
 		public IList<Definition_with_attrContext> _definitions = new List<Definition_with_attrContext>();
@@ -1656,7 +1654,7 @@ public partial class CarpGrammarParser : Parser {
 					Match(COLON);
 					State = 243;
 					((ClassDefinitionContext)_localctx)._type = type(0);
-					((ClassDefinitionContext)_localctx)._interhits.Add(((ClassDefinitionContext)_localctx)._type);
+					((ClassDefinitionContext)_localctx)._inherits.Add(((ClassDefinitionContext)_localctx)._type);
 					State = 248;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
@@ -1715,7 +1713,7 @@ public partial class CarpGrammarParser : Parser {
 					Match(COLON);
 					State = 265;
 					((StructDefinitionContext)_localctx)._type = type(0);
-					((StructDefinitionContext)_localctx)._interhits.Add(((StructDefinitionContext)_localctx)._type);
+					((StructDefinitionContext)_localctx)._inherits.Add(((StructDefinitionContext)_localctx)._type);
 					State = 270;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);

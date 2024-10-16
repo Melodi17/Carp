@@ -9,6 +9,7 @@ public class CarpClass : CarpType
     private List<CarpGrammarParser.Definition_with_attrContext> _nonStaticDefinitions;
     private List<CarpMember> _members;
     private Scope _scope;
+    private List<CarpType> _implementations;
 
     public CarpClass(CarpInterpreter interpreter, CarpString name, bool isStruct, IScope scope,
         CarpType parent, CarpType[] interfaces,
@@ -29,35 +30,36 @@ public class CarpClass : CarpType
         // Create static definitions
         foreach (CarpGrammarParser.Definition_with_attrContext def in staticDefinitions)
         {
-            (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) = this._interpreter.GetDefinition(scope, def);
+            (CarpObject[] attrs, CarpGrammarParser.DefinitionContext definitionContext) =
+                this._interpreter.GetDefinition(scope, def);
             this._interpreter.Execute(this._scope, definitionContext);
 
             Signature sig = Signature.OfVariable(def.def.GetChild(1).GetText());
-            
+
             CarpObject obj = this._scope.Get(sig);
-            
+
             Signature fullSig = this._scope.GetSpecifications(sig).First();
-            
+
             this._members.Add(new(fullSig, obj.GetCarpType(), obj, attrs));
         }
-
-        List<CarpType> implementedInterfaces = new();
-        implementedInterfaces.Add(parent);
-        implementedInterfaces.AddRange(interfaces);
         
-        foreach (CarpType interfaceType in implementedInterfaces)
+        _implementations = new();
+        _implementations.Add(parent);
+        _implementations.AddRange(interfaces);
+
+        foreach (CarpType interfaceType in _implementations)
         {
             foreach (CarpMember? member in interfaceType.Members().Native.Cast<CarpMember>())
             {
                 if (!member.IsStatic) // we only care about static members
                     continue;
-                
+
                 if (member.IsAbstract)
                 {
                     if (!this._scope.Has(member.Name))
                         throw new CarpError.MissingImplementation(member.Name.ToString());
                 }
-                
+
                 if (member.IsProtected)
                 {
                     if (this._scope.Has(member.Name))
@@ -66,7 +68,7 @@ public class CarpClass : CarpType
 
                 CarpObject obj = member.Value;
                 if (obj is CarpInternalFunc func) obj = func.Bind(this._scope);
-                
+
                 this._scope.Define(member.Name, member.ValueType, obj);
                 this._members.Add(member);
             }
@@ -82,6 +84,31 @@ public class CarpClass : CarpType
         // Create non-static definitions
         foreach (CarpGrammarParser.Definition_with_attrContext def in this._nonStaticDefinitions)
             this._interpreter.Execute(scope, this._interpreter.GetDefinition(this._scope, def).definitionContext);
+
+        // Check implementations
+        foreach (CarpType interfaceType in _implementations)
+        foreach (CarpMember? member in interfaceType.Members().Native.Cast<CarpMember>())
+        {
+            if (member.IsStatic)
+                continue;
+
+            if (member.IsAbstract)
+            {
+                if (!scope.Has(member.Name))
+                    throw new CarpError.MissingImplementation(member.Name.ToString());
+            }
+
+            if (member.IsProtected)
+            {
+                if (scope.Has(member.Name))
+                    throw new CarpError.InvalidImplementation(member.Name.ToString());
+            }
+
+            CarpObject v = member.Value;
+            if (v is CarpInternalFunc func) v = func.Bind(scope);
+
+            scope.Define(member.Name, member.ValueType, v);
+        }
 
         // Call constructor
         Signature sig = Signature.InitMethod.WithSpecific(CarpVoid.Type, args.Select(x => x.GetCarpType()).ToArray());
@@ -116,15 +143,15 @@ public class CarpClass : CarpType
 
     public override CarpCollection Members()
     {
-        CarpCollection members = new();
-        foreach (KeyValuePair<Signature, (CarpType, CarpObject)> pair in this._scope)
-        {
-            if (pair.Key.Equals(Signature.InitMethod))
-                continue;
+        // CarpCollection members = new(CarpMember.Type);
+        // foreach (KeyValuePair<Signature, (CarpType type, CarpObject obj)> pair in this._scope)
+        // {
+        //     if (pair.Key.Equals(Signature.InitMethod))
+        //         continue;
+        //
+        //     members.Add(new CarpMember(pair.Key, pair.Value.type, pair.Value.obj,
+        // }
 
-            members.Add(new CarpMember(pair.Key, pair.Value.Item1, pair.Value.Item2, false, false));
-        }
-
-        return members;
+        return new(CarpMember.Type, this._members.ToArray());
     }
 }

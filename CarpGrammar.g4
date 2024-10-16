@@ -160,8 +160,8 @@ definition
     | rtype=type key=name '(' values=type_name_list ')' # emptyFunctionDefinition
     | type key=name '=' value=expression # initializedVariableDefinition
     | type key=name # variableDefinition
-    | CLASS key=name (':' interhits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # classDefinition
-    | STRUCT key=name (':' interhits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # structDefinition
+    | CLASS key=name (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # classDefinition
+    | STRUCT key=name (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # structDefinition
     | FIXED key=name '{' values+=name* '}' # enumDefinition
     ;
 
