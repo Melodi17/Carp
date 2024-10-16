@@ -180,6 +180,7 @@ Properties:
 - `.contains(str search)` `bool` Checks if the string contains a substring
 - `.startswith(str prefix)` `bool` Checks if the string starts with a substring
 - `.endswith(str suffix)` `bool` Checks if the string ends with a substring
+- `.encode(str encoding)` `byte_sequence` Encodes a string to a byte array using the specified encoding. Encoding can be any of the following: `utf8`, `utf32`, `unicode`, `bigendianunicode`, `latin`, `ascii`
 
 Overrides:
 - `iterate` String overrides the iterate method to allow enumeration of each character in the string
@@ -305,6 +306,7 @@ Byte sequences are a collection of bytes. They have no representation in the lan
 
 Properties:
 - `.length` `int` Calculates the length of the byte sequence
+- `.decode(str encoding)` `str` Decodes the byte sequence into a string of specified encoding type which can be any of the following: `utf8`, `utf32`, `unicode`, `bigendianunicode`, `latin`, `ascii`
 
 Overrides:
 - `index` Byte Sequence overrides the index method to get the byte at a specified index, if a range is passed, it will return a sub-sequence based on that range. Note that the byte returned will be in the form of an integer, not a character.

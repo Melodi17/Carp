@@ -12,7 +12,7 @@ public abstract class InternalPackageResolver : IPackageResolver
 
         return isPackage
             ? new PackedPackage(this, interpreter.PackageResolver, name, content)
-            : new SourcePackage(this, interpreter.PackageResolver, name, Encoding.UTF8.GetString(content));
+            : new SourcePackage(this, interpreter.PackageResolver, name, Encoding.UTF8.GetString(content), interpreter.Resources);
     }
 
     protected abstract (string name, byte[] content) FetchPackage(string[] path, string version, out bool isPackage);

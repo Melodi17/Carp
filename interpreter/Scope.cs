@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Carp.objects.types;
 
 namespace Carp.interpreter;
 
-public class Scope : IScope, IDisposable
+public class Scope : IScope, IDisposable, IEnumerable<KeyValuePair<Signature, (CarpType type, CarpObject obj)>>
 {
     public IScope? Parent { get; set; }
     public bool HasParent => this.Parent != null;
@@ -62,6 +63,20 @@ public class Scope : IScope, IDisposable
             return this.Parent!.GetType(name);
 
         throw new CarpError.ReferenceDoesNotExist(name.ToString());
+    }
+    public CarpObject SetLocal(Signature name, CarpObject value)
+    {
+        if (this._values.ContainsKey(name))
+        {
+            var (type, _) = this._values[name];
+            if (!value.GetCarpType().Extends(type))
+                value = value.CastEx(type);
+
+            this._values[name] = (type, value);
+        }
+        else
+            this._values[name] = (value.GetCarpType(), value);
+        return value;
     }
 
     public CarpObject Set(Signature name, CarpObject value)
@@ -129,6 +144,11 @@ public class Scope : IScope, IDisposable
     {
         this._values.Clear();
     }
+    
+    public IEnumerator<KeyValuePair<Signature, (CarpType type, CarpObject obj)>> GetEnumerator() =>
+        this._values.GetEnumerator();
+    
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
     public override string ToString() =>
         "Scope{" + string.Join(", ", this._values.Select(x => $"{x.Key}: {x.Value.type}")) + "}";

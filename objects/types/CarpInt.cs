@@ -45,8 +45,8 @@ public class CarpInt : CarpObject
     {
         if (other is not CarpInt ci)
             throw new CarpError.InvalidType(CarpInt.Type, other.GetCarpType());
-
-        if (ci._value == 0)
+        
+        if (ci._value == 0d)
             throw new CarpError.DivideByZero(this);
 
         return new CarpInt(this._value / ci._value);

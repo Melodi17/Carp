@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:/Users/melod/source/csharp/Carp/CarpGrammar.g4 by ANTLR 4.13.1
+// Generated from D:/Source/csharp/Carp/CarpGrammar.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -319,6 +319,17 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitStructDefinition([NotNull] CarpGrammarParser.StructDefinitionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>enumDefinition</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitEnumDefinition([NotNull] CarpGrammarParser.EnumDefinitionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>mapExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.

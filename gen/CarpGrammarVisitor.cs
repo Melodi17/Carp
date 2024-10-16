@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from C:/Users/melod/source/csharp/Carp/CarpGrammar.g4 by ANTLR 4.13.1
+// Generated from D:/Source/csharp/Carp/CarpGrammar.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -208,6 +208,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitStructDefinition([NotNull] CarpGrammarParser.StructDefinitionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>enumDefinition</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEnumDefinition([NotNull] CarpGrammarParser.EnumDefinitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>mapExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.

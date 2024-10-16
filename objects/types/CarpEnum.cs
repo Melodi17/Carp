@@ -15,7 +15,7 @@ public class CarpEnum : CarpObject
         this._keys = keys;
     }
 
-    public override CarpString String() => new($"enum({string.Join(", ", this._keys)})");
+    public override CarpString String() => new($"enum({this._source}::{string.Join(", ", this._keys)})");
     
     public static CarpEnum Of(CarpObject obj, string item) => new(obj, new List<string> {item});
     public static CarpEnum Of(CarpObject obj, List<string> items) => new(obj, items);

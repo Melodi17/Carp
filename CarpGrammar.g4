@@ -76,6 +76,7 @@ YIELD : 'yield' ;
 CLASS : 'class' ;
 STRUCT : 'struct' ;
 LET : 'let' ;
+FIXED : 'fixed' ;
 //IMPORT : 'import' ;
 
 ID : [a-zA-Z][a-zA-Z0-9_]* ;
@@ -155,12 +156,13 @@ definition_with_attr
     ;
 
 definition
-    : rtype=type name '(' values=type_name_list ')' body=generic_block # functionDefinition
-    | rtype=type name '(' values=type_name_list ')' # emptyFunctionDefinition
-    | type name '=' value=expression # initializedVariableDefinition
-    | type name # variableDefinition
-    | CLASS name '{' definitions+=definition_with_attr* '}' # classDefinition
-    | STRUCT name '{' definitions+=definition_with_attr* '}' # structDefinition
+    : rtype=type key=name '(' values=type_name_list ')' body=generic_block # functionDefinition
+    | rtype=type key=name '(' values=type_name_list ')' # emptyFunctionDefinition
+    | type key=name '=' value=expression # initializedVariableDefinition
+    | type key=name # variableDefinition
+    | CLASS key=name (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # classDefinition
+    | STRUCT key=name (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # structDefinition
+    | FIXED key=name '{' values+=name* '}' # enumDefinition
     ;
 
 expression
@@ -200,6 +202,7 @@ compoundAssignment
     | MINUS_EQUALS # subtractCompound
     | ASTERISK_EQUALS # multiplyCompound
     | SLASH_EQUALS # divideCompound
+    | ASTERISK_LSPACE EQUALS # multiplyCompound
     | CARET_EQUALS # powerCompound
     | PERCENT_EQUALS # modulusCompound
     ;

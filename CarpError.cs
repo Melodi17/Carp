@@ -3,10 +3,43 @@ using Carp.objects.types;
 
 namespace Carp;
 
-// TODO: Rewrite errors to use errorinst.Error() and add line numbers
 public abstract class CarpError(string message) : Exception(message)
 {
     public string DisplayName => this.GetType().Name;
+    private List<StackFrame> _stackTrace = new();
+    public IReadOnlyList<StackFrame> StackTrace => this._stackTrace;
+    
+    public void AddStackFrame(StackFrame frame)
+    {
+        if (this._stackTrace.Contains(frame))
+            return;
+        
+        this._stackTrace.Add(frame);
+    }
+
+    public class StackFrame
+    {
+        public readonly CarpInterpreter Interpreter;
+        public readonly int Line;
+        public string LineContent => this.Interpreter.ExecutionContext!.GetAtLocation(this.Line - 1) ?? "not found";
+        
+        public StackFrame(CarpInterpreter interpreter, int line)
+        {
+            this.Interpreter = interpreter;
+            this.Line = line;
+        }
+
+        public override string ToString()
+        {
+            return $"{this.Interpreter.ExecutionContext!.Source}  {this.Line} |  {this.LineContent}";
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return obj is StackFrame frame && frame.Interpreter == this.Interpreter && frame.Line == this.Line;
+        }
+    }
+    
     public class CarpObjError : CarpObject
     {
         public static new CarpType Type = NativeType.Of<CarpObjError>("error");
@@ -102,6 +135,11 @@ public abstract class CarpError(string message) : Exception(message)
         $"Vague typing used, unable to determine automatic type for '{obj}'");
 
     public class InvalidOperation(string message) : CarpError(message);
+
+    public class MissingImplementation(string name) : CarpError($"Missing implementation for '{name}'");
+    
+    public class InvalidImplementation(string name) : CarpError($"Invalid implementation for '{name}', cannot override parent's protected member");
+    
 }
 
 public abstract class CarpFlowControlError(string message) : Exception(message)
