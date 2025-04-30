@@ -16,17 +16,26 @@ public class CarpMember : CarpObject
     }
 
     public override CarpType GetCarpType() => Type;
-    
+
     public Signature Name { get; }
     public CarpType ValueType { get; }
-    public CarpObject Value { get; set; }
+    public CarpObject Value { get; private set; }
     public CarpObject[] Attributes { get; }
-    
+
+    public CarpObject SetValue(CarpObject obj)
+    {
+        if (!obj.GetCarpType().Extends(ValueType))
+            obj = obj.CastEx(ValueType);
+
+        Value = obj;
+        return obj;
+    }
+
     public bool IsAbstract => this.Attributes.Any(x => x.Match(CarpInterpreter.Abstract).Native);
     public bool IsStatic => this.Attributes.Any(x => x.Match(CarpInterpreter.Static).Native);
     public bool IsProtected => this.Attributes.Any(x => x.Match(CarpInterpreter.Protected).Native);
-    
-    
+
+
     public override CarpString String()
     {
         return new(this.Name.ToString());

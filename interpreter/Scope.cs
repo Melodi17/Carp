@@ -85,14 +85,6 @@ public class Scope : IScope, IDisposable, IEnumerable<KeyValuePair<Signature, (C
         if (result != null)
         {
             var (type, _) = result.Value;
-            // if (!type.Extends(value.GetCarpType()))
-            //     throw new CarpError.InvalidType(type, value.GetCarpType());
-            // else
-            // {
-            //     this._values[name] = (type, value);
-            //     return value;
-            // }
-            
             if (!value.GetCarpType().Extends(type))
                 value = value.CastEx(type);
             

@@ -7,7 +7,7 @@ public class CarpClass : CarpType
     private readonly CarpInterpreter _interpreter;
     private List<CarpGrammarParser.Definition_with_attrContext> _staticDefinitions;
     private List<CarpGrammarParser.Definition_with_attrContext> _nonStaticDefinitions;
-    private List<CarpMember> _members;
+    private CarpCollection<CarpMember> _members;
     private Scope _scope;
     private List<CarpType> _implementations;
 
@@ -40,7 +40,7 @@ public class CarpClass : CarpType
 
             Signature fullSig = this._scope.GetSpecifications(sig).First();
 
-            this._members.Add(new(fullSig, obj.GetCarpType(), obj, attrs));
+            this._members.Add(new CarpMember(fullSig, obj.GetCarpType(), obj, attrs));
         }
         
         _implementations = new();
@@ -49,7 +49,7 @@ public class CarpClass : CarpType
 
         foreach (CarpType interfaceType in _implementations)
         {
-            foreach (CarpMember? member in interfaceType.Members().Native.Cast<CarpMember>())
+            foreach (CarpMember? member in interfaceType.Members().Native)
             {
                 if (!member.IsStatic) // we only care about static members
                     continue;
@@ -87,7 +87,7 @@ public class CarpClass : CarpType
 
         // Check implementations
         foreach (CarpType interfaceType in _implementations)
-        foreach (CarpMember? member in interfaceType.Members().Native.Cast<CarpMember>())
+        foreach (CarpMember? member in interfaceType.Members().Native)
         {
             if (member.IsStatic)
                 continue;
@@ -141,7 +141,7 @@ public class CarpClass : CarpType
         return value;
     }
 
-    public override CarpCollection Members()
+    public override CarpCollection<CarpMember> Members()
     {
         // CarpCollection members = new(CarpMember.Type);
         // foreach (KeyValuePair<Signature, (CarpType type, CarpObject obj)> pair in this._scope)
@@ -152,6 +152,6 @@ public class CarpClass : CarpType
         //     members.Add(new CarpMember(pair.Key, pair.Value.type, pair.Value.obj,
         // }
 
-        return new(CarpMember.Type, this._members.ToArray());
+        return this._members;
     }
 }

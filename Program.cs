@@ -25,7 +25,7 @@ public class Program
     {
         Parser parser = Parser.Default;
         IExecutableObject? options = null;
-        parser.ParseArguments<ScriptExecutor, ProjectBuilder, ProjectCreator>(args)
+        parser.ParseArguments<ScriptExecutor, ProjectBuilder, ProjectCreator, ProjectActioner>(args)
             .WithParsed<IExecutableObject>(o => options = o);
 
         if (options == null)

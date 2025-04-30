@@ -10,7 +10,7 @@ public class CarpCollection : CarpObject
     public override CarpType GetCarpType() => Type.With(this._itemType);
 
     private readonly CarpType _itemType;
-    private List<CarpObject> _value;
+    protected List<CarpObject> _value;
     public List<CarpObject> Native => this._value;
 
     [CarpGenericConstructor]
@@ -189,5 +189,16 @@ public class CarpCollection : CarpObject
         sb.Append(string.Join(", ", this._value.Select(x => x.Repr())));
         sb.Append(']');
         return new(sb.ToString());
+    }
+}
+
+public class CarpCollection<T> : CarpCollection
+{
+    public new List<T> Native => this._value.Cast<T>().ToList();
+    public CarpCollection() : base(NativeType.Find<T>())
+    {
+    }
+    public CarpCollection(T[] srcArr) : base(NativeType.Find<T>(), srcArr.Cast<CarpObject>().ToArray())
+    {
     }
 }

@@ -1,0 +1,13 @@
+
+
+class A {
+    [marshal.abstract]
+    void do()
+}
+
+class B : A {
+
+}
+
+B.new().do()
+
