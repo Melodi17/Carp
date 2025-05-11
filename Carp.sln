@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carp", "Carp.csproj", "{0438B891-BBFD-4DC4-ABF8-E3E9CDDFB038}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarpTests", "..\CarpTests\CarpTests\CarpTests.csproj", "{D31B8E18-CE74-4E78-8BAB-095944B8CB0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0438B891-BBFD-4DC4-ABF8-E3E9CDDFB038}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0438B891-BBFD-4DC4-ABF8-E3E9CDDFB038}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0438B891-BBFD-4DC4-ABF8-E3E9CDDFB038}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D31B8E18-CE74-4E78-8BAB-095944B8CB0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D31B8E18-CE74-4E78-8BAB-095944B8CB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D31B8E18-CE74-4E78-8BAB-095944B8CB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D31B8E18-CE74-4E78-8BAB-095944B8CB0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -6,7 +6,7 @@ public enum Compound
     Subtract,
     Multiply,
     Divide,
-    Pow,
+    Power,
     Modulus,
 }
 

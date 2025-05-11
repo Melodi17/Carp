@@ -1,7 +1,7 @@
 grammar CarpGrammar;
 
 options {
-    contextSuperClass = Carp.interpreter.ScopedParserRuleContext;
+    contextSuperClass = Carp.interpreter.Context;
 }
 
 ELIPSIS : '..'  ;
@@ -37,6 +37,8 @@ CARET_EQUALS : '^=' ;
 PERCENT_EQUALS : '%=' ;
 PLUS_PLUS : '++' ;
 MINUS_MINUS : '--' ;
+LEFT_SHIFT : '<<' ;
+RIGHT_SHIFT : '>>' ;
 PLUS : '+' ;
 MINUS : '-' ;
 SLASH : '/' ;
@@ -242,6 +244,8 @@ binary
     | SLASH # divideBinary
     | CARET # powerBinary
     | PERCENT # modulusBinary
+    | LEFT_SHIFT # leftShiftBinary
+    | RIGHT_SHIFT # rightShiftBinary
     ;
 
 array : '[' expression_list ']' ;

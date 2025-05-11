@@ -6,6 +6,8 @@ public enum Binary
     Subtract,
     Multiply,
     Divide,
-    Pow,
+    Power,
     Modulus,
+    LeftShift,
+    RightShift
 }

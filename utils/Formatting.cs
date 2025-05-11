@@ -4,14 +4,8 @@ namespace Carp;
 
 public static class Formatting
 {
-    public static string FormatMethod(string methodName) => ToMergeCase(methodName);
+    public static string FormatMethod(string methodName) => ToSnakeCase(methodName);
     public static string FormatProperty(string fieldName) => ToSnakeCase(fieldName);
-
-    public static string ToMergeCase(this string text)
-    {
-        // remove all spaces, make all lowercase
-        return text.Replace(" ", "").ToLowerInvariant();
-    }
     public static string ToSnakeCase(this string text)
     {
         ArgumentNullException.ThrowIfNull(text);
