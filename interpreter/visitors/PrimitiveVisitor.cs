@@ -14,10 +14,17 @@ public partial class CarpVisitor
         
         return CarpNumber.Create(result);
     }
-    public override object VisitStringConstant(CarpGrammarParser.StringConstantContext context) => base.VisitStringConstant(context);
+    public override object VisitStringConstant(CarpGrammarParser.StringConstantContext context)
+    {
+        string text = context.STRING().GetText();
+        if (text.Length < 2)
+            throw new InterpreterException($"Invalid string constant: {context.STRING().GetText()}");
+        text = text[1..^1]; // Remove the quotes
+        return CarpString.Create(text);
+    }
     public override object VisitCharConstant(CarpGrammarParser.CharConstantContext context) => base.VisitCharConstant(context);
-    public override object VisitTrueConstant(CarpGrammarParser.TrueConstantContext context) => base.VisitTrueConstant(context);
-    public override object VisitFalseConstant(CarpGrammarParser.FalseConstantContext context) => base.VisitFalseConstant(context);
+    public override object VisitTrueConstant(CarpGrammarParser.TrueConstantContext context) => CarpBoolean.True;
+    public override object VisitFalseConstant(CarpGrammarParser.FalseConstantContext context) => CarpBoolean.False;
     public override object VisitNullConstant(CarpGrammarParser.NullConstantContext context) => base.VisitNullConstant(context);
 
     public override object VisitArray(CarpGrammarParser.ArrayContext context) => base.VisitArray(context);

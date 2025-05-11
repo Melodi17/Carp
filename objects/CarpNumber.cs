@@ -29,6 +29,16 @@ public class CarpNumber : CarpObject
         ? CarpNumber.Create(this.Value % number.Value)
         : base.Modulus(right);
 
+    public override CarpObject Less(CarpObject right) => right is CarpNumber number
+        ? CarpBoolean.Create(this.Value < number.Value)
+        : base.Less(right);
+    
+    public override CarpObject Greater(CarpObject right) => right is CarpNumber number
+        ? CarpBoolean.Create(this.Value > number.Value)
+        : base.Greater(right);
+    
+    public override CarpObject Negate() => CarpNumber.Create(-this.Value);
+
     public static CarpNumber Create(double value) => new(value);
     public override CarpString String() => CarpString.Create(this.Value.ToString());
     public override CarpObject Equal(CarpObject right) => right is CarpNumber number

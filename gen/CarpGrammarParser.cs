@@ -2273,7 +2273,7 @@ public partial class CarpGrammarParser : Parser {
 				State = 301;
 				((UnaryExpressionContext)_localctx).op = unary();
 				State = 302;
-				((UnaryExpressionContext)_localctx).left = expression(15);
+				((UnaryExpressionContext)_localctx).left = expression(16);
 				}
 				break;
 			case 4:
@@ -2362,11 +2362,11 @@ public partial class CarpGrammarParser : Parser {
 						((BinaryExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 320;
-						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
+						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
 						State = 321;
 						((BinaryExpressionContext)_localctx).op = binary();
 						State = 322;
-						((BinaryExpressionContext)_localctx).right = expression(17);
+						((BinaryExpressionContext)_localctx).right = expression(16);
 						}
 						break;
 					case 2:
@@ -4053,7 +4053,7 @@ public partial class CarpGrammarParser : Parser {
 	}
 	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 16);
+		case 0: return Precpred(Context, 15);
 		case 1: return Precpred(Context, 14);
 		case 2: return Precpred(Context, 13);
 		case 3: return Precpred(Context, 12);
@@ -4191,14 +4191,14 @@ public partial class CarpGrammarParser : Parser {
 		0,293,294,5,7,0,0,294,296,1,0,0,0,295,219,1,0,0,0,295,226,1,0,0,0,295,
 		232,1,0,0,0,295,237,1,0,0,0,295,240,1,0,0,0,295,262,1,0,0,0,295,284,1,
 		0,0,0,296,31,1,0,0,0,297,298,6,16,-1,0,298,319,3,38,19,0,299,300,7,0,0,
-		0,300,319,3,32,16,21,301,302,3,40,20,0,302,303,3,32,16,15,303,319,1,0,
+		0,300,319,3,32,16,21,301,302,3,40,20,0,302,303,3,32,16,16,303,319,1,0,
 		0,0,304,319,3,50,25,0,305,319,3,48,24,0,306,319,3,58,29,0,307,308,5,1,
 		0,0,308,319,3,32,16,7,309,310,5,4,0,0,310,311,3,32,16,0,311,312,5,5,0,
 		0,312,319,1,0,0,0,313,314,5,4,0,0,314,315,3,56,28,0,315,316,5,5,0,0,316,
 		317,3,4,2,0,317,319,1,0,0,0,318,297,1,0,0,0,318,299,1,0,0,0,318,301,1,
 		0,0,0,318,304,1,0,0,0,318,305,1,0,0,0,318,306,1,0,0,0,318,307,1,0,0,0,
-		318,309,1,0,0,0,318,313,1,0,0,0,319,375,1,0,0,0,320,321,10,16,0,0,321,
-		322,3,46,23,0,322,323,3,32,16,17,323,374,1,0,0,0,324,325,10,14,0,0,325,
+		318,309,1,0,0,0,318,313,1,0,0,0,319,375,1,0,0,0,320,321,10,15,0,0,321,
+		322,3,46,23,0,322,323,3,32,16,16,323,374,1,0,0,0,324,325,10,14,0,0,325,
 		326,3,44,22,0,326,327,3,32,16,15,327,374,1,0,0,0,328,329,10,13,0,0,329,
 		330,3,42,21,0,330,331,3,32,16,14,331,374,1,0,0,0,332,333,10,12,0,0,333,
 		334,5,43,0,0,334,335,3,32,16,0,335,336,5,45,0,0,336,337,3,32,16,13,337,

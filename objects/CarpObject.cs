@@ -59,4 +59,6 @@ public abstract class CarpObject
 
         return false;
     }
+
+    public override string ToString() => this.Repr();
 }

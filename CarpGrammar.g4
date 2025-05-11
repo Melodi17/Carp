@@ -176,8 +176,8 @@ expression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
     | obj=expression '[' parameters=expression_list ']' # indexExpression
     | obj=expression '.' value=name # propertyExpression
-    | left=expression op=binary right=expression # binaryExpression
     | op=unary left=expression # unaryExpression
+    | left=expression op=binary right=expression # binaryExpression
     | left=expression op=comparison right=expression # comparisonExpression
     | left=expression op=logical right=expression # logicalExpression
     | condition=expression '?' left=expression ':' right=expression # ternaryExpression // Side effects
