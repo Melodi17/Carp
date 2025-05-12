@@ -1,4 +1,4 @@
-﻿namespace Carp;
+﻿namespace Carp.interpreter;
 
 public interface IExecutionContext
 {

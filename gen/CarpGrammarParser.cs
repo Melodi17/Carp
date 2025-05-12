@@ -36,19 +36,19 @@ public partial class CarpGrammarParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		ELIPSIS=1, PERIOD=2, COMMA=3, LPAREN=4, RPAREN=5, LBRACE=6, RBRACE=7, 
-		LBRACKET=8, RBRACKET=9, EQUALS=10, EQUALS_EQUALS=11, NOT_EQUALS=12, GREATER_THAN=13, 
-		LESS_THAN=14, LESS_THAN_EQUALS=15, GREATER_THAN_EQUALS=16, PIPE=17, AMPERSAND=18, 
-		TILDE=19, TILDE_TILDE=20, AT=21, BANG=22, PLUS_EQUALS=23, MINUS_EQUALS=24, 
-		ASTERISK_EQUALS=25, SLASH_EQUALS=26, CARET_EQUALS=27, PERCENT_EQUALS=28, 
-		PLUS_PLUS=29, MINUS_MINUS=30, LEFT_SHIFT=31, RIGHT_SHIFT=32, PLUS=33, 
-		MINUS=34, SLASH=35, PERCENT=36, ASTERISK_BSPACE=37, ASTERISK_LSPACE=38, 
-		ASTERISK_RSPACE=39, ASTERISK_NSPC=40, BACKSLASH=41, CARET=42, QUESTION_MARK=43, 
-		UNDERSCORE=44, COLON=45, SEMICOLON=46, COLON_COLON=47, SEMICOLON_SEMICOLON=48, 
-		ARROW=49, HASH=50, TRUE=51, FALSE=52, NULL=53, TRY=54, CATCH=55, FINALLY=56, 
-		IF=57, ELSE=58, ELSE_IF=59, WHILE=60, ITER=61, RETURN=62, BREAK=63, CONTINUE=64, 
-		YIELD=65, CLASS=66, STRUCT=67, LET=68, FIXED=69, ID=70, INT=71, WS=72, 
-		COMMENT=73, STRING=74, CHAR=75;
+		T__0=1, T__1=2, ELIPSIS=3, PERIOD=4, COMMA=5, LPAREN=6, RPAREN=7, LBRACE=8, 
+		RBRACE=9, LBRACKET=10, RBRACKET=11, EQUALS=12, EQUALS_EQUALS=13, NOT_EQUALS=14, 
+		GREATER_THAN=15, LESS_THAN=16, LESS_THAN_EQUALS=17, GREATER_THAN_EQUALS=18, 
+		PIPE=19, AMPERSAND=20, TILDE=21, TILDE_TILDE=22, AT=23, BANG=24, PLUS_EQUALS=25, 
+		MINUS_EQUALS=26, ASTERISK_EQUALS=27, SLASH_EQUALS=28, CARET_EQUALS=29, 
+		PERCENT_EQUALS=30, PLUS_PLUS=31, MINUS_MINUS=32, LEFT_SHIFT=33, RIGHT_SHIFT=34, 
+		PLUS=35, MINUS=36, SLASH=37, PERCENT=38, ASTERISK_BSPACE=39, ASTERISK_LSPACE=40, 
+		ASTERISK_RSPACE=41, ASTERISK_NSPC=42, BACKSLASH=43, CARET=44, QUESTION_MARK=45, 
+		UNDERSCORE=46, COLON=47, SEMICOLON=48, COLON_COLON=49, SEMICOLON_SEMICOLON=50, 
+		ARROW=51, HASH=52, TRUE=53, FALSE=54, NULL=55, TRY=56, CATCH=57, FINALLY=58, 
+		IF=59, ELSE=60, ELSE_IF=61, WHILE=62, ITER=63, RETURN=64, BREAK=65, CONTINUE=66, 
+		YIELD=67, CLASS=68, STRUCT=69, LET=70, FIXED=71, ID=72, INT=73, WS=74, 
+		COMMENT=75, STRING=76, CHAR=77;
 	public const int
 		RULE_program = 0, RULE_block = 1, RULE_generic_block = 2, RULE_statement = 3, 
 		RULE_flow_control = 4, RULE_if_statement = 5, RULE_while_statement = 6, 
@@ -56,41 +56,44 @@ public partial class CarpGrammarParser : Parser {
 		RULE_break_statement = 10, RULE_continue_statement = 11, RULE_yield_statement = 12, 
 		RULE_attribute = 13, RULE_definition_with_attr = 14, RULE_definition = 15, 
 		RULE_expression = 16, RULE_expression_list = 17, RULE_compoundAssignment = 18, 
-		RULE_constant = 19, RULE_unary = 20, RULE_logical = 21, RULE_comparison = 22, 
-		RULE_binary = 23, RULE_array = 24, RULE_map = 25, RULE_modifier = 26, 
-		RULE_type = 27, RULE_type_name_list = 28, RULE_name = 29;
+		RULE_constant = 19, RULE_unary = 20, RULE_logical = 21, RULE_comparison_compare = 22, 
+		RULE_comparison_match = 23, RULE_binary_geometric = 24, RULE_binary_arithmatic = 25, 
+		RULE_binary_bitwise_shift = 26, RULE_meta = 27, RULE_array = 28, RULE_map = 29, 
+		RULE_modifier = 30, RULE_type = 31, RULE_type_name_list = 32, RULE_name = 33;
 	public static readonly string[] ruleNames = {
 		"program", "block", "generic_block", "statement", "flow_control", "if_statement", 
 		"while_statement", "try_statement", "iter_statement", "return_statement", 
 		"break_statement", "continue_statement", "yield_statement", "attribute", 
 		"definition_with_attr", "definition", "expression", "expression_list", 
-		"compoundAssignment", "constant", "unary", "logical", "comparison", "binary", 
-		"array", "map", "modifier", "type", "type_name_list", "name"
+		"compoundAssignment", "constant", "unary", "logical", "comparison_compare", 
+		"comparison_match", "binary_geometric", "binary_arithmatic", "binary_bitwise_shift", 
+		"meta", "array", "map", "modifier", "type", "type_name_list", "name"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'..'", "'.'", "','", "'('", "')'", "'{'", "'}'", "'['", "']'", 
-		"'='", "'=='", null, "'>'", "'<'", "'<='", "'>='", "'|'", "'&'", "'~'", 
-		"'~~'", "'@'", "'!'", "'+='", "'-='", "'*='", "'/='", "'^='", "'%='", 
-		"'++'", "'--'", "'<<'", "'>>'", "'+'", "'-'", "'/'", "'%'", "' * '", "' *'", 
-		"'* '", "'*'", "'\\'", "'^'", "'?'", "'_'", "':'", "';'", "'::'", "';;'", 
-		"'->'", "'#'", "'true'", "'false'", "'null'", "'try'", "'catch'", "'finally'", 
-		"'if'", "'else'", "'else if'", "'while'", "'for'", "'return'", "'break'", 
-		"'continue'", "'yield'", "'class'", "'struct'", "'let'", "'fixed'"
+		null, "'doc'", "'annotations'", "'..'", "'.'", "','", "'('", "')'", "'{'", 
+		"'}'", "'['", "']'", "'='", "'=='", null, "'>'", "'<'", "'<='", "'>='", 
+		"'|'", "'&'", "'~'", "'~~'", "'@'", "'!'", "'+='", "'-='", "'*='", "'/='", 
+		"'^='", "'%='", "'++'", "'--'", "'<<'", "'>>'", "'+'", "'-'", "'/'", "'%'", 
+		"' * '", "' *'", "'* '", "'*'", "'\\'", "'^'", "'?'", "'_'", "':'", "';'", 
+		"'::'", "';;'", "'->'", "'#'", "'true'", "'false'", "'null'", "'try'", 
+		"'catch'", "'finally'", "'if'", "'else'", "'else if'", "'while'", "'for'", 
+		"'return'", "'break'", "'continue'", "'yield'", "'class'", "'struct'", 
+		"'let'", "'fixed'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "ELIPSIS", "PERIOD", "COMMA", "LPAREN", "RPAREN", "LBRACE", "RBRACE", 
-		"LBRACKET", "RBRACKET", "EQUALS", "EQUALS_EQUALS", "NOT_EQUALS", "GREATER_THAN", 
-		"LESS_THAN", "LESS_THAN_EQUALS", "GREATER_THAN_EQUALS", "PIPE", "AMPERSAND", 
-		"TILDE", "TILDE_TILDE", "AT", "BANG", "PLUS_EQUALS", "MINUS_EQUALS", "ASTERISK_EQUALS", 
-		"SLASH_EQUALS", "CARET_EQUALS", "PERCENT_EQUALS", "PLUS_PLUS", "MINUS_MINUS", 
-		"LEFT_SHIFT", "RIGHT_SHIFT", "PLUS", "MINUS", "SLASH", "PERCENT", "ASTERISK_BSPACE", 
-		"ASTERISK_LSPACE", "ASTERISK_RSPACE", "ASTERISK_NSPC", "BACKSLASH", "CARET", 
-		"QUESTION_MARK", "UNDERSCORE", "COLON", "SEMICOLON", "COLON_COLON", "SEMICOLON_SEMICOLON", 
-		"ARROW", "HASH", "TRUE", "FALSE", "NULL", "TRY", "CATCH", "FINALLY", "IF", 
-		"ELSE", "ELSE_IF", "WHILE", "ITER", "RETURN", "BREAK", "CONTINUE", "YIELD", 
-		"CLASS", "STRUCT", "LET", "FIXED", "ID", "INT", "WS", "COMMENT", "STRING", 
-		"CHAR"
+		null, null, null, "ELIPSIS", "PERIOD", "COMMA", "LPAREN", "RPAREN", "LBRACE", 
+		"RBRACE", "LBRACKET", "RBRACKET", "EQUALS", "EQUALS_EQUALS", "NOT_EQUALS", 
+		"GREATER_THAN", "LESS_THAN", "LESS_THAN_EQUALS", "GREATER_THAN_EQUALS", 
+		"PIPE", "AMPERSAND", "TILDE", "TILDE_TILDE", "AT", "BANG", "PLUS_EQUALS", 
+		"MINUS_EQUALS", "ASTERISK_EQUALS", "SLASH_EQUALS", "CARET_EQUALS", "PERCENT_EQUALS", 
+		"PLUS_PLUS", "MINUS_MINUS", "LEFT_SHIFT", "RIGHT_SHIFT", "PLUS", "MINUS", 
+		"SLASH", "PERCENT", "ASTERISK_BSPACE", "ASTERISK_LSPACE", "ASTERISK_RSPACE", 
+		"ASTERISK_NSPC", "BACKSLASH", "CARET", "QUESTION_MARK", "UNDERSCORE", 
+		"COLON", "SEMICOLON", "COLON_COLON", "SEMICOLON_SEMICOLON", "ARROW", "HASH", 
+		"TRUE", "FALSE", "NULL", "TRY", "CATCH", "FINALLY", "IF", "ELSE", "ELSE_IF", 
+		"WHILE", "ITER", "RETURN", "BREAK", "CONTINUE", "YIELD", "CLASS", "STRUCT", 
+		"LET", "FIXED", "ID", "INT", "WS", "COMMENT", "STRING", "CHAR"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -155,22 +158,22 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 63;
+			State = 71;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -975011708342894318L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 3327L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -3900046833371577272L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 13311L) != 0)) {
 				{
 				{
-				State = 60;
+				State = 68;
 				_localctx._statement = statement();
 				_localctx._statements.Add(_localctx._statement);
 				}
 				}
-				State = 65;
+				State = 73;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 66;
+			State = 74;
 			Match(Eof);
 			}
 		}
@@ -215,18 +218,18 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 71;
+			State = 79;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -975011708342894318L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 3327L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & -3900046833371577272L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 13311L) != 0)) {
 				{
 				{
-				State = 68;
+				State = 76;
 				_localctx._statement = statement();
 				_localctx._statements.Add(_localctx._statement);
 				}
 				}
-				State = 73;
+				State = 81;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -301,18 +304,18 @@ public partial class CarpGrammarParser : Parser {
 		Generic_blockContext _localctx = new Generic_blockContext(Context, State);
 		EnterRule(_localctx, 4, RULE_generic_block);
 		try {
-			State = 82;
+			State = 90;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 			case 1:
 				_localctx = new EnclosedBlockContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 74;
+				State = 82;
 				Match(LBRACE);
-				State = 75;
+				State = 83;
 				block();
-				State = 76;
+				State = 84;
 				Match(RBRACE);
 				}
 				break;
@@ -320,9 +323,9 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new LambdaExpressionBlockContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 78;
+				State = 86;
 				Match(ARROW);
-				State = 79;
+				State = 87;
 				expression(0);
 				}
 				break;
@@ -330,9 +333,9 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new LambdaBlockContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 80;
+				State = 88;
 				Match(ARROW);
-				State = 81;
+				State = 89;
 				statement();
 				}
 				break;
@@ -403,14 +406,14 @@ public partial class CarpGrammarParser : Parser {
 		StatementContext _localctx = new StatementContext(Context, State);
 		EnterRule(_localctx, 6, RULE_statement);
 		try {
-			State = 87;
+			State = 95;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
 			case 1:
 				_localctx = new DefinitionStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 84;
+				State = 92;
 				definition_with_attr();
 				}
 				break;
@@ -418,7 +421,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new ExpressionStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 85;
+				State = 93;
 				expression(0);
 				}
 				break;
@@ -426,7 +429,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new FlowControlStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 86;
+				State = 94;
 				flow_control();
 				}
 				break;
@@ -486,62 +489,62 @@ public partial class CarpGrammarParser : Parser {
 		Flow_controlContext _localctx = new Flow_controlContext(Context, State);
 		EnterRule(_localctx, 8, RULE_flow_control);
 		try {
-			State = 97;
+			State = 105;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case IF:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 89;
+				State = 97;
 				if_statement();
 				}
 				break;
 			case WHILE:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 90;
+				State = 98;
 				while_statement();
 				}
 				break;
 			case ITER:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 91;
+				State = 99;
 				iter_statement();
 				}
 				break;
 			case RETURN:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 92;
+				State = 100;
 				return_statement();
 				}
 				break;
 			case TRY:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 93;
+				State = 101;
 				try_statement();
 				}
 				break;
 			case BREAK:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 94;
+				State = 102;
 				break_statement();
 				}
 				break;
 			case CONTINUE:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 95;
+				State = 103;
 				continue_statement();
 				}
 				break;
 			case YIELD:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 96;
+				State = 104;
 				yield_statement();
 				}
 				break;
@@ -607,42 +610,42 @@ public partial class CarpGrammarParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 99;
+			State = 107;
 			Match(IF);
-			State = 100;
-			_localctx.cond = expression(0);
-			State = 101;
-			_localctx.body = generic_block();
 			State = 108;
+			_localctx.cond = expression(0);
+			State = 109;
+			_localctx.body = generic_block();
+			State = 116;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 102;
+					State = 110;
 					Match(ELSE_IF);
-					State = 103;
+					State = 111;
 					_localctx._expression = expression(0);
 					_localctx._elif_expressions.Add(_localctx._expression);
-					State = 104;
+					State = 112;
 					_localctx._generic_block = generic_block();
 					_localctx._elif_blocks.Add(_localctx._generic_block);
 					}
 					} 
 				}
-				State = 110;
+				State = 118;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
 			}
-			State = 113;
+			State = 121;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,6,Context) ) {
 			case 1:
 				{
-				State = 111;
+				State = 119;
 				Match(ELSE);
-				State = 112;
+				State = 120;
 				_localctx.else_block = generic_block();
 				}
 				break;
@@ -690,11 +693,11 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 115;
+			State = 123;
 			Match(WHILE);
-			State = 116;
+			State = 124;
 			_localctx.cond = expression(0);
-			State = 117;
+			State = 125;
 			_localctx.body = generic_block();
 			}
 		}
@@ -769,53 +772,53 @@ public partial class CarpGrammarParser : Parser {
 		EnterRule(_localctx, 14, RULE_try_statement);
 		try {
 			int _alt;
-			State = 153;
+			State = 161;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,11,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 119;
+				State = 127;
 				Match(TRY);
-				State = 120;
+				State = 128;
 				_localctx.try_block = generic_block();
-				State = 130;
+				State = 138;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
 				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						State = 121;
+						State = 129;
 						Match(CATCH);
-						State = 122;
+						State = 130;
 						Match(LPAREN);
-						State = 123;
+						State = 131;
 						_localctx._type = type(0);
 						_localctx._catch_types.Add(_localctx._type);
-						State = 124;
+						State = 132;
 						_localctx._name = name();
 						_localctx._catch_names.Add(_localctx._name);
-						State = 125;
+						State = 133;
 						Match(RPAREN);
-						State = 126;
+						State = 134;
 						_localctx._generic_block = generic_block();
 						_localctx._catch_blocks.Add(_localctx._generic_block);
 						}
 						} 
 					}
-					State = 132;
+					State = 140;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,7,Context);
 				}
-				State = 135;
+				State = 143;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
 				case 1:
 					{
-					State = 133;
+					State = 141;
 					Match(FINALLY);
-					State = 134;
+					State = 142;
 					_localctx.finally_block = generic_block();
 					}
 					break;
@@ -825,43 +828,43 @@ public partial class CarpGrammarParser : Parser {
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 137;
+				State = 145;
 				Match(TRY);
-				State = 138;
-				_localctx.try_block = generic_block();
 				State = 146;
+				_localctx.try_block = generic_block();
+				State = 154;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,9,Context);
 				while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1 ) {
 						{
 						{
-						State = 139;
+						State = 147;
 						Match(CATCH);
-						State = 140;
+						State = 148;
 						_localctx._type = type(0);
 						_localctx._catch_types.Add(_localctx._type);
-						State = 141;
+						State = 149;
 						_localctx._name = name();
 						_localctx._catch_names.Add(_localctx._name);
-						State = 142;
+						State = 150;
 						_localctx._generic_block = generic_block();
 						_localctx._catch_blocks.Add(_localctx._generic_block);
 						}
 						} 
 					}
-					State = 148;
+					State = 156;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,9,Context);
 				}
-				State = 151;
+				State = 159;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,10,Context) ) {
 				case 1:
 					{
-					State = 149;
+					State = 157;
 					Match(FINALLY);
-					State = 150;
+					State = 158;
 					_localctx.finally_block = generic_block();
 					}
 					break;
@@ -968,18 +971,18 @@ public partial class CarpGrammarParser : Parser {
 		Iter_statementContext _localctx = new Iter_statementContext(Context, State);
 		EnterRule(_localctx, 16, RULE_iter_statement);
 		try {
-			State = 189;
+			State = 197;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,12,Context) ) {
 			case 1:
 				_localctx = new IterStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 155;
+				State = 163;
 				Match(ITER);
-				State = 156;
+				State = 164;
 				((IterStatementContext)_localctx).iter = expression(0);
-				State = 157;
+				State = 165;
 				((IterStatementContext)_localctx).body = generic_block();
 				}
 				break;
@@ -987,28 +990,8 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new IterAsStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 159;
-				Match(ITER);
-				State = 160;
-				type(0);
-				State = 161;
-				name();
-				State = 162;
-				Match(COLON);
-				State = 163;
-				((IterAsStatementContext)_localctx).iter = expression(0);
-				State = 164;
-				((IterAsStatementContext)_localctx).body = generic_block();
-				}
-				break;
-			case 3:
-				_localctx = new IterAsStatementContext(_localctx);
-				EnterOuterAlt(_localctx, 3);
-				{
-				State = 166;
-				Match(ITER);
 				State = 167;
-				Match(LPAREN);
+				Match(ITER);
 				State = 168;
 				type(0);
 				State = 169;
@@ -1018,8 +1001,28 @@ public partial class CarpGrammarParser : Parser {
 				State = 171;
 				((IterAsStatementContext)_localctx).iter = expression(0);
 				State = 172;
+				((IterAsStatementContext)_localctx).body = generic_block();
+				}
+				break;
+			case 3:
+				_localctx = new IterAsStatementContext(_localctx);
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 174;
+				Match(ITER);
+				State = 175;
+				Match(LPAREN);
+				State = 176;
+				type(0);
+				State = 177;
+				name();
+				State = 178;
+				Match(COLON);
+				State = 179;
+				((IterAsStatementContext)_localctx).iter = expression(0);
+				State = 180;
 				Match(RPAREN);
-				State = 173;
+				State = 181;
 				((IterAsStatementContext)_localctx).body = generic_block();
 				}
 				break;
@@ -1027,15 +1030,15 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new IterAsUnpackedStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 175;
+				State = 183;
 				Match(ITER);
-				State = 176;
+				State = 184;
 				type_name_list();
-				State = 177;
+				State = 185;
 				Match(COLON);
-				State = 178;
+				State = 186;
 				((IterAsUnpackedStatementContext)_localctx).iter = expression(0);
-				State = 179;
+				State = 187;
 				((IterAsUnpackedStatementContext)_localctx).body = generic_block();
 				}
 				break;
@@ -1043,19 +1046,19 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new IterAsUnpackedStatementContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 181;
+				State = 189;
 				Match(ITER);
-				State = 182;
+				State = 190;
 				Match(LPAREN);
-				State = 183;
+				State = 191;
 				type_name_list();
-				State = 184;
+				State = 192;
 				Match(COLON);
-				State = 185;
+				State = 193;
 				((IterAsUnpackedStatementContext)_localctx).iter = expression(0);
-				State = 186;
+				State = 194;
 				Match(RPAREN);
-				State = 187;
+				State = 195;
 				((IterAsUnpackedStatementContext)_localctx).body = generic_block();
 				}
 				break;
@@ -1098,14 +1101,14 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 191;
+			State = 199;
 			Match(RETURN);
-			State = 193;
+			State = 201;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,13,Context) ) {
 			case 1:
 				{
-				State = 192;
+				State = 200;
 				_localctx.value = expression(0);
 				}
 				break;
@@ -1145,7 +1148,7 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 195;
+			State = 203;
 			Match(BREAK);
 			}
 		}
@@ -1182,7 +1185,7 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 197;
+			State = 205;
 			Match(CONTINUE);
 			}
 		}
@@ -1223,14 +1226,14 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 199;
+			State = 207;
 			Match(YIELD);
-			State = 201;
+			State = 209;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				{
-				State = 200;
+				State = 208;
 				_localctx.value = expression(0);
 				}
 				break;
@@ -1274,26 +1277,26 @@ public partial class CarpGrammarParser : Parser {
 		AttributeContext _localctx = new AttributeContext(Context, State);
 		EnterRule(_localctx, 26, RULE_attribute);
 		try {
-			State = 209;
+			State = 217;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case AT:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 203;
+				State = 211;
 				Match(AT);
-				State = 204;
+				State = 212;
 				_localctx.obj = expression(0);
 				}
 				break;
 			case LBRACKET:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 205;
+				State = 213;
 				Match(LBRACKET);
-				State = 206;
+				State = 214;
 				_localctx.obj = expression(0);
-				State = 207;
+				State = 215;
 				Match(RBRACKET);
 				}
 				break;
@@ -1346,22 +1349,22 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 214;
+			State = 222;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==LBRACKET || _la==AT) {
 				{
 				{
-				State = 211;
+				State = 219;
 				_localctx._attribute = attribute();
 				_localctx._attrs.Add(_localctx._attribute);
 				}
 				}
-				State = 216;
+				State = 224;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 217;
+			State = 225;
 			_localctx.def = definition();
 			}
 		}
@@ -1577,24 +1580,24 @@ public partial class CarpGrammarParser : Parser {
 		EnterRule(_localctx, 30, RULE_definition);
 		int _la;
 		try {
-			State = 295;
+			State = 303;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,24,Context) ) {
 			case 1:
 				_localctx = new FunctionDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 219;
+				State = 227;
 				((FunctionDefinitionContext)_localctx).rtype = type(0);
-				State = 220;
+				State = 228;
 				((FunctionDefinitionContext)_localctx).key = name();
-				State = 221;
+				State = 229;
 				Match(LPAREN);
-				State = 222;
+				State = 230;
 				((FunctionDefinitionContext)_localctx).@values = type_name_list();
-				State = 223;
+				State = 231;
 				Match(RPAREN);
-				State = 224;
+				State = 232;
 				((FunctionDefinitionContext)_localctx).body = generic_block();
 				}
 				break;
@@ -1602,15 +1605,15 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new EmptyFunctionDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 226;
+				State = 234;
 				((EmptyFunctionDefinitionContext)_localctx).rtype = type(0);
-				State = 227;
+				State = 235;
 				((EmptyFunctionDefinitionContext)_localctx).key = name();
-				State = 228;
+				State = 236;
 				Match(LPAREN);
-				State = 229;
+				State = 237;
 				((EmptyFunctionDefinitionContext)_localctx).@values = type_name_list();
-				State = 230;
+				State = 238;
 				Match(RPAREN);
 				}
 				break;
@@ -1618,13 +1621,13 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new InitializedVariableDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 232;
+				State = 240;
 				type(0);
-				State = 233;
+				State = 241;
 				((InitializedVariableDefinitionContext)_localctx).key = name();
-				State = 234;
+				State = 242;
 				Match(EQUALS);
-				State = 235;
+				State = 243;
 				((InitializedVariableDefinitionContext)_localctx).value = expression(0);
 				}
 				break;
@@ -1632,9 +1635,9 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new VariableDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 237;
+				State = 245;
 				type(0);
-				State = 238;
+				State = 246;
 				((VariableDefinitionContext)_localctx).key = name();
 				}
 				break;
@@ -1642,58 +1645,58 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new ClassDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 240;
+				State = 248;
 				Match(CLASS);
-				State = 241;
+				State = 249;
 				((ClassDefinitionContext)_localctx).key = name();
-				State = 251;
+				State = 259;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==COLON) {
 					{
-					State = 242;
+					State = 250;
 					Match(COLON);
-					State = 243;
+					State = 251;
 					((ClassDefinitionContext)_localctx)._type = type(0);
 					((ClassDefinitionContext)_localctx)._inherits.Add(((ClassDefinitionContext)_localctx)._type);
-					State = 248;
+					State = 256;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						State = 244;
+						State = 252;
 						Match(COMMA);
-						State = 245;
+						State = 253;
 						((ClassDefinitionContext)_localctx)._type = type(0);
 						((ClassDefinitionContext)_localctx)._inherits.Add(((ClassDefinitionContext)_localctx)._type);
 						}
 						}
-						State = 250;
+						State = 258;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
 					}
 				}
 
-				State = 253;
+				State = 261;
 				Match(LBRACE);
-				State = 257;
+				State = 265;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (((((_la - 8)) & ~0x3f) == 0 && ((1L << (_la - 8)) & 8935141660703072257L) != 0)) {
+				while (((((_la - 10)) & ~0x3f) == 0 && ((1L << (_la - 10)) & 8935141660703072257L) != 0)) {
 					{
 					{
-					State = 254;
+					State = 262;
 					((ClassDefinitionContext)_localctx)._definition_with_attr = definition_with_attr();
 					((ClassDefinitionContext)_localctx)._definitions.Add(((ClassDefinitionContext)_localctx)._definition_with_attr);
 					}
 					}
-					State = 259;
+					State = 267;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 260;
+				State = 268;
 				Match(RBRACE);
 				}
 				break;
@@ -1701,58 +1704,58 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new StructDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 262;
+				State = 270;
 				Match(STRUCT);
-				State = 263;
+				State = 271;
 				((StructDefinitionContext)_localctx).key = name();
-				State = 273;
+				State = 281;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==COLON) {
 					{
-					State = 264;
+					State = 272;
 					Match(COLON);
-					State = 265;
+					State = 273;
 					((StructDefinitionContext)_localctx)._type = type(0);
 					((StructDefinitionContext)_localctx)._inherits.Add(((StructDefinitionContext)_localctx)._type);
-					State = 270;
+					State = 278;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						State = 266;
+						State = 274;
 						Match(COMMA);
-						State = 267;
+						State = 275;
 						((StructDefinitionContext)_localctx)._type = type(0);
 						((StructDefinitionContext)_localctx)._inherits.Add(((StructDefinitionContext)_localctx)._type);
 						}
 						}
-						State = 272;
+						State = 280;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
 					}
 				}
 
-				State = 275;
+				State = 283;
 				Match(LBRACE);
-				State = 279;
+				State = 287;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (((((_la - 8)) & ~0x3f) == 0 && ((1L << (_la - 8)) & 8935141660703072257L) != 0)) {
+				while (((((_la - 10)) & ~0x3f) == 0 && ((1L << (_la - 10)) & 8935141660703072257L) != 0)) {
 					{
 					{
-					State = 276;
+					State = 284;
 					((StructDefinitionContext)_localctx)._definition_with_attr = definition_with_attr();
 					((StructDefinitionContext)_localctx)._definitions.Add(((StructDefinitionContext)_localctx)._definition_with_attr);
 					}
 					}
-					State = 281;
+					State = 289;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 282;
+				State = 290;
 				Match(RBRACE);
 				}
 				break;
@@ -1760,28 +1763,28 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new EnumDefinitionContext(_localctx);
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 284;
+				State = 292;
 				Match(FIXED);
-				State = 285;
+				State = 293;
 				((EnumDefinitionContext)_localctx).key = name();
-				State = 286;
+				State = 294;
 				Match(LBRACE);
-				State = 290;
+				State = 298;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==UNDERSCORE || _la==ID) {
 					{
 					{
-					State = 287;
+					State = 295;
 					((EnumDefinitionContext)_localctx)._name = name();
 					((EnumDefinitionContext)_localctx)._values.Add(((EnumDefinitionContext)_localctx)._name);
 					}
 					}
-					State = 292;
+					State = 300;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 293;
+				State = 301;
 				Match(RBRACE);
 				}
 				break;
@@ -1808,6 +1811,196 @@ public partial class CarpGrammarParser : Parser {
 		public ExpressionContext() { }
 		public virtual void CopyFrom(ExpressionContext context) {
 			base.CopyFrom(context);
+		}
+	}
+	public partial class ComparisonCompareExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public Comparison_compareContext op;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Comparison_compareContext comparison_compare() {
+			return GetRuleContext<Comparison_compareContext>(0);
+		}
+		public ComparisonCompareExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitComparisonCompareExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class VariableExpressionContext : ExpressionContext {
+		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
+			return GetRuleContext<NameContext>(0);
+		}
+		public VariableExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitVariableExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class WindExpressionContext : ExpressionContext {
+		public ExpressionContext inner;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON_COLON() { return GetToken(CarpGrammarParser.COLON_COLON, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public WindExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitWindExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class BinaryArithmaticExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public Binary_arithmaticContext op;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Binary_arithmaticContext binary_arithmatic() {
+			return GetRuleContext<Binary_arithmaticContext>(0);
+		}
+		public BinaryArithmaticExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBinaryArithmaticExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class CastExpressionContext : ExpressionContext {
+		public ExpressionContext obj;
+		public TypeContext dest;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TILDE() { return GetToken(CarpGrammarParser.TILDE, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
+			return GetRuleContext<TypeContext>(0);
+		}
+		public CastExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitCastExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class BinaryBitwiseShiftExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public Binary_bitwise_shiftContext op;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Binary_bitwise_shiftContext binary_bitwise_shift() {
+			return GetRuleContext<Binary_bitwise_shiftContext>(0);
+		}
+		public BinaryBitwiseShiftExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitBinaryBitwiseShiftExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class ParenthesizedExpressionContext : ExpressionContext {
+		public ExpressionContext obj;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(CarpGrammarParser.LPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(CarpGrammarParser.RPAREN, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public ParenthesizedExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParenthesizedExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class InfixExpressionContext : ExpressionContext {
+		public IToken token;
+		public ExpressionContext expr;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS_PLUS() { return GetToken(CarpGrammarParser.PLUS_PLUS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS_MINUS() { return GetToken(CarpGrammarParser.MINUS_MINUS, 0); }
+		public InfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitInfixExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class IndexExpressionContext : ExpressionContext {
+		public ExpressionContext obj;
+		public Expression_listContext parameters;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACKET() { return GetToken(CarpGrammarParser.LBRACKET, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACKET() { return GetToken(CarpGrammarParser.RBRACKET, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Expression_listContext expression_list() {
+			return GetRuleContext<Expression_listContext>(0);
+		}
+		public IndexExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIndexExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class UnaryExpressionContext : ExpressionContext {
+		public UnaryContext op;
+		public ExpressionContext left;
+		[System.Diagnostics.DebuggerNonUserCode] public UnaryContext unary() {
+			return GetRuleContext<UnaryContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		public UnaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUnaryExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class PostfixExpressionContext : ExpressionContext {
+		public ExpressionContext expr;
+		public IToken token;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS_PLUS() { return GetToken(CarpGrammarParser.PLUS_PLUS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS_MINUS() { return GetToken(CarpGrammarParser.MINUS_MINUS, 0); }
+		public PostfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPostfixExpression(this);
+			else return visitor.VisitChildren(this);
 		}
 	}
 	public partial class MapExpressionContext : ExpressionContext {
@@ -1865,6 +2058,27 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
+	public partial class ComparisonMatchExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public Comparison_matchContext op;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Comparison_matchContext comparison_match() {
+			return GetRuleContext<Comparison_matchContext>(0);
+		}
+		public ComparisonMatchExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitComparisonMatchExpression(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
 	public partial class AssignmentExpressionContext : ExpressionContext {
 		public ExpressionContext left;
 		public ExpressionContext right;
@@ -1883,24 +2097,28 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class ComparisonExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public ComparisonContext op;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
+	public partial class MetaMemberExpressionContext : ExpressionContext {
+		public ExpressionContext obj;
+		public NameContext member;
+		public MetaContext op;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] PERIOD() { return GetTokens(CarpGrammarParser.PERIOD); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD(int i) {
+			return GetToken(CarpGrammarParser.PERIOD, i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
+			return GetRuleContext<ExpressionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ComparisonContext comparison() {
-			return GetRuleContext<ComparisonContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
+			return GetRuleContext<NameContext>(0);
 		}
-		public ComparisonExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode] public MetaContext meta() {
+			return GetRuleContext<MetaContext>(0);
+		}
+		public MetaMemberExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitComparisonExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitMetaMemberExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -1925,83 +2143,21 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class VariableExpressionContext : ExpressionContext {
-		[System.Diagnostics.DebuggerNonUserCode] public NameContext name() {
-			return GetRuleContext<NameContext>(0);
-		}
-		public VariableExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitVariableExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class WindExpressionContext : ExpressionContext {
-		public ExpressionContext inner;
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode COLON_COLON() { return GetToken(CarpGrammarParser.COLON_COLON, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		public WindExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitWindExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class BinaryExpressionContext : ExpressionContext {
-		public ExpressionContext left;
-		public BinaryContext op;
-		public ExpressionContext right;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
-			return GetRuleContexts<ExpressionContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
-			return GetRuleContext<ExpressionContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public BinaryContext binary() {
-			return GetRuleContext<BinaryContext>(0);
-		}
-		public BinaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitBinaryExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class CastExpressionContext : ExpressionContext {
+	public partial class MetaObjExpressionContext : ExpressionContext {
 		public ExpressionContext obj;
-		public TypeContext dest;
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode TILDE() { return GetToken(CarpGrammarParser.TILDE, 0); }
+		public MetaContext op;
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERIOD() { return GetToken(CarpGrammarParser.PERIOD, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
 			return GetRuleContext<ExpressionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
-			return GetRuleContext<TypeContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public MetaContext meta() {
+			return GetRuleContext<MetaContext>(0);
 		}
-		public CastExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		public MetaObjExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitCastExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class ParenthesizedExpressionContext : ExpressionContext {
-		public ExpressionContext obj;
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LPAREN() { return GetToken(CarpGrammarParser.LPAREN, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RPAREN() { return GetToken(CarpGrammarParser.RPAREN, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		public ParenthesizedExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitParenthesizedExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitMetaObjExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -2024,19 +2180,24 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class InfixExpressionContext : ExpressionContext {
-		public IToken token;
-		public ExpressionContext expr;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
+	public partial class BinaryGeometricExpressionContext : ExpressionContext {
+		public ExpressionContext left;
+		public Binary_geometricContext op;
+		public ExpressionContext right;
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS_PLUS() { return GetToken(CarpGrammarParser.PLUS_PLUS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS_MINUS() { return GetToken(CarpGrammarParser.MINUS_MINUS, 0); }
-		public InfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Binary_geometricContext binary_geometric() {
+			return GetRuleContext<Binary_geometricContext>(0);
+		}
+		public BinaryGeometricExpressionContext(ExpressionContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitInfixExpression(this);
+			if (typedVisitor != null) return typedVisitor.VisitBinaryGeometricExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -2093,42 +2254,6 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class IndexExpressionContext : ExpressionContext {
-		public ExpressionContext obj;
-		public Expression_listContext parameters;
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LBRACKET() { return GetToken(CarpGrammarParser.LBRACKET, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RBRACKET() { return GetToken(CarpGrammarParser.RBRACKET, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Expression_listContext expression_list() {
-			return GetRuleContext<Expression_listContext>(0);
-		}
-		public IndexExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitIndexExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class UnaryExpressionContext : ExpressionContext {
-		public UnaryContext op;
-		public ExpressionContext left;
-		[System.Diagnostics.DebuggerNonUserCode] public UnaryContext unary() {
-			return GetRuleContext<UnaryContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		public UnaryExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitUnaryExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
 	public partial class TernaryExpressionContext : ExpressionContext {
 		public ExpressionContext condition;
 		public ExpressionContext left;
@@ -2146,22 +2271,6 @@ public partial class CarpGrammarParser : Parser {
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitTernaryExpression(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class PostfixExpressionContext : ExpressionContext {
-		public ExpressionContext expr;
-		public IToken token;
-		[System.Diagnostics.DebuggerNonUserCode] public ExpressionContext expression() {
-			return GetRuleContext<ExpressionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS_PLUS() { return GetToken(CarpGrammarParser.PLUS_PLUS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS_MINUS() { return GetToken(CarpGrammarParser.MINUS_MINUS, 0); }
-		public PostfixExpressionContext(ExpressionContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitPostfixExpression(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -2233,7 +2342,7 @@ public partial class CarpGrammarParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 318;
+			State = 326;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,25,Context) ) {
 			case 1:
@@ -2242,7 +2351,7 @@ public partial class CarpGrammarParser : Parser {
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 298;
+				State = 306;
 				constant();
 				}
 				break;
@@ -2251,7 +2360,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new InfixExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 299;
+				State = 307;
 				((InfixExpressionContext)_localctx).token = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
 				if ( !(_la==PLUS_PLUS || _la==MINUS_MINUS) ) {
@@ -2261,8 +2370,8 @@ public partial class CarpGrammarParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 300;
-				((InfixExpressionContext)_localctx).expr = expression(21);
+				State = 308;
+				((InfixExpressionContext)_localctx).expr = expression(26);
 				}
 				break;
 			case 3:
@@ -2270,10 +2379,10 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new UnaryExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 301;
+				State = 309;
 				((UnaryExpressionContext)_localctx).op = unary();
-				State = 302;
-				((UnaryExpressionContext)_localctx).left = expression(16);
+				State = 310;
+				((UnaryExpressionContext)_localctx).left = expression(19);
 				}
 				break;
 			case 4:
@@ -2281,7 +2390,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new MapExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 304;
+				State = 312;
 				map();
 				}
 				break;
@@ -2290,7 +2399,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new ArrayExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 305;
+				State = 313;
 				array();
 				}
 				break;
@@ -2299,7 +2408,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new VariableExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 306;
+				State = 314;
 				name();
 				}
 				break;
@@ -2308,9 +2417,9 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new EndRangeExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 307;
+				State = 315;
 				Match(ELIPSIS);
-				State = 308;
+				State = 316;
 				((EndRangeExpressionContext)_localctx).right = expression(7);
 				}
 				break;
@@ -2319,11 +2428,11 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new ParenthesizedExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 309;
+				State = 317;
 				Match(LPAREN);
-				State = 310;
+				State = 318;
 				((ParenthesizedExpressionContext)_localctx).obj = expression(0);
-				State = 311;
+				State = 319;
 				Match(RPAREN);
 				}
 				break;
@@ -2332,19 +2441,19 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new LambdaExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 313;
+				State = 321;
 				Match(LPAREN);
-				State = 314;
+				State = 322;
 				((LambdaExpressionContext)_localctx).@values = type_name_list();
-				State = 315;
+				State = 323;
 				Match(RPAREN);
-				State = 316;
+				State = 324;
 				((LambdaExpressionContext)_localctx).body = generic_block();
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 375;
+			State = 404;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,27,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -2353,138 +2462,177 @@ public partial class CarpGrammarParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 373;
+					State = 402;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,26,Context) ) {
 					case 1:
 						{
-						_localctx = new BinaryExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((BinaryExpressionContext)_localctx).left = _prevctx;
+						_localctx = new BinaryGeometricExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((BinaryGeometricExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 320;
-						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
-						State = 321;
-						((BinaryExpressionContext)_localctx).op = binary();
-						State = 322;
-						((BinaryExpressionContext)_localctx).right = expression(16);
+						State = 328;
+						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
+						State = 329;
+						((BinaryGeometricExpressionContext)_localctx).op = binary_geometric();
+						State = 330;
+						((BinaryGeometricExpressionContext)_localctx).right = expression(19);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new ComparisonExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((ComparisonExpressionContext)_localctx).left = _prevctx;
+						_localctx = new BinaryArithmaticExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((BinaryArithmaticExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 324;
-						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
-						State = 325;
-						((ComparisonExpressionContext)_localctx).op = comparison();
-						State = 326;
-						((ComparisonExpressionContext)_localctx).right = expression(15);
+						State = 332;
+						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
+						State = 333;
+						((BinaryArithmaticExpressionContext)_localctx).op = binary_arithmatic();
+						State = 334;
+						((BinaryArithmaticExpressionContext)_localctx).right = expression(18);
 						}
 						break;
 					case 3:
 						{
-						_localctx = new LogicalExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((LogicalExpressionContext)_localctx).left = _prevctx;
+						_localctx = new BinaryBitwiseShiftExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((BinaryBitwiseShiftExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 328;
-						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
-						State = 329;
-						((LogicalExpressionContext)_localctx).op = logical();
-						State = 330;
-						((LogicalExpressionContext)_localctx).right = expression(14);
+						State = 336;
+						if (!(Precpred(Context, 16))) throw new FailedPredicateException(this, "Precpred(Context, 16)");
+						State = 337;
+						((BinaryBitwiseShiftExpressionContext)_localctx).op = binary_bitwise_shift();
+						State = 338;
+						((BinaryBitwiseShiftExpressionContext)_localctx).right = expression(17);
 						}
 						break;
 					case 4:
 						{
-						_localctx = new TernaryExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((TernaryExpressionContext)_localctx).condition = _prevctx;
+						_localctx = new ComparisonCompareExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((ComparisonCompareExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 332;
-						if (!(Precpred(Context, 12))) throw new FailedPredicateException(this, "Precpred(Context, 12)");
-						State = 333;
-						Match(QUESTION_MARK);
-						State = 334;
-						((TernaryExpressionContext)_localctx).left = expression(0);
-						State = 335;
-						Match(COLON);
-						State = 336;
-						((TernaryExpressionContext)_localctx).right = expression(13);
+						State = 340;
+						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
+						State = 341;
+						((ComparisonCompareExpressionContext)_localctx).op = comparison_compare();
+						State = 342;
+						((ComparisonCompareExpressionContext)_localctx).right = expression(16);
 						}
 						break;
 					case 5:
 						{
-						_localctx = new RangeExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((RangeExpressionContext)_localctx).left = _prevctx;
+						_localctx = new ComparisonMatchExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((ComparisonMatchExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 338;
-						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
-						State = 339;
-						Match(ELIPSIS);
-						State = 340;
-						((RangeExpressionContext)_localctx).right = expression(9);
+						State = 344;
+						if (!(Precpred(Context, 14))) throw new FailedPredicateException(this, "Precpred(Context, 14)");
+						State = 345;
+						((ComparisonMatchExpressionContext)_localctx).op = comparison_match();
+						State = 346;
+						((ComparisonMatchExpressionContext)_localctx).right = expression(15);
 						}
 						break;
 					case 6:
 						{
-						_localctx = new AssignmentExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((AssignmentExpressionContext)_localctx).left = _prevctx;
+						_localctx = new LogicalExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((LogicalExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 341;
-						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
-						State = 342;
-						Match(EQUALS);
-						State = 343;
-						((AssignmentExpressionContext)_localctx).right = expression(4);
+						State = 348;
+						if (!(Precpred(Context, 13))) throw new FailedPredicateException(this, "Precpred(Context, 13)");
+						State = 349;
+						((LogicalExpressionContext)_localctx).op = logical();
+						State = 350;
+						((LogicalExpressionContext)_localctx).right = expression(14);
 						}
 						break;
 					case 7:
 						{
-						_localctx = new CompoundAssignmentExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((CompoundAssignmentExpressionContext)_localctx).left = _prevctx;
+						_localctx = new TernaryExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((TernaryExpressionContext)_localctx).condition = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 344;
-						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 345;
-						((CompoundAssignmentExpressionContext)_localctx).op = compoundAssignment();
-						State = 346;
-						((CompoundAssignmentExpressionContext)_localctx).right = expression(3);
+						State = 352;
+						if (!(Precpred(Context, 12))) throw new FailedPredicateException(this, "Precpred(Context, 12)");
+						State = 353;
+						Match(QUESTION_MARK);
+						State = 354;
+						((TernaryExpressionContext)_localctx).left = expression(0);
+						State = 355;
+						Match(COLON);
+						State = 356;
+						((TernaryExpressionContext)_localctx).right = expression(13);
 						}
 						break;
 					case 8:
 						{
-						_localctx = new CastExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((CastExpressionContext)_localctx).obj = _prevctx;
+						_localctx = new RangeExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((RangeExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 348;
-						if (!(Precpred(Context, 23))) throw new FailedPredicateException(this, "Precpred(Context, 23)");
-						State = 349;
-						Match(TILDE);
-						State = 350;
-						((CastExpressionContext)_localctx).dest = type(0);
+						State = 358;
+						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
+						State = 359;
+						Match(ELIPSIS);
+						State = 360;
+						((RangeExpressionContext)_localctx).right = expression(9);
 						}
 						break;
 					case 9:
 						{
-						_localctx = new CompareTypeExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((CompareTypeExpressionContext)_localctx).obj = _prevctx;
+						_localctx = new AssignmentExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((AssignmentExpressionContext)_localctx).left = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 351;
-						if (!(Precpred(Context, 22))) throw new FailedPredicateException(this, "Precpred(Context, 22)");
-						State = 352;
-						Match(TILDE_TILDE);
-						State = 353;
-						((CompareTypeExpressionContext)_localctx).dest = type(0);
+						State = 361;
+						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
+						State = 362;
+						Match(EQUALS);
+						State = 363;
+						((AssignmentExpressionContext)_localctx).right = expression(4);
 						}
 						break;
 					case 10:
 						{
+						_localctx = new CompoundAssignmentExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((CompoundAssignmentExpressionContext)_localctx).left = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 364;
+						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
+						State = 365;
+						((CompoundAssignmentExpressionContext)_localctx).op = compoundAssignment();
+						State = 366;
+						((CompoundAssignmentExpressionContext)_localctx).right = expression(3);
+						}
+						break;
+					case 11:
+						{
+						_localctx = new CastExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((CastExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 368;
+						if (!(Precpred(Context, 28))) throw new FailedPredicateException(this, "Precpred(Context, 28)");
+						State = 369;
+						Match(TILDE);
+						State = 370;
+						((CastExpressionContext)_localctx).dest = type(0);
+						}
+						break;
+					case 12:
+						{
+						_localctx = new CompareTypeExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((CompareTypeExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 371;
+						if (!(Precpred(Context, 27))) throw new FailedPredicateException(this, "Precpred(Context, 27)");
+						State = 372;
+						Match(TILDE_TILDE);
+						State = 373;
+						((CompareTypeExpressionContext)_localctx).dest = type(0);
+						}
+						break;
+					case 13:
+						{
 						_localctx = new PostfixExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((PostfixExpressionContext)_localctx).expr = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 354;
-						if (!(Precpred(Context, 20))) throw new FailedPredicateException(this, "Precpred(Context, 20)");
-						State = 355;
+						State = 374;
+						if (!(Precpred(Context, 25))) throw new FailedPredicateException(this, "Precpred(Context, 25)");
+						State = 375;
 						((PostfixExpressionContext)_localctx).token = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==PLUS_PLUS || _la==MINUS_MINUS) ) {
@@ -2496,75 +2644,105 @@ public partial class CarpGrammarParser : Parser {
 						}
 						}
 						break;
-					case 11:
+					case 14:
 						{
 						_localctx = new CallExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((CallExpressionContext)_localctx).obj = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 356;
-						if (!(Precpred(Context, 19))) throw new FailedPredicateException(this, "Precpred(Context, 19)");
-						State = 357;
+						State = 376;
+						if (!(Precpred(Context, 24))) throw new FailedPredicateException(this, "Precpred(Context, 24)");
+						State = 377;
 						Match(LPAREN);
-						State = 358;
+						State = 378;
 						((CallExpressionContext)_localctx).parameters = expression_list();
-						State = 359;
+						State = 379;
 						Match(RPAREN);
-						}
-						break;
-					case 12:
-						{
-						_localctx = new IndexExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((IndexExpressionContext)_localctx).obj = _prevctx;
-						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 361;
-						if (!(Precpred(Context, 18))) throw new FailedPredicateException(this, "Precpred(Context, 18)");
-						State = 362;
-						Match(LBRACKET);
-						State = 363;
-						((IndexExpressionContext)_localctx).parameters = expression_list();
-						State = 364;
-						Match(RBRACKET);
-						}
-						break;
-					case 13:
-						{
-						_localctx = new PropertyExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((PropertyExpressionContext)_localctx).obj = _prevctx;
-						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 366;
-						if (!(Precpred(Context, 17))) throw new FailedPredicateException(this, "Precpred(Context, 17)");
-						State = 367;
-						Match(PERIOD);
-						State = 368;
-						((PropertyExpressionContext)_localctx).value = name();
-						}
-						break;
-					case 14:
-						{
-						_localctx = new WindExpressionContext(new ExpressionContext(_parentctx, _parentState));
-						((WindExpressionContext)_localctx).inner = _prevctx;
-						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 369;
-						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 370;
-						Match(COLON_COLON);
 						}
 						break;
 					case 15:
 						{
+						_localctx = new IndexExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((IndexExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 381;
+						if (!(Precpred(Context, 23))) throw new FailedPredicateException(this, "Precpred(Context, 23)");
+						State = 382;
+						Match(LBRACKET);
+						State = 383;
+						((IndexExpressionContext)_localctx).parameters = expression_list();
+						State = 384;
+						Match(RBRACKET);
+						}
+						break;
+					case 16:
+						{
+						_localctx = new MetaMemberExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((MetaMemberExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 386;
+						if (!(Precpred(Context, 22))) throw new FailedPredicateException(this, "Precpred(Context, 22)");
+						State = 387;
+						Match(PERIOD);
+						State = 388;
+						((MetaMemberExpressionContext)_localctx).member = name();
+						State = 389;
+						Match(PERIOD);
+						State = 390;
+						((MetaMemberExpressionContext)_localctx).op = meta();
+						}
+						break;
+					case 17:
+						{
+						_localctx = new MetaObjExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((MetaObjExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 392;
+						if (!(Precpred(Context, 21))) throw new FailedPredicateException(this, "Precpred(Context, 21)");
+						State = 393;
+						Match(PERIOD);
+						State = 394;
+						((MetaObjExpressionContext)_localctx).op = meta();
+						}
+						break;
+					case 18:
+						{
+						_localctx = new PropertyExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((PropertyExpressionContext)_localctx).obj = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 395;
+						if (!(Precpred(Context, 20))) throw new FailedPredicateException(this, "Precpred(Context, 20)");
+						State = 396;
+						Match(PERIOD);
+						State = 397;
+						((PropertyExpressionContext)_localctx).value = name();
+						}
+						break;
+					case 19:
+						{
+						_localctx = new WindExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						((WindExpressionContext)_localctx).inner = _prevctx;
+						PushNewRecursionContext(_localctx, _startState, RULE_expression);
+						State = 398;
+						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
+						State = 399;
+						Match(COLON_COLON);
+						}
+						break;
+					case 20:
+						{
 						_localctx = new FilterExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						((FilterExpressionContext)_localctx).inner = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 371;
+						State = 400;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 372;
+						State = 401;
 						Match(SEMICOLON_SEMICOLON);
 						}
 						break;
 					}
 					} 
 				}
-				State = 377;
+				State = 406;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,27,Context);
 			}
@@ -2615,28 +2793,28 @@ public partial class CarpGrammarParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 386;
+			State = 415;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 15780209676517650L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 51L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 63120838706070600L) != 0) || ((((_la - 72)) & ~0x3f) == 0 && ((1L << (_la - 72)) & 51L) != 0)) {
 				{
-				State = 378;
+				State = 407;
 				_localctx._expression = expression(0);
 				_localctx._expressions.Add(_localctx._expression);
-				State = 383;
+				State = 412;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					State = 379;
+					State = 408;
 					Match(COMMA);
-					State = 380;
+					State = 409;
 					_localctx._expression = expression(0);
 					_localctx._expressions.Add(_localctx._expression);
 					}
 					}
-					State = 385;
+					State = 414;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
@@ -2736,14 +2914,14 @@ public partial class CarpGrammarParser : Parser {
 		CompoundAssignmentContext _localctx = new CompoundAssignmentContext(Context, State);
 		EnterRule(_localctx, 36, RULE_compoundAssignment);
 		try {
-			State = 396;
+			State = 425;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case PLUS_EQUALS:
 				_localctx = new AddCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 388;
+				State = 417;
 				Match(PLUS_EQUALS);
 				}
 				break;
@@ -2751,7 +2929,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new SubtractCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 389;
+				State = 418;
 				Match(MINUS_EQUALS);
 				}
 				break;
@@ -2759,7 +2937,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new MultiplyCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 390;
+				State = 419;
 				Match(ASTERISK_EQUALS);
 				}
 				break;
@@ -2767,7 +2945,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new DivideCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 391;
+				State = 420;
 				Match(SLASH_EQUALS);
 				}
 				break;
@@ -2775,9 +2953,9 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new MultiplyCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 392;
+				State = 421;
 				Match(ASTERISK_LSPACE);
-				State = 393;
+				State = 422;
 				Match(EQUALS);
 				}
 				break;
@@ -2785,7 +2963,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new PowerCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 394;
+				State = 423;
 				Match(CARET_EQUALS);
 				}
 				break;
@@ -2793,7 +2971,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new ModulusCompoundContext(_localctx);
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 395;
+				State = 424;
 				Match(PERCENT_EQUALS);
 				}
 				break;
@@ -2890,14 +3068,14 @@ public partial class CarpGrammarParser : Parser {
 		ConstantContext _localctx = new ConstantContext(Context, State);
 		EnterRule(_localctx, 38, RULE_constant);
 		try {
-			State = 404;
+			State = 433;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case INT:
 				_localctx = new IntConstantContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 398;
+				State = 427;
 				Match(INT);
 				}
 				break;
@@ -2905,7 +3083,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new StringConstantContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 399;
+				State = 428;
 				Match(STRING);
 				}
 				break;
@@ -2913,7 +3091,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new CharConstantContext(_localctx);
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 400;
+				State = 429;
 				Match(CHAR);
 				}
 				break;
@@ -2921,7 +3099,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new TrueConstantContext(_localctx);
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 401;
+				State = 430;
 				Match(TRUE);
 				}
 				break;
@@ -2929,7 +3107,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new FalseConstantContext(_localctx);
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 402;
+				State = 431;
 				Match(FALSE);
 				}
 				break;
@@ -2937,7 +3115,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new NullConstantContext(_localctx);
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 403;
+				State = 432;
 				Match(NULL);
 				}
 				break;
@@ -2994,14 +3172,14 @@ public partial class CarpGrammarParser : Parser {
 		UnaryContext _localctx = new UnaryContext(Context, State);
 		EnterRule(_localctx, 40, RULE_unary);
 		try {
-			State = 408;
+			State = 437;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case MINUS:
 				_localctx = new NegateUnaryContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 406;
+				State = 435;
 				Match(MINUS);
 				}
 				break;
@@ -3009,7 +3187,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new NotUnaryContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 407;
+				State = 436;
 				Match(BANG);
 				}
 				break;
@@ -3066,14 +3244,14 @@ public partial class CarpGrammarParser : Parser {
 		LogicalContext _localctx = new LogicalContext(Context, State);
 		EnterRule(_localctx, 42, RULE_logical);
 		try {
-			State = 412;
+			State = 441;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case AMPERSAND:
 				_localctx = new AndLogicalContext(_localctx);
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 410;
+				State = 439;
 				Match(AMPERSAND);
 				}
 				break;
@@ -3081,7 +3259,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new OrLogicalContext(_localctx);
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 411;
+				State = 440;
 				Match(PIPE);
 				}
 				break;
@@ -3100,31 +3278,21 @@ public partial class CarpGrammarParser : Parser {
 		return _localctx;
 	}
 
-	public partial class ComparisonContext : Carp.interpreter.Context {
-		public ComparisonContext(ParserRuleContext parent, int invokingState)
+	public partial class Comparison_compareContext : Carp.interpreter.Context {
+		public Comparison_compareContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_comparison; } }
+		public override int RuleIndex { get { return RULE_comparison_compare; } }
 	 
-		public ComparisonContext() { }
-		public virtual void CopyFrom(ComparisonContext context) {
+		public Comparison_compareContext() { }
+		public virtual void CopyFrom(Comparison_compareContext context) {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class MatchComparisonContext : ComparisonContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUALS_EQUALS() { return GetToken(CarpGrammarParser.EQUALS_EQUALS, 0); }
-		public MatchComparisonContext(ComparisonContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMatchComparison(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class GreaterThanEqualsComparisonContext : ComparisonContext {
+	public partial class GreaterThanEqualsComparisonContext : Comparison_compareContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GREATER_THAN_EQUALS() { return GetToken(CarpGrammarParser.GREATER_THAN_EQUALS, 0); }
-		public GreaterThanEqualsComparisonContext(ComparisonContext context) { CopyFrom(context); }
+		public GreaterThanEqualsComparisonContext(Comparison_compareContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3132,9 +3300,9 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class GreaterThanComparisonContext : ComparisonContext {
+	public partial class GreaterThanComparisonContext : Comparison_compareContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode GREATER_THAN() { return GetToken(CarpGrammarParser.GREATER_THAN, 0); }
-		public GreaterThanComparisonContext(ComparisonContext context) { CopyFrom(context); }
+		public GreaterThanComparisonContext(Comparison_compareContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3142,9 +3310,9 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class LessThanEqualsComparisonContext : ComparisonContext {
+	public partial class LessThanEqualsComparisonContext : Comparison_compareContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LESS_THAN_EQUALS() { return GetToken(CarpGrammarParser.LESS_THAN_EQUALS, 0); }
-		public LessThanEqualsComparisonContext(ComparisonContext context) { CopyFrom(context); }
+		public LessThanEqualsComparisonContext(Comparison_compareContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3152,19 +3320,9 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class NotMatchComparisonContext : ComparisonContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NOT_EQUALS() { return GetToken(CarpGrammarParser.NOT_EQUALS, 0); }
-		public NotMatchComparisonContext(ComparisonContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitNotMatchComparison(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class LessThanComparisonContext : ComparisonContext {
+	public partial class LessThanComparisonContext : Comparison_compareContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LESS_THAN() { return GetToken(CarpGrammarParser.LESS_THAN, 0); }
-		public LessThanComparisonContext(ComparisonContext context) { CopyFrom(context); }
+		public LessThanComparisonContext(Comparison_compareContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3174,58 +3332,42 @@ public partial class CarpGrammarParser : Parser {
 	}
 
 	[RuleVersion(0)]
-	public ComparisonContext comparison() {
-		ComparisonContext _localctx = new ComparisonContext(Context, State);
-		EnterRule(_localctx, 44, RULE_comparison);
+	public Comparison_compareContext comparison_compare() {
+		Comparison_compareContext _localctx = new Comparison_compareContext(Context, State);
+		EnterRule(_localctx, 44, RULE_comparison_compare);
 		try {
-			State = 420;
+			State = 447;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case EQUALS_EQUALS:
-				_localctx = new MatchComparisonContext(_localctx);
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 414;
-				Match(EQUALS_EQUALS);
-				}
-				break;
-			case NOT_EQUALS:
-				_localctx = new NotMatchComparisonContext(_localctx);
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 415;
-				Match(NOT_EQUALS);
-				}
-				break;
 			case GREATER_THAN:
 				_localctx = new GreaterThanComparisonContext(_localctx);
-				EnterOuterAlt(_localctx, 3);
+				EnterOuterAlt(_localctx, 1);
 				{
-				State = 416;
+				State = 443;
 				Match(GREATER_THAN);
 				}
 				break;
 			case LESS_THAN:
 				_localctx = new LessThanComparisonContext(_localctx);
-				EnterOuterAlt(_localctx, 4);
+				EnterOuterAlt(_localctx, 2);
 				{
-				State = 417;
+				State = 444;
 				Match(LESS_THAN);
 				}
 				break;
 			case GREATER_THAN_EQUALS:
 				_localctx = new GreaterThanEqualsComparisonContext(_localctx);
-				EnterOuterAlt(_localctx, 5);
+				EnterOuterAlt(_localctx, 3);
 				{
-				State = 418;
+				State = 445;
 				Match(GREATER_THAN_EQUALS);
 				}
 				break;
 			case LESS_THAN_EQUALS:
 				_localctx = new LessThanEqualsComparisonContext(_localctx);
-				EnterOuterAlt(_localctx, 6);
+				EnterOuterAlt(_localctx, 4);
 				{
-				State = 419;
+				State = 446;
 				Match(LESS_THAN_EQUALS);
 				}
 				break;
@@ -3244,31 +3386,93 @@ public partial class CarpGrammarParser : Parser {
 		return _localctx;
 	}
 
-	public partial class BinaryContext : Carp.interpreter.Context {
-		public BinaryContext(ParserRuleContext parent, int invokingState)
+	public partial class Comparison_matchContext : Carp.interpreter.Context {
+		public Comparison_matchContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_binary; } }
+		public override int RuleIndex { get { return RULE_comparison_match; } }
 	 
-		public BinaryContext() { }
-		public virtual void CopyFrom(BinaryContext context) {
+		public Comparison_matchContext() { }
+		public virtual void CopyFrom(Comparison_matchContext context) {
 			base.CopyFrom(context);
 		}
 	}
-	public partial class LeftShiftBinaryContext : BinaryContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LEFT_SHIFT() { return GetToken(CarpGrammarParser.LEFT_SHIFT, 0); }
-		public LeftShiftBinaryContext(BinaryContext context) { CopyFrom(context); }
+	public partial class MatchComparisonContext : Comparison_matchContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode EQUALS_EQUALS() { return GetToken(CarpGrammarParser.EQUALS_EQUALS, 0); }
+		public MatchComparisonContext(Comparison_matchContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitLeftShiftBinary(this);
+			if (typedVisitor != null) return typedVisitor.VisitMatchComparison(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class DivideBinaryContext : BinaryContext {
+	public partial class NotMatchComparisonContext : Comparison_matchContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NOT_EQUALS() { return GetToken(CarpGrammarParser.NOT_EQUALS, 0); }
+		public NotMatchComparisonContext(Comparison_matchContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitNotMatchComparison(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Comparison_matchContext comparison_match() {
+		Comparison_matchContext _localctx = new Comparison_matchContext(Context, State);
+		EnterRule(_localctx, 46, RULE_comparison_match);
+		try {
+			State = 451;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case EQUALS_EQUALS:
+				_localctx = new MatchComparisonContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 449;
+				Match(EQUALS_EQUALS);
+				}
+				break;
+			case NOT_EQUALS:
+				_localctx = new NotMatchComparisonContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 450;
+				Match(NOT_EQUALS);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Binary_geometricContext : Carp.interpreter.Context {
+		public Binary_geometricContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_binary_geometric; } }
+	 
+		public Binary_geometricContext() { }
+		public virtual void CopyFrom(Binary_geometricContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class DivideBinaryContext : Binary_geometricContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode SLASH() { return GetToken(CarpGrammarParser.SLASH, 0); }
-		public DivideBinaryContext(BinaryContext context) { CopyFrom(context); }
+		public DivideBinaryContext(Binary_geometricContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3276,9 +3480,9 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class PowerBinaryContext : BinaryContext {
+	public partial class PowerBinaryContext : Binary_geometricContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode CARET() { return GetToken(CarpGrammarParser.CARET, 0); }
-		public PowerBinaryContext(BinaryContext context) { CopyFrom(context); }
+		public PowerBinaryContext(Binary_geometricContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3286,21 +3490,11 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class RightShiftBinaryContext : BinaryContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RIGHT_SHIFT() { return GetToken(CarpGrammarParser.RIGHT_SHIFT, 0); }
-		public RightShiftBinaryContext(BinaryContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitRightShiftBinary(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class MultiplicationBinaryContext : BinaryContext {
+	public partial class MultiplicationBinaryContext : Binary_geometricContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ASTERISK_LSPACE() { return GetToken(CarpGrammarParser.ASTERISK_LSPACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ASTERISK_BSPACE() { return GetToken(CarpGrammarParser.ASTERISK_BSPACE, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode ASTERISK_NSPC() { return GetToken(CarpGrammarParser.ASTERISK_NSPC, 0); }
-		public MultiplicationBinaryContext(BinaryContext context) { CopyFrom(context); }
+		public MultiplicationBinaryContext(Binary_geometricContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3308,9 +3502,9 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class ModulusBinaryContext : BinaryContext {
+	public partial class ModulusBinaryContext : Binary_geometricContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PERCENT() { return GetToken(CarpGrammarParser.PERCENT, 0); }
-		public ModulusBinaryContext(BinaryContext context) { CopyFrom(context); }
+		public ModulusBinaryContext(Binary_geometricContext context) { CopyFrom(context); }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
@@ -3318,61 +3512,25 @@ public partial class CarpGrammarParser : Parser {
 			else return visitor.VisitChildren(this);
 		}
 	}
-	public partial class AddBinaryContext : BinaryContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(CarpGrammarParser.PLUS, 0); }
-		public AddBinaryContext(BinaryContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAddBinary(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-	public partial class SubtractBinaryContext : BinaryContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(CarpGrammarParser.MINUS, 0); }
-		public SubtractBinaryContext(BinaryContext context) { CopyFrom(context); }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitSubtractBinary(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
 
 	[RuleVersion(0)]
-	public BinaryContext binary() {
-		BinaryContext _localctx = new BinaryContext(Context, State);
-		EnterRule(_localctx, 46, RULE_binary);
+	public Binary_geometricContext binary_geometric() {
+		Binary_geometricContext _localctx = new Binary_geometricContext(Context, State);
+		EnterRule(_localctx, 48, RULE_binary_geometric);
 		int _la;
 		try {
-			State = 430;
+			State = 457;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
-			case PLUS:
-				_localctx = new AddBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 422;
-				Match(PLUS);
-				}
-				break;
-			case MINUS:
-				_localctx = new SubtractBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 423;
-				Match(MINUS);
-				}
-				break;
 			case ASTERISK_BSPACE:
 			case ASTERISK_LSPACE:
 			case ASTERISK_NSPC:
 				_localctx = new MultiplicationBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 3);
+				EnterOuterAlt(_localctx, 1);
 				{
-				State = 424;
+				State = 453;
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1511828488192L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 6047313952768L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -3383,42 +3541,240 @@ public partial class CarpGrammarParser : Parser {
 				break;
 			case SLASH:
 				_localctx = new DivideBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 4);
+				EnterOuterAlt(_localctx, 2);
 				{
-				State = 425;
+				State = 454;
 				Match(SLASH);
 				}
 				break;
 			case CARET:
 				_localctx = new PowerBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 5);
+				EnterOuterAlt(_localctx, 3);
 				{
-				State = 426;
+				State = 455;
 				Match(CARET);
 				}
 				break;
 			case PERCENT:
 				_localctx = new ModulusBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 6);
+				EnterOuterAlt(_localctx, 4);
 				{
-				State = 427;
+				State = 456;
 				Match(PERCENT);
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Binary_arithmaticContext : Carp.interpreter.Context {
+		public Binary_arithmaticContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_binary_arithmatic; } }
+	 
+		public Binary_arithmaticContext() { }
+		public virtual void CopyFrom(Binary_arithmaticContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class AddBinaryContext : Binary_arithmaticContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode PLUS() { return GetToken(CarpGrammarParser.PLUS, 0); }
+		public AddBinaryContext(Binary_arithmaticContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAddBinary(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class SubtractBinaryContext : Binary_arithmaticContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode MINUS() { return GetToken(CarpGrammarParser.MINUS, 0); }
+		public SubtractBinaryContext(Binary_arithmaticContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSubtractBinary(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Binary_arithmaticContext binary_arithmatic() {
+		Binary_arithmaticContext _localctx = new Binary_arithmaticContext(Context, State);
+		EnterRule(_localctx, 50, RULE_binary_arithmatic);
+		try {
+			State = 461;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case PLUS:
+				_localctx = new AddBinaryContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 459;
+				Match(PLUS);
+				}
+				break;
+			case MINUS:
+				_localctx = new SubtractBinaryContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 460;
+				Match(MINUS);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Binary_bitwise_shiftContext : Carp.interpreter.Context {
+		public Binary_bitwise_shiftContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_binary_bitwise_shift; } }
+	 
+		public Binary_bitwise_shiftContext() { }
+		public virtual void CopyFrom(Binary_bitwise_shiftContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class LeftShiftBinaryContext : Binary_bitwise_shiftContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LEFT_SHIFT() { return GetToken(CarpGrammarParser.LEFT_SHIFT, 0); }
+		public LeftShiftBinaryContext(Binary_bitwise_shiftContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitLeftShiftBinary(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class RightShiftBinaryContext : Binary_bitwise_shiftContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RIGHT_SHIFT() { return GetToken(CarpGrammarParser.RIGHT_SHIFT, 0); }
+		public RightShiftBinaryContext(Binary_bitwise_shiftContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitRightShiftBinary(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Binary_bitwise_shiftContext binary_bitwise_shift() {
+		Binary_bitwise_shiftContext _localctx = new Binary_bitwise_shiftContext(Context, State);
+		EnterRule(_localctx, 52, RULE_binary_bitwise_shift);
+		try {
+			State = 465;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
 			case LEFT_SHIFT:
 				_localctx = new LeftShiftBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 7);
+				EnterOuterAlt(_localctx, 1);
 				{
-				State = 428;
+				State = 463;
 				Match(LEFT_SHIFT);
 				}
 				break;
 			case RIGHT_SHIFT:
 				_localctx = new RightShiftBinaryContext(_localctx);
-				EnterOuterAlt(_localctx, 8);
+				EnterOuterAlt(_localctx, 2);
 				{
-				State = 429;
+				State = 464;
 				Match(RIGHT_SHIFT);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class MetaContext : Carp.interpreter.Context {
+		public MetaContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_meta; } }
+	 
+		public MetaContext() { }
+		public virtual void CopyFrom(MetaContext context) {
+			base.CopyFrom(context);
+		}
+	}
+	public partial class DocMetaContext : MetaContext {
+		public DocMetaContext(MetaContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitDocMeta(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class AnnotationsMetaContext : MetaContext {
+		public AnnotationsMetaContext(MetaContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ICarpGrammarVisitor<TResult> typedVisitor = visitor as ICarpGrammarVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAnnotationsMeta(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public MetaContext meta() {
+		MetaContext _localctx = new MetaContext(Context, State);
+		EnterRule(_localctx, 54, RULE_meta);
+		try {
+			State = 469;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__0:
+				_localctx = new DocMetaContext(_localctx);
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 467;
+				Match(T__0);
+				}
+				break;
+			case T__1:
+				_localctx = new AnnotationsMetaContext(_localctx);
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 468;
+				Match(T__1);
 				}
 				break;
 			default:
@@ -3458,15 +3814,15 @@ public partial class CarpGrammarParser : Parser {
 	[RuleVersion(0)]
 	public ArrayContext array() {
 		ArrayContext _localctx = new ArrayContext(Context, State);
-		EnterRule(_localctx, 48, RULE_array);
+		EnterRule(_localctx, 56, RULE_array);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 432;
+			State = 471;
 			Match(LBRACKET);
-			State = 433;
+			State = 472;
 			expression_list();
-			State = 434;
+			State = 473;
 			Match(RBRACKET);
 			}
 		}
@@ -3517,44 +3873,44 @@ public partial class CarpGrammarParser : Parser {
 	[RuleVersion(0)]
 	public MapContext map() {
 		MapContext _localctx = new MapContext(Context, State);
-		EnterRule(_localctx, 50, RULE_map);
+		EnterRule(_localctx, 58, RULE_map);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 436;
+			State = 475;
 			Match(LBRACKET);
-			State = 437;
+			State = 476;
 			_localctx._expression = expression(0);
 			_localctx._keys.Add(_localctx._expression);
-			State = 438;
+			State = 477;
 			Match(COLON);
-			State = 439;
+			State = 478;
 			_localctx._expression = expression(0);
 			_localctx._values.Add(_localctx._expression);
-			State = 447;
+			State = 486;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				State = 440;
+				State = 479;
 				Match(COMMA);
-				State = 441;
+				State = 480;
 				_localctx._expression = expression(0);
 				_localctx._keys.Add(_localctx._expression);
-				State = 442;
+				State = 481;
 				Match(COLON);
-				State = 443;
+				State = 482;
 				_localctx._expression = expression(0);
 				_localctx._values.Add(_localctx._expression);
 				}
 				}
-				State = 449;
+				State = 488;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 450;
+			State = 489;
 			Match(RBRACKET);
 			}
 		}
@@ -3595,12 +3951,12 @@ public partial class CarpGrammarParser : Parser {
 	[RuleVersion(0)]
 	public ModifierContext modifier() {
 		ModifierContext _localctx = new ModifierContext(Context, State);
-		EnterRule(_localctx, 52, RULE_modifier);
+		EnterRule(_localctx, 60, RULE_modifier);
 		try {
 			_localctx = new PrivateModifierContext(_localctx);
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 452;
+			State = 491;
 			Match(UNDERSCORE);
 			}
 		}
@@ -3735,25 +4091,25 @@ public partial class CarpGrammarParser : Parser {
 		int _parentState = State;
 		TypeContext _localctx = new TypeContext(Context, _parentState);
 		TypeContext _prevctx = _localctx;
-		int _startState = 54;
-		EnterRecursionRule(_localctx, 54, RULE_type, _p);
+		int _startState = 62;
+		EnterRecursionRule(_localctx, 62, RULE_type, _p);
 		int _la;
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 464;
+			State = 503;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,38,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,42,Context) ) {
 			case 1:
 				{
 				_localctx = new PropertyTypeContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 455;
+				State = 494;
 				((PropertyTypeContext)_localctx).main = Match(ID);
-				State = 458;
+				State = 497;
 				ErrorHandler.Sync(this);
 				_alt = 1;
 				do {
@@ -3761,9 +4117,9 @@ public partial class CarpGrammarParser : Parser {
 					case 1:
 						{
 						{
-						State = 456;
+						State = 495;
 						Match(PERIOD);
-						State = 457;
+						State = 496;
 						((PropertyTypeContext)_localctx)._ID = Match(ID);
 						((PropertyTypeContext)_localctx)._parts.Add(((PropertyTypeContext)_localctx)._ID);
 						}
@@ -3772,9 +4128,9 @@ public partial class CarpGrammarParser : Parser {
 					default:
 						throw new NoViableAltException(this);
 					}
-					State = 460;
+					State = 499;
 					ErrorHandler.Sync(this);
-					_alt = Interpreter.AdaptivePredict(TokenStream,37,Context);
+					_alt = Interpreter.AdaptivePredict(TokenStream,41,Context);
 				} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
 				}
 				break;
@@ -3783,7 +4139,7 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new NamedTypeContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 462;
+				State = 501;
 				Match(ID);
 				}
 				break;
@@ -3792,34 +4148,34 @@ public partial class CarpGrammarParser : Parser {
 				_localctx = new AutoTypeContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 463;
+				State = 502;
 				Match(LET);
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 485;
+			State = 524;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,41,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,45,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( ParseListeners!=null )
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 483;
+					State = 522;
 					ErrorHandler.Sync(this);
-					switch ( Interpreter.AdaptivePredict(TokenStream,40,Context) ) {
+					switch ( Interpreter.AdaptivePredict(TokenStream,44,Context) ) {
 					case 1:
 						{
 						_localctx = new MapTypeContext(new TypeContext(_parentctx, _parentState));
 						((MapTypeContext)_localctx).key = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 466;
+						State = 505;
 						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
-						State = 467;
+						State = 506;
 						Match(COLON);
-						State = 468;
+						State = 507;
 						((MapTypeContext)_localctx).value = type(7);
 						}
 						break;
@@ -3828,9 +4184,9 @@ public partial class CarpGrammarParser : Parser {
 						_localctx = new ListTypeContext(new TypeContext(_parentctx, _parentState));
 						((ListTypeContext)_localctx).element = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 469;
+						State = 508;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 470;
+						State = 509;
 						_la = TokenStream.LA(1);
 						if ( !(_la==ASTERISK_RSPACE || _la==ASTERISK_NSPC) ) {
 						ErrorHandler.RecoverInline(this);
@@ -3846,40 +4202,40 @@ public partial class CarpGrammarParser : Parser {
 						_localctx = new GenericTypeContext(new TypeContext(_parentctx, _parentState));
 						((GenericTypeContext)_localctx).main = _prevctx;
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 471;
+						State = 510;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 472;
+						State = 511;
 						Match(LESS_THAN);
-						State = 473;
+						State = 512;
 						((GenericTypeContext)_localctx)._type = type(0);
 						((GenericTypeContext)_localctx)._subs.Add(((GenericTypeContext)_localctx)._type);
-						State = 478;
+						State = 517;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 						while (_la==COMMA) {
 							{
 							{
-							State = 474;
+							State = 513;
 							Match(COMMA);
-							State = 475;
+							State = 514;
 							((GenericTypeContext)_localctx)._type = type(0);
 							((GenericTypeContext)_localctx)._subs.Add(((GenericTypeContext)_localctx)._type);
 							}
 							}
-							State = 480;
+							State = 519;
 							ErrorHandler.Sync(this);
 							_la = TokenStream.LA(1);
 						}
-						State = 481;
+						State = 520;
 						Match(GREATER_THAN);
 						}
 						break;
 					}
 					} 
 				}
-				State = 487;
+				State = 526;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,41,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,45,Context);
 			}
 			}
 		}
@@ -3931,39 +4287,39 @@ public partial class CarpGrammarParser : Parser {
 	[RuleVersion(0)]
 	public Type_name_listContext type_name_list() {
 		Type_name_listContext _localctx = new Type_name_listContext(Context, State);
-		EnterRule(_localctx, 56, RULE_type_name_list);
+		EnterRule(_localctx, 64, RULE_type_name_list);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 499;
+			State = 538;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LET || _la==ID) {
 				{
-				State = 488;
+				State = 527;
 				_localctx._type = type(0);
 				_localctx._types.Add(_localctx._type);
-				State = 489;
+				State = 528;
 				_localctx._name = name();
 				_localctx._names.Add(_localctx._name);
-				State = 496;
+				State = 535;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					State = 490;
+					State = 529;
 					Match(COMMA);
-					State = 491;
+					State = 530;
 					_localctx._type = type(0);
 					_localctx._types.Add(_localctx._type);
-					State = 492;
+					State = 531;
 					_localctx._name = name();
 					_localctx._names.Add(_localctx._name);
 					}
 					}
-					State = 498;
+					State = 537;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
@@ -4009,27 +4365,27 @@ public partial class CarpGrammarParser : Parser {
 	[RuleVersion(0)]
 	public NameContext name() {
 		NameContext _localctx = new NameContext(Context, State);
-		EnterRule(_localctx, 58, RULE_name);
+		EnterRule(_localctx, 66, RULE_name);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 504;
+			State = 543;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==UNDERSCORE) {
 				{
 				{
-				State = 501;
+				State = 540;
 				_localctx._modifier = modifier();
 				_localctx._modifiers.Add(_localctx._modifier);
 				}
 				}
-				State = 506;
+				State = 545;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 507;
+			State = 546;
 			Match(ID);
 			}
 		}
@@ -4047,216 +4403,234 @@ public partial class CarpGrammarParser : Parser {
 	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 16: return expression_sempred((ExpressionContext)_localctx, predIndex);
-		case 27: return type_sempred((TypeContext)_localctx, predIndex);
+		case 31: return type_sempred((TypeContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private bool expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Precpred(Context, 15);
-		case 1: return Precpred(Context, 14);
-		case 2: return Precpred(Context, 13);
-		case 3: return Precpred(Context, 12);
-		case 4: return Precpred(Context, 8);
-		case 5: return Precpred(Context, 3);
-		case 6: return Precpred(Context, 2);
-		case 7: return Precpred(Context, 23);
-		case 8: return Precpred(Context, 22);
-		case 9: return Precpred(Context, 20);
-		case 10: return Precpred(Context, 19);
-		case 11: return Precpred(Context, 18);
-		case 12: return Precpred(Context, 17);
-		case 13: return Precpred(Context, 5);
-		case 14: return Precpred(Context, 4);
+		case 0: return Precpred(Context, 18);
+		case 1: return Precpred(Context, 17);
+		case 2: return Precpred(Context, 16);
+		case 3: return Precpred(Context, 15);
+		case 4: return Precpred(Context, 14);
+		case 5: return Precpred(Context, 13);
+		case 6: return Precpred(Context, 12);
+		case 7: return Precpred(Context, 8);
+		case 8: return Precpred(Context, 3);
+		case 9: return Precpred(Context, 2);
+		case 10: return Precpred(Context, 28);
+		case 11: return Precpred(Context, 27);
+		case 12: return Precpred(Context, 25);
+		case 13: return Precpred(Context, 24);
+		case 14: return Precpred(Context, 23);
+		case 15: return Precpred(Context, 22);
+		case 16: return Precpred(Context, 21);
+		case 17: return Precpred(Context, 20);
+		case 18: return Precpred(Context, 5);
+		case 19: return Precpred(Context, 4);
 		}
 		return true;
 	}
 	private bool type_sempred(TypeContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 15: return Precpred(Context, 6);
-		case 16: return Precpred(Context, 5);
-		case 17: return Precpred(Context, 4);
+		case 20: return Precpred(Context, 6);
+		case 21: return Precpred(Context, 5);
+		case 22: return Precpred(Context, 4);
 		}
 		return true;
 	}
 
 	private static int[] _serializedATN = {
-		4,1,75,510,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,77,549,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
-		2,29,7,29,1,0,5,0,62,8,0,10,0,12,0,65,9,0,1,0,1,0,1,1,5,1,70,8,1,10,1,
-		12,1,73,9,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,83,8,2,1,3,1,3,1,3,3,3,
-		88,8,3,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,98,8,4,1,5,1,5,1,5,1,5,1,5,
-		1,5,1,5,5,5,107,8,5,10,5,12,5,110,9,5,1,5,1,5,3,5,114,8,5,1,6,1,6,1,6,
-		1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,5,7,129,8,7,10,7,12,7,132,9,7,
-		1,7,1,7,3,7,136,8,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,5,7,145,8,7,10,7,12,7,
-		148,9,7,1,7,1,7,3,7,152,8,7,3,7,154,8,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
+		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,1,0,5,0,70,8,0,10,0,
+		12,0,73,9,0,1,0,1,0,1,1,5,1,78,8,1,10,1,12,1,81,9,1,1,2,1,2,1,2,1,2,1,
+		2,1,2,1,2,1,2,3,2,91,8,2,1,3,1,3,1,3,3,3,96,8,3,1,4,1,4,1,4,1,4,1,4,1,
+		4,1,4,1,4,3,4,106,8,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,5,5,115,8,5,10,5,12,
+		5,118,9,5,1,5,1,5,3,5,122,8,5,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,
+		1,7,1,7,1,7,5,7,137,8,7,10,7,12,7,140,9,7,1,7,1,7,3,7,144,8,7,1,7,1,7,
+		1,7,1,7,1,7,1,7,1,7,5,7,153,8,7,10,7,12,7,156,9,7,1,7,1,7,3,7,160,8,7,
+		3,7,162,8,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
 		8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,
-		1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,190,8,8,1,9,1,9,3,9,194,8,9,1,
-		10,1,10,1,11,1,11,1,12,1,12,3,12,202,8,12,1,13,1,13,1,13,1,13,1,13,1,13,
-		3,13,210,8,13,1,14,5,14,213,8,14,10,14,12,14,216,9,14,1,14,1,14,1,15,1,
-		15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,
-		15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,5,15,247,8,15,
-		10,15,12,15,250,9,15,3,15,252,8,15,1,15,1,15,5,15,256,8,15,10,15,12,15,
-		259,9,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,5,15,269,8,15,10,15,12,
-		15,272,9,15,3,15,274,8,15,1,15,1,15,5,15,278,8,15,10,15,12,15,281,9,15,
-		1,15,1,15,1,15,1,15,1,15,1,15,5,15,289,8,15,10,15,12,15,292,9,15,1,15,
-		1,15,3,15,296,8,15,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,
-		16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,3,16,319,8,16,1,16,
+		1,8,1,8,3,8,198,8,8,1,9,1,9,3,9,202,8,9,1,10,1,10,1,11,1,11,1,12,1,12,
+		3,12,210,8,12,1,13,1,13,1,13,1,13,1,13,1,13,3,13,218,8,13,1,14,5,14,221,
+		8,14,10,14,12,14,224,9,14,1,14,1,14,1,15,1,15,1,15,1,15,1,15,1,15,1,15,
+		1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,1,15,
+		1,15,1,15,1,15,1,15,1,15,1,15,5,15,255,8,15,10,15,12,15,258,9,15,3,15,
+		260,8,15,1,15,1,15,5,15,264,8,15,10,15,12,15,267,9,15,1,15,1,15,1,15,1,
+		15,1,15,1,15,1,15,1,15,5,15,277,8,15,10,15,12,15,280,9,15,3,15,282,8,15,
+		1,15,1,15,5,15,286,8,15,10,15,12,15,289,9,15,1,15,1,15,1,15,1,15,1,15,
+		1,15,5,15,297,8,15,10,15,12,15,300,9,15,1,15,1,15,3,15,304,8,15,1,16,1,
+		16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,
+		16,1,16,1,16,1,16,1,16,1,16,3,16,327,8,16,1,16,1,16,1,16,1,16,1,16,1,16,
 		1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,
 		1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,
 		1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,
-		1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,5,16,374,8,16,10,16,
-		12,16,377,9,16,1,17,1,17,1,17,5,17,382,8,17,10,17,12,17,385,9,17,3,17,
-		387,8,17,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,3,18,397,8,18,1,19,1,
-		19,1,19,1,19,1,19,1,19,3,19,405,8,19,1,20,1,20,3,20,409,8,20,1,21,1,21,
-		3,21,413,8,21,1,22,1,22,1,22,1,22,1,22,1,22,3,22,421,8,22,1,23,1,23,1,
-		23,1,23,1,23,1,23,1,23,1,23,3,23,431,8,23,1,24,1,24,1,24,1,24,1,25,1,25,
-		1,25,1,25,1,25,1,25,1,25,1,25,1,25,5,25,446,8,25,10,25,12,25,449,9,25,
-		1,25,1,25,1,26,1,26,1,27,1,27,1,27,1,27,4,27,459,8,27,11,27,12,27,460,
-		1,27,1,27,3,27,465,8,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,
-		27,5,27,477,8,27,10,27,12,27,480,9,27,1,27,1,27,5,27,484,8,27,10,27,12,
-		27,487,9,27,1,28,1,28,1,28,1,28,1,28,1,28,5,28,495,8,28,10,28,12,28,498,
-		9,28,3,28,500,8,28,1,29,5,29,503,8,29,10,29,12,29,506,9,29,1,29,1,29,1,
-		29,0,2,32,54,30,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,
-		40,42,44,46,48,50,52,54,56,58,0,3,1,0,29,30,2,0,37,38,40,40,1,0,39,40,
-		581,0,63,1,0,0,0,2,71,1,0,0,0,4,82,1,0,0,0,6,87,1,0,0,0,8,97,1,0,0,0,10,
-		99,1,0,0,0,12,115,1,0,0,0,14,153,1,0,0,0,16,189,1,0,0,0,18,191,1,0,0,0,
-		20,195,1,0,0,0,22,197,1,0,0,0,24,199,1,0,0,0,26,209,1,0,0,0,28,214,1,0,
-		0,0,30,295,1,0,0,0,32,318,1,0,0,0,34,386,1,0,0,0,36,396,1,0,0,0,38,404,
-		1,0,0,0,40,408,1,0,0,0,42,412,1,0,0,0,44,420,1,0,0,0,46,430,1,0,0,0,48,
-		432,1,0,0,0,50,436,1,0,0,0,52,452,1,0,0,0,54,464,1,0,0,0,56,499,1,0,0,
-		0,58,504,1,0,0,0,60,62,3,6,3,0,61,60,1,0,0,0,62,65,1,0,0,0,63,61,1,0,0,
-		0,63,64,1,0,0,0,64,66,1,0,0,0,65,63,1,0,0,0,66,67,5,0,0,1,67,1,1,0,0,0,
-		68,70,3,6,3,0,69,68,1,0,0,0,70,73,1,0,0,0,71,69,1,0,0,0,71,72,1,0,0,0,
-		72,3,1,0,0,0,73,71,1,0,0,0,74,75,5,6,0,0,75,76,3,2,1,0,76,77,5,7,0,0,77,
-		83,1,0,0,0,78,79,5,49,0,0,79,83,3,32,16,0,80,81,5,49,0,0,81,83,3,6,3,0,
-		82,74,1,0,0,0,82,78,1,0,0,0,82,80,1,0,0,0,83,5,1,0,0,0,84,88,3,28,14,0,
-		85,88,3,32,16,0,86,88,3,8,4,0,87,84,1,0,0,0,87,85,1,0,0,0,87,86,1,0,0,
-		0,88,7,1,0,0,0,89,98,3,10,5,0,90,98,3,12,6,0,91,98,3,16,8,0,92,98,3,18,
-		9,0,93,98,3,14,7,0,94,98,3,20,10,0,95,98,3,22,11,0,96,98,3,24,12,0,97,
-		89,1,0,0,0,97,90,1,0,0,0,97,91,1,0,0,0,97,92,1,0,0,0,97,93,1,0,0,0,97,
-		94,1,0,0,0,97,95,1,0,0,0,97,96,1,0,0,0,98,9,1,0,0,0,99,100,5,57,0,0,100,
-		101,3,32,16,0,101,108,3,4,2,0,102,103,5,59,0,0,103,104,3,32,16,0,104,105,
-		3,4,2,0,105,107,1,0,0,0,106,102,1,0,0,0,107,110,1,0,0,0,108,106,1,0,0,
-		0,108,109,1,0,0,0,109,113,1,0,0,0,110,108,1,0,0,0,111,112,5,58,0,0,112,
-		114,3,4,2,0,113,111,1,0,0,0,113,114,1,0,0,0,114,11,1,0,0,0,115,116,5,60,
-		0,0,116,117,3,32,16,0,117,118,3,4,2,0,118,13,1,0,0,0,119,120,5,54,0,0,
-		120,130,3,4,2,0,121,122,5,55,0,0,122,123,5,4,0,0,123,124,3,54,27,0,124,
-		125,3,58,29,0,125,126,5,5,0,0,126,127,3,4,2,0,127,129,1,0,0,0,128,121,
-		1,0,0,0,129,132,1,0,0,0,130,128,1,0,0,0,130,131,1,0,0,0,131,135,1,0,0,
-		0,132,130,1,0,0,0,133,134,5,56,0,0,134,136,3,4,2,0,135,133,1,0,0,0,135,
-		136,1,0,0,0,136,154,1,0,0,0,137,138,5,54,0,0,138,146,3,4,2,0,139,140,5,
-		55,0,0,140,141,3,54,27,0,141,142,3,58,29,0,142,143,3,4,2,0,143,145,1,0,
-		0,0,144,139,1,0,0,0,145,148,1,0,0,0,146,144,1,0,0,0,146,147,1,0,0,0,147,
-		151,1,0,0,0,148,146,1,0,0,0,149,150,5,56,0,0,150,152,3,4,2,0,151,149,1,
-		0,0,0,151,152,1,0,0,0,152,154,1,0,0,0,153,119,1,0,0,0,153,137,1,0,0,0,
-		154,15,1,0,0,0,155,156,5,61,0,0,156,157,3,32,16,0,157,158,3,4,2,0,158,
-		190,1,0,0,0,159,160,5,61,0,0,160,161,3,54,27,0,161,162,3,58,29,0,162,163,
-		5,45,0,0,163,164,3,32,16,0,164,165,3,4,2,0,165,190,1,0,0,0,166,167,5,61,
-		0,0,167,168,5,4,0,0,168,169,3,54,27,0,169,170,3,58,29,0,170,171,5,45,0,
-		0,171,172,3,32,16,0,172,173,5,5,0,0,173,174,3,4,2,0,174,190,1,0,0,0,175,
-		176,5,61,0,0,176,177,3,56,28,0,177,178,5,45,0,0,178,179,3,32,16,0,179,
-		180,3,4,2,0,180,190,1,0,0,0,181,182,5,61,0,0,182,183,5,4,0,0,183,184,3,
-		56,28,0,184,185,5,45,0,0,185,186,3,32,16,0,186,187,5,5,0,0,187,188,3,4,
-		2,0,188,190,1,0,0,0,189,155,1,0,0,0,189,159,1,0,0,0,189,166,1,0,0,0,189,
-		175,1,0,0,0,189,181,1,0,0,0,190,17,1,0,0,0,191,193,5,62,0,0,192,194,3,
-		32,16,0,193,192,1,0,0,0,193,194,1,0,0,0,194,19,1,0,0,0,195,196,5,63,0,
-		0,196,21,1,0,0,0,197,198,5,64,0,0,198,23,1,0,0,0,199,201,5,65,0,0,200,
-		202,3,32,16,0,201,200,1,0,0,0,201,202,1,0,0,0,202,25,1,0,0,0,203,204,5,
-		21,0,0,204,210,3,32,16,0,205,206,5,8,0,0,206,207,3,32,16,0,207,208,5,9,
-		0,0,208,210,1,0,0,0,209,203,1,0,0,0,209,205,1,0,0,0,210,27,1,0,0,0,211,
-		213,3,26,13,0,212,211,1,0,0,0,213,216,1,0,0,0,214,212,1,0,0,0,214,215,
-		1,0,0,0,215,217,1,0,0,0,216,214,1,0,0,0,217,218,3,30,15,0,218,29,1,0,0,
-		0,219,220,3,54,27,0,220,221,3,58,29,0,221,222,5,4,0,0,222,223,3,56,28,
-		0,223,224,5,5,0,0,224,225,3,4,2,0,225,296,1,0,0,0,226,227,3,54,27,0,227,
-		228,3,58,29,0,228,229,5,4,0,0,229,230,3,56,28,0,230,231,5,5,0,0,231,296,
-		1,0,0,0,232,233,3,54,27,0,233,234,3,58,29,0,234,235,5,10,0,0,235,236,3,
-		32,16,0,236,296,1,0,0,0,237,238,3,54,27,0,238,239,3,58,29,0,239,296,1,
-		0,0,0,240,241,5,66,0,0,241,251,3,58,29,0,242,243,5,45,0,0,243,248,3,54,
-		27,0,244,245,5,3,0,0,245,247,3,54,27,0,246,244,1,0,0,0,247,250,1,0,0,0,
-		248,246,1,0,0,0,248,249,1,0,0,0,249,252,1,0,0,0,250,248,1,0,0,0,251,242,
-		1,0,0,0,251,252,1,0,0,0,252,253,1,0,0,0,253,257,5,6,0,0,254,256,3,28,14,
-		0,255,254,1,0,0,0,256,259,1,0,0,0,257,255,1,0,0,0,257,258,1,0,0,0,258,
-		260,1,0,0,0,259,257,1,0,0,0,260,261,5,7,0,0,261,296,1,0,0,0,262,263,5,
-		67,0,0,263,273,3,58,29,0,264,265,5,45,0,0,265,270,3,54,27,0,266,267,5,
-		3,0,0,267,269,3,54,27,0,268,266,1,0,0,0,269,272,1,0,0,0,270,268,1,0,0,
-		0,270,271,1,0,0,0,271,274,1,0,0,0,272,270,1,0,0,0,273,264,1,0,0,0,273,
-		274,1,0,0,0,274,275,1,0,0,0,275,279,5,6,0,0,276,278,3,28,14,0,277,276,
-		1,0,0,0,278,281,1,0,0,0,279,277,1,0,0,0,279,280,1,0,0,0,280,282,1,0,0,
-		0,281,279,1,0,0,0,282,283,5,7,0,0,283,296,1,0,0,0,284,285,5,69,0,0,285,
-		286,3,58,29,0,286,290,5,6,0,0,287,289,3,58,29,0,288,287,1,0,0,0,289,292,
-		1,0,0,0,290,288,1,0,0,0,290,291,1,0,0,0,291,293,1,0,0,0,292,290,1,0,0,
-		0,293,294,5,7,0,0,294,296,1,0,0,0,295,219,1,0,0,0,295,226,1,0,0,0,295,
-		232,1,0,0,0,295,237,1,0,0,0,295,240,1,0,0,0,295,262,1,0,0,0,295,284,1,
-		0,0,0,296,31,1,0,0,0,297,298,6,16,-1,0,298,319,3,38,19,0,299,300,7,0,0,
-		0,300,319,3,32,16,21,301,302,3,40,20,0,302,303,3,32,16,16,303,319,1,0,
-		0,0,304,319,3,50,25,0,305,319,3,48,24,0,306,319,3,58,29,0,307,308,5,1,
-		0,0,308,319,3,32,16,7,309,310,5,4,0,0,310,311,3,32,16,0,311,312,5,5,0,
-		0,312,319,1,0,0,0,313,314,5,4,0,0,314,315,3,56,28,0,315,316,5,5,0,0,316,
-		317,3,4,2,0,317,319,1,0,0,0,318,297,1,0,0,0,318,299,1,0,0,0,318,301,1,
-		0,0,0,318,304,1,0,0,0,318,305,1,0,0,0,318,306,1,0,0,0,318,307,1,0,0,0,
-		318,309,1,0,0,0,318,313,1,0,0,0,319,375,1,0,0,0,320,321,10,15,0,0,321,
-		322,3,46,23,0,322,323,3,32,16,16,323,374,1,0,0,0,324,325,10,14,0,0,325,
-		326,3,44,22,0,326,327,3,32,16,15,327,374,1,0,0,0,328,329,10,13,0,0,329,
-		330,3,42,21,0,330,331,3,32,16,14,331,374,1,0,0,0,332,333,10,12,0,0,333,
-		334,5,43,0,0,334,335,3,32,16,0,335,336,5,45,0,0,336,337,3,32,16,13,337,
-		374,1,0,0,0,338,339,10,8,0,0,339,340,5,1,0,0,340,374,3,32,16,9,341,342,
-		10,3,0,0,342,343,5,10,0,0,343,374,3,32,16,4,344,345,10,2,0,0,345,346,3,
-		36,18,0,346,347,3,32,16,3,347,374,1,0,0,0,348,349,10,23,0,0,349,350,5,
-		19,0,0,350,374,3,54,27,0,351,352,10,22,0,0,352,353,5,20,0,0,353,374,3,
-		54,27,0,354,355,10,20,0,0,355,374,7,0,0,0,356,357,10,19,0,0,357,358,5,
-		4,0,0,358,359,3,34,17,0,359,360,5,5,0,0,360,374,1,0,0,0,361,362,10,18,
-		0,0,362,363,5,8,0,0,363,364,3,34,17,0,364,365,5,9,0,0,365,374,1,0,0,0,
-		366,367,10,17,0,0,367,368,5,2,0,0,368,374,3,58,29,0,369,370,10,5,0,0,370,
-		374,5,47,0,0,371,372,10,4,0,0,372,374,5,48,0,0,373,320,1,0,0,0,373,324,
-		1,0,0,0,373,328,1,0,0,0,373,332,1,0,0,0,373,338,1,0,0,0,373,341,1,0,0,
-		0,373,344,1,0,0,0,373,348,1,0,0,0,373,351,1,0,0,0,373,354,1,0,0,0,373,
-		356,1,0,0,0,373,361,1,0,0,0,373,366,1,0,0,0,373,369,1,0,0,0,373,371,1,
-		0,0,0,374,377,1,0,0,0,375,373,1,0,0,0,375,376,1,0,0,0,376,33,1,0,0,0,377,
-		375,1,0,0,0,378,383,3,32,16,0,379,380,5,3,0,0,380,382,3,32,16,0,381,379,
-		1,0,0,0,382,385,1,0,0,0,383,381,1,0,0,0,383,384,1,0,0,0,384,387,1,0,0,
-		0,385,383,1,0,0,0,386,378,1,0,0,0,386,387,1,0,0,0,387,35,1,0,0,0,388,397,
-		5,23,0,0,389,397,5,24,0,0,390,397,5,25,0,0,391,397,5,26,0,0,392,393,5,
-		38,0,0,393,397,5,10,0,0,394,397,5,27,0,0,395,397,5,28,0,0,396,388,1,0,
-		0,0,396,389,1,0,0,0,396,390,1,0,0,0,396,391,1,0,0,0,396,392,1,0,0,0,396,
-		394,1,0,0,0,396,395,1,0,0,0,397,37,1,0,0,0,398,405,5,71,0,0,399,405,5,
-		74,0,0,400,405,5,75,0,0,401,405,5,51,0,0,402,405,5,52,0,0,403,405,5,53,
-		0,0,404,398,1,0,0,0,404,399,1,0,0,0,404,400,1,0,0,0,404,401,1,0,0,0,404,
-		402,1,0,0,0,404,403,1,0,0,0,405,39,1,0,0,0,406,409,5,34,0,0,407,409,5,
-		22,0,0,408,406,1,0,0,0,408,407,1,0,0,0,409,41,1,0,0,0,410,413,5,18,0,0,
-		411,413,5,17,0,0,412,410,1,0,0,0,412,411,1,0,0,0,413,43,1,0,0,0,414,421,
-		5,11,0,0,415,421,5,12,0,0,416,421,5,13,0,0,417,421,5,14,0,0,418,421,5,
-		16,0,0,419,421,5,15,0,0,420,414,1,0,0,0,420,415,1,0,0,0,420,416,1,0,0,
-		0,420,417,1,0,0,0,420,418,1,0,0,0,420,419,1,0,0,0,421,45,1,0,0,0,422,431,
-		5,33,0,0,423,431,5,34,0,0,424,431,7,1,0,0,425,431,5,35,0,0,426,431,5,42,
-		0,0,427,431,5,36,0,0,428,431,5,31,0,0,429,431,5,32,0,0,430,422,1,0,0,0,
-		430,423,1,0,0,0,430,424,1,0,0,0,430,425,1,0,0,0,430,426,1,0,0,0,430,427,
-		1,0,0,0,430,428,1,0,0,0,430,429,1,0,0,0,431,47,1,0,0,0,432,433,5,8,0,0,
-		433,434,3,34,17,0,434,435,5,9,0,0,435,49,1,0,0,0,436,437,5,8,0,0,437,438,
-		3,32,16,0,438,439,5,45,0,0,439,447,3,32,16,0,440,441,5,3,0,0,441,442,3,
-		32,16,0,442,443,5,45,0,0,443,444,3,32,16,0,444,446,1,0,0,0,445,440,1,0,
-		0,0,446,449,1,0,0,0,447,445,1,0,0,0,447,448,1,0,0,0,448,450,1,0,0,0,449,
-		447,1,0,0,0,450,451,5,9,0,0,451,51,1,0,0,0,452,453,5,44,0,0,453,53,1,0,
-		0,0,454,455,6,27,-1,0,455,458,5,70,0,0,456,457,5,2,0,0,457,459,5,70,0,
-		0,458,456,1,0,0,0,459,460,1,0,0,0,460,458,1,0,0,0,460,461,1,0,0,0,461,
-		465,1,0,0,0,462,465,5,70,0,0,463,465,5,68,0,0,464,454,1,0,0,0,464,462,
-		1,0,0,0,464,463,1,0,0,0,465,485,1,0,0,0,466,467,10,6,0,0,467,468,5,45,
-		0,0,468,484,3,54,27,7,469,470,10,5,0,0,470,484,7,2,0,0,471,472,10,4,0,
-		0,472,473,5,14,0,0,473,478,3,54,27,0,474,475,5,3,0,0,475,477,3,54,27,0,
-		476,474,1,0,0,0,477,480,1,0,0,0,478,476,1,0,0,0,478,479,1,0,0,0,479,481,
-		1,0,0,0,480,478,1,0,0,0,481,482,5,13,0,0,482,484,1,0,0,0,483,466,1,0,0,
-		0,483,469,1,0,0,0,483,471,1,0,0,0,484,487,1,0,0,0,485,483,1,0,0,0,485,
-		486,1,0,0,0,486,55,1,0,0,0,487,485,1,0,0,0,488,489,3,54,27,0,489,496,3,
-		58,29,0,490,491,5,3,0,0,491,492,3,54,27,0,492,493,3,58,29,0,493,495,1,
-		0,0,0,494,490,1,0,0,0,495,498,1,0,0,0,496,494,1,0,0,0,496,497,1,0,0,0,
-		497,500,1,0,0,0,498,496,1,0,0,0,499,488,1,0,0,0,499,500,1,0,0,0,500,57,
-		1,0,0,0,501,503,3,52,26,0,502,501,1,0,0,0,503,506,1,0,0,0,504,502,1,0,
-		0,0,504,505,1,0,0,0,505,507,1,0,0,0,506,504,1,0,0,0,507,508,5,70,0,0,508,
-		59,1,0,0,0,45,63,71,82,87,97,108,113,130,135,146,151,153,189,193,201,209,
-		214,248,251,257,270,273,279,290,295,318,373,375,383,386,396,404,408,412,
-		420,430,447,460,464,478,483,485,496,499,504
+		1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,
+		1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,5,16,403,8,
+		16,10,16,12,16,406,9,16,1,17,1,17,1,17,5,17,411,8,17,10,17,12,17,414,9,
+		17,3,17,416,8,17,1,18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,3,18,426,8,18,
+		1,19,1,19,1,19,1,19,1,19,1,19,3,19,434,8,19,1,20,1,20,3,20,438,8,20,1,
+		21,1,21,3,21,442,8,21,1,22,1,22,1,22,1,22,3,22,448,8,22,1,23,1,23,3,23,
+		452,8,23,1,24,1,24,1,24,1,24,3,24,458,8,24,1,25,1,25,3,25,462,8,25,1,26,
+		1,26,3,26,466,8,26,1,27,1,27,3,27,470,8,27,1,28,1,28,1,28,1,28,1,29,1,
+		29,1,29,1,29,1,29,1,29,1,29,1,29,1,29,5,29,485,8,29,10,29,12,29,488,9,
+		29,1,29,1,29,1,30,1,30,1,31,1,31,1,31,1,31,4,31,498,8,31,11,31,12,31,499,
+		1,31,1,31,3,31,504,8,31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,31,1,
+		31,5,31,516,8,31,10,31,12,31,519,9,31,1,31,1,31,5,31,523,8,31,10,31,12,
+		31,526,9,31,1,32,1,32,1,32,1,32,1,32,1,32,5,32,534,8,32,10,32,12,32,537,
+		9,32,3,32,539,8,32,1,33,5,33,542,8,33,10,33,12,33,545,9,33,1,33,1,33,1,
+		33,0,2,32,62,34,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,
+		40,42,44,46,48,50,52,54,56,58,60,62,64,66,0,3,1,0,31,32,2,0,39,40,42,42,
+		1,0,41,42,619,0,71,1,0,0,0,2,79,1,0,0,0,4,90,1,0,0,0,6,95,1,0,0,0,8,105,
+		1,0,0,0,10,107,1,0,0,0,12,123,1,0,0,0,14,161,1,0,0,0,16,197,1,0,0,0,18,
+		199,1,0,0,0,20,203,1,0,0,0,22,205,1,0,0,0,24,207,1,0,0,0,26,217,1,0,0,
+		0,28,222,1,0,0,0,30,303,1,0,0,0,32,326,1,0,0,0,34,415,1,0,0,0,36,425,1,
+		0,0,0,38,433,1,0,0,0,40,437,1,0,0,0,42,441,1,0,0,0,44,447,1,0,0,0,46,451,
+		1,0,0,0,48,457,1,0,0,0,50,461,1,0,0,0,52,465,1,0,0,0,54,469,1,0,0,0,56,
+		471,1,0,0,0,58,475,1,0,0,0,60,491,1,0,0,0,62,503,1,0,0,0,64,538,1,0,0,
+		0,66,543,1,0,0,0,68,70,3,6,3,0,69,68,1,0,0,0,70,73,1,0,0,0,71,69,1,0,0,
+		0,71,72,1,0,0,0,72,74,1,0,0,0,73,71,1,0,0,0,74,75,5,0,0,1,75,1,1,0,0,0,
+		76,78,3,6,3,0,77,76,1,0,0,0,78,81,1,0,0,0,79,77,1,0,0,0,79,80,1,0,0,0,
+		80,3,1,0,0,0,81,79,1,0,0,0,82,83,5,8,0,0,83,84,3,2,1,0,84,85,5,9,0,0,85,
+		91,1,0,0,0,86,87,5,51,0,0,87,91,3,32,16,0,88,89,5,51,0,0,89,91,3,6,3,0,
+		90,82,1,0,0,0,90,86,1,0,0,0,90,88,1,0,0,0,91,5,1,0,0,0,92,96,3,28,14,0,
+		93,96,3,32,16,0,94,96,3,8,4,0,95,92,1,0,0,0,95,93,1,0,0,0,95,94,1,0,0,
+		0,96,7,1,0,0,0,97,106,3,10,5,0,98,106,3,12,6,0,99,106,3,16,8,0,100,106,
+		3,18,9,0,101,106,3,14,7,0,102,106,3,20,10,0,103,106,3,22,11,0,104,106,
+		3,24,12,0,105,97,1,0,0,0,105,98,1,0,0,0,105,99,1,0,0,0,105,100,1,0,0,0,
+		105,101,1,0,0,0,105,102,1,0,0,0,105,103,1,0,0,0,105,104,1,0,0,0,106,9,
+		1,0,0,0,107,108,5,59,0,0,108,109,3,32,16,0,109,116,3,4,2,0,110,111,5,61,
+		0,0,111,112,3,32,16,0,112,113,3,4,2,0,113,115,1,0,0,0,114,110,1,0,0,0,
+		115,118,1,0,0,0,116,114,1,0,0,0,116,117,1,0,0,0,117,121,1,0,0,0,118,116,
+		1,0,0,0,119,120,5,60,0,0,120,122,3,4,2,0,121,119,1,0,0,0,121,122,1,0,0,
+		0,122,11,1,0,0,0,123,124,5,62,0,0,124,125,3,32,16,0,125,126,3,4,2,0,126,
+		13,1,0,0,0,127,128,5,56,0,0,128,138,3,4,2,0,129,130,5,57,0,0,130,131,5,
+		6,0,0,131,132,3,62,31,0,132,133,3,66,33,0,133,134,5,7,0,0,134,135,3,4,
+		2,0,135,137,1,0,0,0,136,129,1,0,0,0,137,140,1,0,0,0,138,136,1,0,0,0,138,
+		139,1,0,0,0,139,143,1,0,0,0,140,138,1,0,0,0,141,142,5,58,0,0,142,144,3,
+		4,2,0,143,141,1,0,0,0,143,144,1,0,0,0,144,162,1,0,0,0,145,146,5,56,0,0,
+		146,154,3,4,2,0,147,148,5,57,0,0,148,149,3,62,31,0,149,150,3,66,33,0,150,
+		151,3,4,2,0,151,153,1,0,0,0,152,147,1,0,0,0,153,156,1,0,0,0,154,152,1,
+		0,0,0,154,155,1,0,0,0,155,159,1,0,0,0,156,154,1,0,0,0,157,158,5,58,0,0,
+		158,160,3,4,2,0,159,157,1,0,0,0,159,160,1,0,0,0,160,162,1,0,0,0,161,127,
+		1,0,0,0,161,145,1,0,0,0,162,15,1,0,0,0,163,164,5,63,0,0,164,165,3,32,16,
+		0,165,166,3,4,2,0,166,198,1,0,0,0,167,168,5,63,0,0,168,169,3,62,31,0,169,
+		170,3,66,33,0,170,171,5,47,0,0,171,172,3,32,16,0,172,173,3,4,2,0,173,198,
+		1,0,0,0,174,175,5,63,0,0,175,176,5,6,0,0,176,177,3,62,31,0,177,178,3,66,
+		33,0,178,179,5,47,0,0,179,180,3,32,16,0,180,181,5,7,0,0,181,182,3,4,2,
+		0,182,198,1,0,0,0,183,184,5,63,0,0,184,185,3,64,32,0,185,186,5,47,0,0,
+		186,187,3,32,16,0,187,188,3,4,2,0,188,198,1,0,0,0,189,190,5,63,0,0,190,
+		191,5,6,0,0,191,192,3,64,32,0,192,193,5,47,0,0,193,194,3,32,16,0,194,195,
+		5,7,0,0,195,196,3,4,2,0,196,198,1,0,0,0,197,163,1,0,0,0,197,167,1,0,0,
+		0,197,174,1,0,0,0,197,183,1,0,0,0,197,189,1,0,0,0,198,17,1,0,0,0,199,201,
+		5,64,0,0,200,202,3,32,16,0,201,200,1,0,0,0,201,202,1,0,0,0,202,19,1,0,
+		0,0,203,204,5,65,0,0,204,21,1,0,0,0,205,206,5,66,0,0,206,23,1,0,0,0,207,
+		209,5,67,0,0,208,210,3,32,16,0,209,208,1,0,0,0,209,210,1,0,0,0,210,25,
+		1,0,0,0,211,212,5,23,0,0,212,218,3,32,16,0,213,214,5,10,0,0,214,215,3,
+		32,16,0,215,216,5,11,0,0,216,218,1,0,0,0,217,211,1,0,0,0,217,213,1,0,0,
+		0,218,27,1,0,0,0,219,221,3,26,13,0,220,219,1,0,0,0,221,224,1,0,0,0,222,
+		220,1,0,0,0,222,223,1,0,0,0,223,225,1,0,0,0,224,222,1,0,0,0,225,226,3,
+		30,15,0,226,29,1,0,0,0,227,228,3,62,31,0,228,229,3,66,33,0,229,230,5,6,
+		0,0,230,231,3,64,32,0,231,232,5,7,0,0,232,233,3,4,2,0,233,304,1,0,0,0,
+		234,235,3,62,31,0,235,236,3,66,33,0,236,237,5,6,0,0,237,238,3,64,32,0,
+		238,239,5,7,0,0,239,304,1,0,0,0,240,241,3,62,31,0,241,242,3,66,33,0,242,
+		243,5,12,0,0,243,244,3,32,16,0,244,304,1,0,0,0,245,246,3,62,31,0,246,247,
+		3,66,33,0,247,304,1,0,0,0,248,249,5,68,0,0,249,259,3,66,33,0,250,251,5,
+		47,0,0,251,256,3,62,31,0,252,253,5,5,0,0,253,255,3,62,31,0,254,252,1,0,
+		0,0,255,258,1,0,0,0,256,254,1,0,0,0,256,257,1,0,0,0,257,260,1,0,0,0,258,
+		256,1,0,0,0,259,250,1,0,0,0,259,260,1,0,0,0,260,261,1,0,0,0,261,265,5,
+		8,0,0,262,264,3,28,14,0,263,262,1,0,0,0,264,267,1,0,0,0,265,263,1,0,0,
+		0,265,266,1,0,0,0,266,268,1,0,0,0,267,265,1,0,0,0,268,269,5,9,0,0,269,
+		304,1,0,0,0,270,271,5,69,0,0,271,281,3,66,33,0,272,273,5,47,0,0,273,278,
+		3,62,31,0,274,275,5,5,0,0,275,277,3,62,31,0,276,274,1,0,0,0,277,280,1,
+		0,0,0,278,276,1,0,0,0,278,279,1,0,0,0,279,282,1,0,0,0,280,278,1,0,0,0,
+		281,272,1,0,0,0,281,282,1,0,0,0,282,283,1,0,0,0,283,287,5,8,0,0,284,286,
+		3,28,14,0,285,284,1,0,0,0,286,289,1,0,0,0,287,285,1,0,0,0,287,288,1,0,
+		0,0,288,290,1,0,0,0,289,287,1,0,0,0,290,291,5,9,0,0,291,304,1,0,0,0,292,
+		293,5,71,0,0,293,294,3,66,33,0,294,298,5,8,0,0,295,297,3,66,33,0,296,295,
+		1,0,0,0,297,300,1,0,0,0,298,296,1,0,0,0,298,299,1,0,0,0,299,301,1,0,0,
+		0,300,298,1,0,0,0,301,302,5,9,0,0,302,304,1,0,0,0,303,227,1,0,0,0,303,
+		234,1,0,0,0,303,240,1,0,0,0,303,245,1,0,0,0,303,248,1,0,0,0,303,270,1,
+		0,0,0,303,292,1,0,0,0,304,31,1,0,0,0,305,306,6,16,-1,0,306,327,3,38,19,
+		0,307,308,7,0,0,0,308,327,3,32,16,26,309,310,3,40,20,0,310,311,3,32,16,
+		19,311,327,1,0,0,0,312,327,3,58,29,0,313,327,3,56,28,0,314,327,3,66,33,
+		0,315,316,5,3,0,0,316,327,3,32,16,7,317,318,5,6,0,0,318,319,3,32,16,0,
+		319,320,5,7,0,0,320,327,1,0,0,0,321,322,5,6,0,0,322,323,3,64,32,0,323,
+		324,5,7,0,0,324,325,3,4,2,0,325,327,1,0,0,0,326,305,1,0,0,0,326,307,1,
+		0,0,0,326,309,1,0,0,0,326,312,1,0,0,0,326,313,1,0,0,0,326,314,1,0,0,0,
+		326,315,1,0,0,0,326,317,1,0,0,0,326,321,1,0,0,0,327,404,1,0,0,0,328,329,
+		10,18,0,0,329,330,3,48,24,0,330,331,3,32,16,19,331,403,1,0,0,0,332,333,
+		10,17,0,0,333,334,3,50,25,0,334,335,3,32,16,18,335,403,1,0,0,0,336,337,
+		10,16,0,0,337,338,3,52,26,0,338,339,3,32,16,17,339,403,1,0,0,0,340,341,
+		10,15,0,0,341,342,3,44,22,0,342,343,3,32,16,16,343,403,1,0,0,0,344,345,
+		10,14,0,0,345,346,3,46,23,0,346,347,3,32,16,15,347,403,1,0,0,0,348,349,
+		10,13,0,0,349,350,3,42,21,0,350,351,3,32,16,14,351,403,1,0,0,0,352,353,
+		10,12,0,0,353,354,5,45,0,0,354,355,3,32,16,0,355,356,5,47,0,0,356,357,
+		3,32,16,13,357,403,1,0,0,0,358,359,10,8,0,0,359,360,5,3,0,0,360,403,3,
+		32,16,9,361,362,10,3,0,0,362,363,5,12,0,0,363,403,3,32,16,4,364,365,10,
+		2,0,0,365,366,3,36,18,0,366,367,3,32,16,3,367,403,1,0,0,0,368,369,10,28,
+		0,0,369,370,5,21,0,0,370,403,3,62,31,0,371,372,10,27,0,0,372,373,5,22,
+		0,0,373,403,3,62,31,0,374,375,10,25,0,0,375,403,7,0,0,0,376,377,10,24,
+		0,0,377,378,5,6,0,0,378,379,3,34,17,0,379,380,5,7,0,0,380,403,1,0,0,0,
+		381,382,10,23,0,0,382,383,5,10,0,0,383,384,3,34,17,0,384,385,5,11,0,0,
+		385,403,1,0,0,0,386,387,10,22,0,0,387,388,5,4,0,0,388,389,3,66,33,0,389,
+		390,5,4,0,0,390,391,3,54,27,0,391,403,1,0,0,0,392,393,10,21,0,0,393,394,
+		5,4,0,0,394,403,3,54,27,0,395,396,10,20,0,0,396,397,5,4,0,0,397,403,3,
+		66,33,0,398,399,10,5,0,0,399,403,5,49,0,0,400,401,10,4,0,0,401,403,5,50,
+		0,0,402,328,1,0,0,0,402,332,1,0,0,0,402,336,1,0,0,0,402,340,1,0,0,0,402,
+		344,1,0,0,0,402,348,1,0,0,0,402,352,1,0,0,0,402,358,1,0,0,0,402,361,1,
+		0,0,0,402,364,1,0,0,0,402,368,1,0,0,0,402,371,1,0,0,0,402,374,1,0,0,0,
+		402,376,1,0,0,0,402,381,1,0,0,0,402,386,1,0,0,0,402,392,1,0,0,0,402,395,
+		1,0,0,0,402,398,1,0,0,0,402,400,1,0,0,0,403,406,1,0,0,0,404,402,1,0,0,
+		0,404,405,1,0,0,0,405,33,1,0,0,0,406,404,1,0,0,0,407,412,3,32,16,0,408,
+		409,5,5,0,0,409,411,3,32,16,0,410,408,1,0,0,0,411,414,1,0,0,0,412,410,
+		1,0,0,0,412,413,1,0,0,0,413,416,1,0,0,0,414,412,1,0,0,0,415,407,1,0,0,
+		0,415,416,1,0,0,0,416,35,1,0,0,0,417,426,5,25,0,0,418,426,5,26,0,0,419,
+		426,5,27,0,0,420,426,5,28,0,0,421,422,5,40,0,0,422,426,5,12,0,0,423,426,
+		5,29,0,0,424,426,5,30,0,0,425,417,1,0,0,0,425,418,1,0,0,0,425,419,1,0,
+		0,0,425,420,1,0,0,0,425,421,1,0,0,0,425,423,1,0,0,0,425,424,1,0,0,0,426,
+		37,1,0,0,0,427,434,5,73,0,0,428,434,5,76,0,0,429,434,5,77,0,0,430,434,
+		5,53,0,0,431,434,5,54,0,0,432,434,5,55,0,0,433,427,1,0,0,0,433,428,1,0,
+		0,0,433,429,1,0,0,0,433,430,1,0,0,0,433,431,1,0,0,0,433,432,1,0,0,0,434,
+		39,1,0,0,0,435,438,5,36,0,0,436,438,5,24,0,0,437,435,1,0,0,0,437,436,1,
+		0,0,0,438,41,1,0,0,0,439,442,5,20,0,0,440,442,5,19,0,0,441,439,1,0,0,0,
+		441,440,1,0,0,0,442,43,1,0,0,0,443,448,5,15,0,0,444,448,5,16,0,0,445,448,
+		5,18,0,0,446,448,5,17,0,0,447,443,1,0,0,0,447,444,1,0,0,0,447,445,1,0,
+		0,0,447,446,1,0,0,0,448,45,1,0,0,0,449,452,5,13,0,0,450,452,5,14,0,0,451,
+		449,1,0,0,0,451,450,1,0,0,0,452,47,1,0,0,0,453,458,7,1,0,0,454,458,5,37,
+		0,0,455,458,5,44,0,0,456,458,5,38,0,0,457,453,1,0,0,0,457,454,1,0,0,0,
+		457,455,1,0,0,0,457,456,1,0,0,0,458,49,1,0,0,0,459,462,5,35,0,0,460,462,
+		5,36,0,0,461,459,1,0,0,0,461,460,1,0,0,0,462,51,1,0,0,0,463,466,5,33,0,
+		0,464,466,5,34,0,0,465,463,1,0,0,0,465,464,1,0,0,0,466,53,1,0,0,0,467,
+		470,5,1,0,0,468,470,5,2,0,0,469,467,1,0,0,0,469,468,1,0,0,0,470,55,1,0,
+		0,0,471,472,5,10,0,0,472,473,3,34,17,0,473,474,5,11,0,0,474,57,1,0,0,0,
+		475,476,5,10,0,0,476,477,3,32,16,0,477,478,5,47,0,0,478,486,3,32,16,0,
+		479,480,5,5,0,0,480,481,3,32,16,0,481,482,5,47,0,0,482,483,3,32,16,0,483,
+		485,1,0,0,0,484,479,1,0,0,0,485,488,1,0,0,0,486,484,1,0,0,0,486,487,1,
+		0,0,0,487,489,1,0,0,0,488,486,1,0,0,0,489,490,5,11,0,0,490,59,1,0,0,0,
+		491,492,5,46,0,0,492,61,1,0,0,0,493,494,6,31,-1,0,494,497,5,72,0,0,495,
+		496,5,4,0,0,496,498,5,72,0,0,497,495,1,0,0,0,498,499,1,0,0,0,499,497,1,
+		0,0,0,499,500,1,0,0,0,500,504,1,0,0,0,501,504,5,72,0,0,502,504,5,70,0,
+		0,503,493,1,0,0,0,503,501,1,0,0,0,503,502,1,0,0,0,504,524,1,0,0,0,505,
+		506,10,6,0,0,506,507,5,47,0,0,507,523,3,62,31,7,508,509,10,5,0,0,509,523,
+		7,2,0,0,510,511,10,4,0,0,511,512,5,16,0,0,512,517,3,62,31,0,513,514,5,
+		5,0,0,514,516,3,62,31,0,515,513,1,0,0,0,516,519,1,0,0,0,517,515,1,0,0,
+		0,517,518,1,0,0,0,518,520,1,0,0,0,519,517,1,0,0,0,520,521,5,15,0,0,521,
+		523,1,0,0,0,522,505,1,0,0,0,522,508,1,0,0,0,522,510,1,0,0,0,523,526,1,
+		0,0,0,524,522,1,0,0,0,524,525,1,0,0,0,525,63,1,0,0,0,526,524,1,0,0,0,527,
+		528,3,62,31,0,528,535,3,66,33,0,529,530,5,5,0,0,530,531,3,62,31,0,531,
+		532,3,66,33,0,532,534,1,0,0,0,533,529,1,0,0,0,534,537,1,0,0,0,535,533,
+		1,0,0,0,535,536,1,0,0,0,536,539,1,0,0,0,537,535,1,0,0,0,538,527,1,0,0,
+		0,538,539,1,0,0,0,539,65,1,0,0,0,540,542,3,60,30,0,541,540,1,0,0,0,542,
+		545,1,0,0,0,543,541,1,0,0,0,543,544,1,0,0,0,544,546,1,0,0,0,545,543,1,
+		0,0,0,546,547,5,72,0,0,547,67,1,0,0,0,49,71,79,90,95,105,116,121,138,143,
+		154,159,161,197,201,209,217,222,256,259,265,278,281,287,298,303,326,402,
+		404,412,415,425,433,437,441,447,451,457,461,465,469,486,499,503,517,522,
+		524,535,538,543
 	};
 
 	public static readonly ATN _ATN =

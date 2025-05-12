@@ -2,6 +2,7 @@ namespace Carp.objects;
 
 public class CarpString : CarpObject
 {
+    public static readonly CarpString Empty = new(string.Empty);
     public string Value { get; }
 
     protected CarpString(string value)

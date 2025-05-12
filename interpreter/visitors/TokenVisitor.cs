@@ -32,4 +32,7 @@ public partial class CarpVisitor
     public override object VisitModulusBinary(CarpGrammarParser.ModulusBinaryContext context) => Binary.Modulus;
     public override object VisitLeftShiftBinary(CarpGrammarParser.LeftShiftBinaryContext context) => Binary.LeftShift;
     public override object VisitRightShiftBinary(CarpGrammarParser.RightShiftBinaryContext context) => Binary.RightShift;
+
+    public override object VisitDocMeta(CarpGrammarParser.DocMetaContext context) => Meta.Doc;
+    public override object VisitAnnotationsMeta(CarpGrammarParser.AnnotationsMetaContext context) => Meta.Annotations;
 }

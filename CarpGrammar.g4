@@ -83,7 +83,7 @@ FIXED : 'fixed' ;
 
 ID : [a-zA-Z][a-zA-Z0-9_]* ;
 //STRING : '\'' (~['\\])* '\'' ;
-INT : '-'? ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
+INT : ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
 WS : [ \t\r\n]+ -> skip ;
 COMMENT : '#' .*? [\n] -> skip ;
 STRING : '\'' SHORT_STRING_ITEM_FOR_SINGLE_QUOTE* '\'' ;
@@ -158,13 +158,11 @@ definition_with_attr
     ;
 
 definition
-    : rtype=type key=name '(' values=type_name_list ')' body=generic_block # functionDefinition
-    | rtype=type key=name '(' values=type_name_list ')' # emptyFunctionDefinition
-    | type key=name '=' value=expression # initializedVariableDefinition
-    | type key=name # variableDefinition
+    : rtype=type key=name '(' values=type_name_list ')' body=generic_block? # functionDefinition
+    | rtype=type key=name ('=' value=expression)? # variableDefinition
     | CLASS key=name (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # classDefinition
     | STRUCT key=name (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=definition_with_attr* '}' # structDefinition
-    | FIXED key=name '{' values+=name* '}' # enumDefinition
+    | FIXED key=name '{' keys+=name* '}' # enumDefinition
     ;
 
 expression
@@ -175,10 +173,15 @@ expression
     | expr=expression token=('++'|'--') # postfixExpression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
     | obj=expression '[' parameters=expression_list ']' # indexExpression
+    | obj=expression '.' member=name '.' op=meta # metaMemberExpression
+    | obj=expression '.' op=meta # metaObjExpression
     | obj=expression '.' value=name # propertyExpression
     | op=unary left=expression # unaryExpression
-    | left=expression op=binary right=expression # binaryExpression
-    | left=expression op=comparison right=expression # comparisonExpression
+    | left=expression op=binary_geometric right=expression # binaryGeometricExpression // Geometric
+    | left=expression op=binary_arithmatic right=expression # binaryArithmaticExpression // Arithmatic
+    | left=expression op=binary_bitwise_shift right=expression # binaryBitwiseShiftExpression // Bitwise shifts
+    | left=expression op=comparison_compare right=expression # comparisonCompareExpression // Comparing
+    | left=expression op=comparison_match right=expression # comparisonMatchExpression // Matching
     | left=expression op=logical right=expression # logicalExpression
     | condition=expression '?' left=expression ':' right=expression # ternaryExpression // Side effects
     | map # mapExpression
@@ -228,24 +231,38 @@ logical
     | PIPE # orLogical
     ;
 
-comparison
-    : EQUALS_EQUALS # matchComparison
-    | NOT_EQUALS # notMatchComparison
-    | GREATER_THAN # greaterThanComparison
+comparison_compare
+    : GREATER_THAN # greaterThanComparison
     | LESS_THAN # lessThanComparison
     | GREATER_THAN_EQUALS # greaterThanEqualsComparison
     | LESS_THAN_EQUALS # lessThanEqualsComparison
     ;
+    
+comparison_match
+    : EQUALS_EQUALS # matchComparison
+    | NOT_EQUALS # notMatchComparison
+    ;
 
-binary
-    : PLUS # addBinary
-    | MINUS # subtractBinary
-    | (ASTERISK_LSPACE | ASTERISK_BSPACE | ASTERISK_NSPC) # multiplicationBinary
+binary_geometric
+    : (ASTERISK_LSPACE | ASTERISK_BSPACE | ASTERISK_NSPC) # multiplicationBinary
     | SLASH # divideBinary
     | CARET # powerBinary
     | PERCENT # modulusBinary
-    | LEFT_SHIFT # leftShiftBinary
+    ;
+    
+binary_arithmatic
+    : PLUS # addBinary
+    | MINUS # subtractBinary
+    ;
+    
+binary_bitwise_shift
+    : LEFT_SHIFT # leftShiftBinary
     | RIGHT_SHIFT # rightShiftBinary
+    ;
+    
+meta
+    : 'doc' # docMeta
+    | 'annotations' # annotationsMeta
     ;
 
 array : '[' expression_list ']' ;

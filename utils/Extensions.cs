@@ -1,9 +1,6 @@
 using System.IO.Compression;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
-namespace Carp;
+namespace Carp.utils;
 
 public static class Extensions
 {

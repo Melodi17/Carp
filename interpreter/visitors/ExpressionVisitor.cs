@@ -1,15 +1,20 @@
+using Carp.exceptions;
 using Carp.objects;
 using Carp.parser;
+using Carp.scoping;
 
 namespace Carp.interpreter.visitors;
 
 public partial class CarpVisitor
 {
-    public override object VisitComparisonExpression(CarpGrammarParser.ComparisonExpressionContext context)
+    public object VisitComparisonExpression(CarpGrammarParser.ExpressionContext context,
+        CarpGrammarParser.ExpressionContext leftCtx,
+        CarpGrammarParser.ExpressionContext rightCtx,
+        Context opCtx)
     {
-        var left = VisitExpression(context.left);
-        var right = VisitExpression(context.right);
-        var op = VisitToken<Comparison>(context.op);
+        var left = this.VisitExpression(leftCtx);
+        var right = this.VisitExpression(rightCtx);
+        var op = this.VisitToken<Comparison>(opCtx);
         
         return op switch
         {
@@ -22,12 +27,17 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+    public override object VisitComparisonCompareExpression(CarpGrammarParser.ComparisonCompareExpressionContext context) 
+        => this.VisitComparisonExpression(context, context.left, context.right, context.op);
+    public override object VisitComparisonMatchExpression(CarpGrammarParser.ComparisonMatchExpressionContext context)
+        => this.VisitComparisonExpression(context, context.left, context.right, context.op);
+
     public override object VisitLogicalExpression(CarpGrammarParser.LogicalExpressionContext context)
     {
-        var left = VisitExpression(context.left);
-        var op = VisitToken<Logical>(context.op);
+        var left = this.VisitExpression(context.left);
+        var op = this.VisitToken<Logical>(context.op);
 
-        CarpObject GetRight() => VisitExpression(context.right);
+        CarpObject GetRight() => this.VisitExpression(context.right);
         
         return op switch
         {
@@ -36,12 +46,15 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-    public override object VisitBinaryExpression(CarpGrammarParser.BinaryExpressionContext context)
+    public object VisitBinaryExpression(CarpGrammarParser.ExpressionContext context, 
+        CarpGrammarParser.ExpressionContext leftCtx,
+        CarpGrammarParser.ExpressionContext rightCtx,
+        Context opCtx)
     {
-        var left = VisitExpression(context.left);
-        var right = VisitExpression(context.right);
+        var left = this.VisitExpression(leftCtx);
+        var right = this.VisitExpression(rightCtx);
         
-        var op = VisitToken<Binary>(context.op);
+        var op = this.VisitToken<Binary>(opCtx);
         
         return op switch
         {
@@ -56,10 +69,16 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+    public override object VisitBinaryArithmaticExpression(CarpGrammarParser.BinaryArithmaticExpressionContext context) 
+        => this.VisitBinaryExpression(context, context.left, context.right, context.op);
+    public override object VisitBinaryBitwiseShiftExpression(CarpGrammarParser.BinaryBitwiseShiftExpressionContext context)
+        => this.VisitBinaryExpression(context, context.left, context.right, context.op);
+    public override object VisitBinaryGeometricExpression(CarpGrammarParser.BinaryGeometricExpressionContext context)
+        => this.VisitBinaryExpression(context, context.left, context.right, context.op);
     public override object VisitUnaryExpression(CarpGrammarParser.UnaryExpressionContext context)
     {
-        var obj = VisitExpression(context.left);
-        var op = VisitToken<Unary>(context.op);
+        var obj = this.VisitExpression(context.left);
+        var op = this.VisitToken<Unary>(context.op);
 
         return op switch
         {
@@ -68,6 +87,24 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+
+    public override object VisitMetaMemberExpression(CarpGrammarParser.MetaMemberExpressionContext context)
+    {
+        CarpObject obj = this.VisitExpression(context.obj);
+        string member = context.member.GetText() ?? throw new InterpreterException("Member token missing");
+        Meta op = this.VisitToken<Meta>(context.op);
+
+        // Meta flag is used to access even private members
+        Member objMember = obj.Member(member, context.CurrentObject, true);
+        return op switch
+        {
+            Meta.Doc => objMember.Docstring == null ? CarpString.Empty : CarpString.Create(objMember.Docstring),
+            // TODO: Implement annotations
+            // Meta.Annotations => objMember.Annotations,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+    public override object VisitMetaObjExpression(CarpGrammarParser.MetaObjExpressionContext context) => base.VisitMetaObjExpression(context);
     public override object VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context) => base.VisitAssignmentExpression(context);
     public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context) => base.VisitVariableExpression(context);
     public override object VisitWindExpression(CarpGrammarParser.WindExpressionContext context) => base.VisitWindExpression(context);

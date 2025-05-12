@@ -10,8 +10,11 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var res = RunString("1 + 1");
-        Console.WriteLine(res.Repr());
+        while (true)
+        {
+            var res = RunString(Console.ReadLine()!);
+            Console.WriteLine(res.Repr());
+        }
     }
 
     public static CarpObject RunString(string text)

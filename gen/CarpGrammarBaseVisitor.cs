@@ -331,6 +331,127 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitEnumDefinition([NotNull] CarpGrammarParser.EnumDefinitionContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by the <c>comparisonCompareExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitComparisonCompareExpression([NotNull] CarpGrammarParser.ComparisonCompareExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>variableExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitVariableExpression([NotNull] CarpGrammarParser.VariableExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>windExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitWindExpression([NotNull] CarpGrammarParser.WindExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryArithmaticExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBinaryArithmaticExpression([NotNull] CarpGrammarParser.BinaryArithmaticExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>castExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitCastExpression([NotNull] CarpGrammarParser.CastExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryBitwiseShiftExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitBinaryBitwiseShiftExpression([NotNull] CarpGrammarParser.BinaryBitwiseShiftExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>parenthesizedExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitParenthesizedExpression([NotNull] CarpGrammarParser.ParenthesizedExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>infixExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitInfixExpression([NotNull] CarpGrammarParser.InfixExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>indexExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitIndexExpression([NotNull] CarpGrammarParser.IndexExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>unaryExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitUnaryExpression([NotNull] CarpGrammarParser.UnaryExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>postfixExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitPostfixExpression([NotNull] CarpGrammarParser.PostfixExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>mapExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// <para>
@@ -375,6 +496,17 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitArrayExpression([NotNull] CarpGrammarParser.ArrayExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by the <c>comparisonMatchExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitComparisonMatchExpression([NotNull] CarpGrammarParser.ComparisonMatchExpressionContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>assignmentExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// <para>
@@ -386,7 +518,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitAssignmentExpression([NotNull] CarpGrammarParser.AssignmentExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>comparisonExpression</c>
+	/// Visit a parse tree produced by the <c>metaMemberExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -395,7 +527,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitComparisonExpression([NotNull] CarpGrammarParser.ComparisonExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitMetaMemberExpression([NotNull] CarpGrammarParser.MetaMemberExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>logicalExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -408,7 +540,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitLogicalExpression([NotNull] CarpGrammarParser.LogicalExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>variableExpression</c>
+	/// Visit a parse tree produced by the <c>metaObjExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -417,51 +549,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitVariableExpression([NotNull] CarpGrammarParser.VariableExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>windExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitWindExpression([NotNull] CarpGrammarParser.WindExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>binaryExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitBinaryExpression([NotNull] CarpGrammarParser.BinaryExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>castExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitCastExpression([NotNull] CarpGrammarParser.CastExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>parenthesizedExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitParenthesizedExpression([NotNull] CarpGrammarParser.ParenthesizedExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitMetaObjExpression([NotNull] CarpGrammarParser.MetaObjExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>callExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -474,7 +562,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitCallExpression([NotNull] CarpGrammarParser.CallExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>infixExpression</c>
+	/// Visit a parse tree produced by the <c>binaryGeometricExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
@@ -483,7 +571,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitInfixExpression([NotNull] CarpGrammarParser.InfixExpressionContext context) { return VisitChildren(context); }
+	public virtual Result VisitBinaryGeometricExpression([NotNull] CarpGrammarParser.BinaryGeometricExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>compoundAssignmentExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -518,28 +606,6 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitRangeExpression([NotNull] CarpGrammarParser.RangeExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>indexExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitIndexExpression([NotNull] CarpGrammarParser.IndexExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>unaryExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitUnaryExpression([NotNull] CarpGrammarParser.UnaryExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
 	/// Visit a parse tree produced by the <c>ternaryExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// <para>
@@ -550,17 +616,6 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitTernaryExpression([NotNull] CarpGrammarParser.TernaryExpressionContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>postfixExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitPostfixExpression([NotNull] CarpGrammarParser.PostfixExpressionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>propertyExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -781,30 +836,8 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitOrLogical([NotNull] CarpGrammarParser.OrLogicalContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>matchComparison</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.comparison"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitMatchComparison([NotNull] CarpGrammarParser.MatchComparisonContext context) { return VisitChildren(context); }
-	/// <summary>
-	/// Visit a parse tree produced by the <c>notMatchComparison</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.comparison"/>.
-	/// <para>
-	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
-	/// on <paramref name="context"/>.
-	/// </para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	public virtual Result VisitNotMatchComparison([NotNull] CarpGrammarParser.NotMatchComparisonContext context) { return VisitChildren(context); }
-	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterThanComparison</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.comparison"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.comparison_compare"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -815,7 +848,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitGreaterThanComparison([NotNull] CarpGrammarParser.GreaterThanComparisonContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessThanComparison</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.comparison"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.comparison_compare"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -826,7 +859,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitLessThanComparison([NotNull] CarpGrammarParser.LessThanComparisonContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>greaterThanEqualsComparison</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.comparison"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.comparison_compare"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -837,7 +870,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitGreaterThanEqualsComparison([NotNull] CarpGrammarParser.GreaterThanEqualsComparisonContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>lessThanEqualsComparison</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.comparison"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.comparison_compare"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -847,8 +880,8 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitLessThanEqualsComparison([NotNull] CarpGrammarParser.LessThanEqualsComparisonContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>addBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// Visit a parse tree produced by the <c>matchComparison</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.comparison_match"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -856,10 +889,10 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitAddBinary([NotNull] CarpGrammarParser.AddBinaryContext context) { return VisitChildren(context); }
+	public virtual Result VisitMatchComparison([NotNull] CarpGrammarParser.MatchComparisonContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by the <c>subtractBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// Visit a parse tree produced by the <c>notMatchComparison</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.comparison_match"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -867,10 +900,10 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitSubtractBinary([NotNull] CarpGrammarParser.SubtractBinaryContext context) { return VisitChildren(context); }
+	public virtual Result VisitNotMatchComparison([NotNull] CarpGrammarParser.NotMatchComparisonContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>multiplicationBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_geometric"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -881,7 +914,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitMultiplicationBinary([NotNull] CarpGrammarParser.MultiplicationBinaryContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>divideBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_geometric"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -892,7 +925,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitDivideBinary([NotNull] CarpGrammarParser.DivideBinaryContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>powerBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_geometric"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -903,7 +936,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitPowerBinary([NotNull] CarpGrammarParser.PowerBinaryContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>modulusBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_geometric"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -913,8 +946,30 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	public virtual Result VisitModulusBinary([NotNull] CarpGrammarParser.ModulusBinaryContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by the <c>addBinary</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_arithmatic"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitAddBinary([NotNull] CarpGrammarParser.AddBinaryContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>subtractBinary</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_arithmatic"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitSubtractBinary([NotNull] CarpGrammarParser.SubtractBinaryContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>leftShiftBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_bitwise_shift"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -925,7 +980,7 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	public virtual Result VisitLeftShiftBinary([NotNull] CarpGrammarParser.LeftShiftBinaryContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>rightShiftBinary</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.binary"/>.
+	/// labeled alternative in <see cref="CarpGrammarParser.binary_bitwise_shift"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -934,6 +989,28 @@ public partial class CarpGrammarBaseVisitor<Result> : AbstractParseTreeVisitor<R
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitRightShiftBinary([NotNull] CarpGrammarParser.RightShiftBinaryContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>docMeta</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.meta"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitDocMeta([NotNull] CarpGrammarParser.DocMetaContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>annotationsMeta</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.meta"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitAnnotationsMeta([NotNull] CarpGrammarParser.AnnotationsMetaContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="CarpGrammarParser.array"/>.
 	/// <para>

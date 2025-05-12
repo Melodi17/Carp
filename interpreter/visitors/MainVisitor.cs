@@ -1,6 +1,7 @@
 using Antlr4.Runtime.Tree;
 using Carp.exceptions;
 using Carp.objects;
+using Carp.utils;
 
 namespace Carp.interpreter.visitors;
 

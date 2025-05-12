@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Carp;
+namespace Carp.utils;
 
 public static class Formatting
 {
