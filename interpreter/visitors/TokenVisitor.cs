@@ -1,4 +1,5 @@
 using Carp.parser;
+using Carp.scoping;
 
 namespace Carp.interpreter.visitors;
 
@@ -35,4 +36,10 @@ public partial class CarpVisitor
 
     public override object VisitDocMeta(CarpGrammarParser.DocMetaContext context) => Meta.Doc;
     public override object VisitAnnotationsMeta(CarpGrammarParser.AnnotationsMetaContext context) => Meta.Annotations;
+
+    public override object VisitPrivateModifier(CarpGrammarParser.PrivateModifierContext context) => Modifiers.Private;
+    public override object VisitStaticModifier(CarpGrammarParser.StaticModifierContext context) => Modifiers.Static;
+    public override object VisitProtectedModifier(CarpGrammarParser.ProtectedModifierContext context) => Modifiers.Protected;
+    public override object VisitAbstractModifier(CarpGrammarParser.AbstractModifierContext context) => Modifiers.Abstract;
+    public override object VisitFinalModifier(CarpGrammarParser.FinalModifierContext context) => Modifiers.Final;
 }

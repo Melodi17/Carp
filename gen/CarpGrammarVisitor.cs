@@ -161,11 +161,11 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAttribute([NotNull] CarpGrammarParser.AttributeContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="CarpGrammarParser.definition_with_attr"/>.
+	/// Visit a parse tree produced by <see cref="CarpGrammarParser.wrapped_definition"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitDefinition_with_attr([NotNull] CarpGrammarParser.Definition_with_attrContext context);
+	Result VisitWrapped_definition([NotNull] CarpGrammarParser.Wrapped_definitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>functionDefinition</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
@@ -173,20 +173,6 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFunctionDefinition([NotNull] CarpGrammarParser.FunctionDefinitionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>emptyFunctionDefinition</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitEmptyFunctionDefinition([NotNull] CarpGrammarParser.EmptyFunctionDefinitionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>initializedVariableDefinition</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitInitializedVariableDefinition([NotNull] CarpGrammarParser.InitializedVariableDefinitionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>variableDefinition</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.definition"/>.
@@ -668,6 +654,34 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitPrivateModifier([NotNull] CarpGrammarParser.PrivateModifierContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>staticModifier</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.modifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStaticModifier([NotNull] CarpGrammarParser.StaticModifierContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>protectedModifier</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.modifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitProtectedModifier([NotNull] CarpGrammarParser.ProtectedModifierContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>abstractModifier</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.modifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAbstractModifier([NotNull] CarpGrammarParser.AbstractModifierContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>finalModifier</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.modifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFinalModifier([NotNull] CarpGrammarParser.FinalModifierContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>namedType</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.type"/>.
 	/// </summary>
@@ -715,10 +729,4 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitType_name_list([NotNull] CarpGrammarParser.Type_name_listContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="CarpGrammarParser.name"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitName([NotNull] CarpGrammarParser.NameContext context);
 }

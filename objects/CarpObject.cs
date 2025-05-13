@@ -1,5 +1,6 @@
 using Carp.exceptions;
 using Carp.exceptions.impl;
+using Carp.interpreter;
 using Carp.scoping;
 
 namespace Carp.objects;
@@ -7,7 +8,7 @@ namespace Carp.objects;
 public abstract class CarpObject
 {
     public CarpType Type { get; }
-    public Dictionary<string, Member> Members { get; } = new();
+    public Scope Members { get; } = new();
 
     public abstract CarpString String();
     public virtual string Repr() => String().Value;
@@ -30,30 +31,27 @@ public abstract class CarpObject
     public virtual CarpObject Less(CarpObject right) { throw new PrimitiveIncompatibleException("Less", this); }
     public virtual CarpObject GreaterEqual(CarpObject right) => CarpObject.LogicalOr(this.Greater(right), () => this.Equal(right));
     public virtual CarpObject LessEqual(CarpObject right) => CarpObject.LogicalOr(this.Less(right), () => this.Equal(right));
-    
+
     public virtual CarpObject Call(CarpObject[] args) => throw new PrimitiveIncompatibleException("Call", this);
     public virtual CarpObject Index(CarpObject index) => throw new PrimitiveIncompatibleException("Index", this);
     public virtual CarpObject IndexSet(CarpObject index, CarpObject value) => throw new PrimitiveIncompatibleException("IndexSet", this);
     public virtual Member Member(string name, CarpObject? caller = null, bool meta = false)
     {
-        if (this.Members.TryGetValue(name, out var member))
-        {
-            if (this.IsAccessible(member, caller) || meta)
-                return member;
-            else
-                throw new MemberNotAccessibleException(this, name);
-        }
+        Member member = this.Members.Find(name);
 
-        throw new MemberNotFoundException(this, name);
+        if (this.IsAccessible(member, caller) || meta)
+            return member;
+
+        throw new MemberNotAccessibleException(this, name);
     }
-    
+
     protected virtual bool IsAccessible(Member member, CarpObject? caller)
     {
         if (member.Is(Modifiers.Private))
             return this.Equals(caller);
         return true;
     }
-    
+
 
     public static bool IsTruthy(CarpObject obj)
     {

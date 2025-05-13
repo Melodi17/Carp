@@ -1,3 +1,5 @@
+using System.Text;
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Carp.exceptions;
 using Carp.objects;
@@ -9,7 +11,7 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
 {
     protected CarpObject VisitExpression(CarpGrammarParser.ExpressionContext context)
     {
-        if (context.Accept(this) is CarpObject carpObject)
+        if (this.Visit(context) is CarpObject carpObject)
             return carpObject;
 
         throw new InterpreterException(
@@ -18,11 +20,42 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
 
     protected T VisitToken<T>(Context context) where T : Enum
     {
-        if (context.Accept(this) is T token)
+        if (this.Visit(context) is T token)
             return token;
 
         throw new InterpreterException(
             $"Expected token of {typeof(T).Name}, but got {context.GetType().GetFormattedName()} instead.");
+    }
+
+    private CarpType VisitType(CarpGrammarParser.TypeContext contextRtype)
+    {
+        if (this.Visit(contextRtype) is CarpType type)
+            return type;
+
+        throw new InterpreterException(
+            $"Expected type, but got {contextRtype.GetType().GetFormattedName()} instead.");
+    }
+
+    public override object Visit(IParseTree tree)
+    {
+        if (tree is Context ctx)
+        {
+            ctx.Position = ctx.Start.Line;
+            if (tree.Parent is Context parent)
+                ctx.ReplicateParent(parent);
+            Console.WriteLine($"Visiting {ctx.GetType().GetFormattedName()} at line {ctx.Position}");
+        }
+
+        try
+        {
+            return base.Visit(tree);
+        }
+        catch (RuntimeException e)
+        {
+            if (tree is Context ctx2)
+                e.AddStackFrame(new(ctx2));
+            throw;
+        }
     }
 
     public override object VisitChildren(IRuleNode node)
@@ -34,10 +67,18 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
             IParseTree child = node.GetChild(i);
             if (child is ITerminalNode)
                 continue;
-            
-            object nextResult = child.Accept(this);
+
+            object nextResult = this.Visit(child);
             result = this.AggregateResult(result, nextResult);
         }
         return result;
+    }
+    private string? VisitDocstring(IList<IToken> contextDocs)
+    {
+        if (contextDocs.Count == 0)
+            return null;
+
+        return string.Join("\n", contextDocs
+            .Select(x => x.Text[2..].Trim()));
     }
 }

@@ -1,7 +1,27 @@
+using Carp.objects;
+using Carp.scoping;
+
 namespace Carp.interpreter.visitors;
 
 public partial class CarpVisitor
 {
+    public override object VisitBlock(CarpGrammarParser.BlockContext context)
+    {
+        Scope s = new(context.Scope);
+
+        object? obj = null;
+
+        context.Scope = s;
+        foreach (var statement in context._statements)
+        {
+            obj = this.Visit(statement);
+        }
+        
+        s.Dispose();
+
+        // TODO: Change this to return CarpVoid instead of null
+        return obj as CarpObject ?? null!;
+    }
     public override object VisitExpressionStatement(CarpGrammarParser.ExpressionStatementContext context) => base.VisitExpressionStatement(context);
     public override object VisitFlowControlStatement(CarpGrammarParser.FlowControlStatementContext context) => base.VisitFlowControlStatement(context);
     public override object VisitIf_statement(CarpGrammarParser.If_statementContext context) => base.VisitIf_statement(context);

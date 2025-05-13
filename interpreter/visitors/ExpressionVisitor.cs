@@ -91,7 +91,7 @@ public partial class CarpVisitor
     public override object VisitMetaMemberExpression(CarpGrammarParser.MetaMemberExpressionContext context)
     {
         CarpObject obj = this.VisitExpression(context.obj);
-        string member = context.member.GetText() ?? throw new InterpreterException("Member token missing");
+        string member = context.member.Text ?? throw new InterpreterException("Member token missing");
         Meta op = this.VisitToken<Meta>(context.op);
 
         // Meta flag is used to access even private members
@@ -104,9 +104,18 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+    
     public override object VisitMetaObjExpression(CarpGrammarParser.MetaObjExpressionContext context) => base.VisitMetaObjExpression(context);
     public override object VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context) => base.VisitAssignmentExpression(context);
-    public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context) => base.VisitVariableExpression(context);
+    public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context)
+    {
+        string name = context.ID().GetText();
+        Member member = context.Scope.Find(name);
+        
+        // Self is null because we are looking at
+        // this outside of an object
+        return member.Get(null);
+    }
     public override object VisitWindExpression(CarpGrammarParser.WindExpressionContext context) => base.VisitWindExpression(context);
     public override object VisitCastExpression(CarpGrammarParser.CastExpressionContext context) => base.VisitCastExpression(context);
     public override object VisitParenthesizedExpression(CarpGrammarParser.ParenthesizedExpressionContext context) => base.VisitParenthesizedExpression(context);
