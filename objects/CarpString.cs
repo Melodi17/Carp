@@ -1,7 +1,11 @@
+using Carp.objects.typing;
+
 namespace Carp.objects;
 
 public class CarpString : CarpObject
 {
+    public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type).Build();
+    public override CarpType GetCarpType() => Type;
     public static readonly CarpString Empty = new(string.Empty);
     private static readonly Dictionary<string, CarpString> Cache = new();
     public string Value { get; }

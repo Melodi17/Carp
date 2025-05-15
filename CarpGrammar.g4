@@ -175,7 +175,7 @@ expression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
     | obj=expression '[' parameters=expression_list ']' # indexExpression
     | obj=expression '.' member=ID '.' op=meta # metaMemberExpression
-    | obj=expression '.' op=meta # metaObjExpression
+    | member=ID '.' op=meta # metaObjExpression
     | obj=expression '.' path=ID # propertyExpression
     | op=unary left=expression # unaryExpression
     | left=expression op=binary_geometric right=expression # binaryGeometricExpression // Geometric

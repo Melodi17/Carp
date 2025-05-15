@@ -104,8 +104,22 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-    
-    public override object VisitMetaObjExpression(CarpGrammarParser.MetaObjExpressionContext context) => base.VisitMetaObjExpression(context);
+
+    public override object VisitMetaObjExpression(CarpGrammarParser.MetaObjExpressionContext context)
+    {
+        string member = context.member.Text ?? throw new InterpreterException("Member token missing");
+        Meta op = this.VisitToken<Meta>(context.op);
+
+        // Meta flag is used to access even private members
+        Member objMember = context.Scope!.Find(member);
+        return op switch
+        {
+            Meta.Doc => objMember.Docstring == null ? CarpString.Empty : CarpString.Create(objMember.Docstring),
+            // TODO: Implement annotations
+            // Meta.Annotations => objMember.Annotations,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
     public override object VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context) => base.VisitAssignmentExpression(context);
     public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context)
     {

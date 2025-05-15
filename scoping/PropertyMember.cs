@@ -6,8 +6,8 @@ namespace Carp.scoping;
 
 public class PropertyMember : Member
 {
-    private readonly Func<CarpObject, CarpObject> _getter;
-    private readonly Action<CarpObject, CarpObject>? _setter;
+    private Func<CarpObject, CarpObject> _getter;
+    private Action<CarpObject, CarpObject>? _setter;
 
     public PropertyMember(string name, CarpType type,
         Func<CarpObject, CarpObject> getter, Action<CarpObject, CarpObject>? setter = null)
@@ -15,6 +15,23 @@ public class PropertyMember : Member
     {
         this._getter = getter;
         this._setter = setter;
+    }
+    
+    public PropertyMember(string name, CarpType type)
+        : base(name, type)
+    {
+    }
+    
+    public PropertyMember Getter(Func<CarpObject, CarpObject> getter)
+    {
+        this._getter = getter;
+        return this;
+    }
+    
+    public PropertyMember Setter(Action<CarpObject, CarpObject> setter)
+    {
+        this._setter = setter;
+        return this;
     }
 
     public override CarpObject Get(CarpObject? self) => this._getter(self);

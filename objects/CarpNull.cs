@@ -1,7 +1,11 @@
+using Carp.objects.typing;
+
 namespace Carp.objects;
 
 public class CarpNull : CarpObject
 {
+    public new static readonly CarpType Type = CarpType.Create("null", CarpObject.Type).Build();
+    public override CarpType GetCarpType() => Type;
     public static readonly CarpNull Instance = new();
     
     private CarpNull() { }

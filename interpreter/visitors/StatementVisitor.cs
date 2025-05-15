@@ -19,8 +19,7 @@ public partial class CarpVisitor
         
         s.Dispose();
 
-        // TODO: Change this to return CarpVoid instead of null
-        return obj as CarpObject ?? null!;
+        return obj as CarpObject ?? CarpVoid.Instance;
     }
     public override object VisitExpressionStatement(CarpGrammarParser.ExpressionStatementContext context) => base.VisitExpressionStatement(context);
     public override object VisitFlowControlStatement(CarpGrammarParser.FlowControlStatementContext context) => base.VisitFlowControlStatement(context);

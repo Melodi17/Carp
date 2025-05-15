@@ -30,4 +30,12 @@ public class Scope : IDisposable
         if (!this.Values.TryAdd(member.Name, member))
             throw new ReferenceAlreadyDefinedException(member.Name);
     }
+    public Scope Clone()
+    {
+        // TODO: check if the parent needs to be cloned
+        Scope clone = new(this.Parent);
+        foreach (var member in this.Values)
+            clone.Define(member.Value.Clone());
+        return clone;
+    }
 }

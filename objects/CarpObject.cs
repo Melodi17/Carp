@@ -8,9 +8,24 @@ namespace Carp.objects;
 
 public abstract class CarpObject
 {
-    public CarpType Type { get; }
-    public Scope Members { get; } = new();
+    public static readonly CarpType Type = CarpType.Create("obj", null)
+        .Member(new PropertyMember("type", CarpType.Type)
+            .Getter(x => x.GetCarpType())
+            .With(Modifiers.None)
+            .Doc("The type of this object"))
+        .Member(new PropertyMember("string", CarpString.Type)
+            .Getter(x => x.String())
+            .With(Modifiers.None)
+            .Doc("The string representation of this object"))
+        .Build();
+    public Scope Members { get; }
 
+    public CarpObject()
+    {
+        this.Members = this.GetCarpType().Members.Clone();
+    }
+
+    public abstract CarpType GetCarpType();
     public abstract CarpString String();
     public virtual string Repr() => String().Value;
 
@@ -53,19 +68,18 @@ public abstract class CarpObject
 
         if (member.Is(Modifiers.Static))
             return false;
-        
+
         return true;
     }
 
 
     public static bool IsTruthy(CarpObject obj)
     {
-        // TODO: implement null
         if (obj is CarpBoolean boolean)
             return boolean.Value;
-        //
-        // if (obj is CarpNull)
-        //     return false;
+
+        if (obj is CarpNull)
+            return false;
 
         return true;
     }
