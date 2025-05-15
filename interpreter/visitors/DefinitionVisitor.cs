@@ -1,5 +1,6 @@
 using System.Text;
 using Carp.objects;
+using Carp.objects.typing;
 using Carp.scoping;
 
 namespace Carp.interpreter.visitors;

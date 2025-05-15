@@ -1,5 +1,6 @@
 using Carp.exceptions.impl;
 using Carp.objects;
+using Carp.objects.typing;
 
 namespace Carp.scoping;
 
@@ -18,6 +19,9 @@ public class FieldMember : Member
     {
         if (this.Is(Modifiers.Final))
             throw new InvalidAssignmentTargetException($"Field is read-only");
+       
+        // TODO: check type
+        
         this._value = value;
     }
 }

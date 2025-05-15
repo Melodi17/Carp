@@ -3,6 +3,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using Carp.exceptions;
 using Carp.objects;
+using Carp.objects.typing;
 using Carp.utils;
 
 namespace Carp.interpreter.visitors;

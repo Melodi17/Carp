@@ -1,6 +1,7 @@
 using Carp.exceptions;
 using Carp.exceptions.impl;
 using Carp.interpreter;
+using Carp.objects.typing;
 using Carp.scoping;
 
 namespace Carp.objects;
@@ -49,6 +50,10 @@ public abstract class CarpObject
     {
         if (member.Is(Modifiers.Private))
             return this.Equals(caller);
+
+        if (member.Is(Modifiers.Static))
+            return false;
+        
         return true;
     }
 

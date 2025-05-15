@@ -1,5 +1,6 @@
 using Carp.exceptions.impl;
 using Carp.objects;
+using Carp.objects.typing;
 
 namespace Carp.scoping;
 
