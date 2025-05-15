@@ -5,8 +5,8 @@ namespace Carp.exceptions;
 
 public class RuntimeException(string message) : Exception(message)
 {
-    public List<StackFrame> StackTrace { get; } = new();
-    public void AddStackFrame(StackFrame frame) => this.StackTrace.Add(frame);
+    public List<StackFrame> InternalStackTrace { get; } = new();
+    public void AddStackFrame(StackFrame frame) => this.InternalStackTrace.Add(frame);
     
     public override string ToString()
     {
@@ -14,7 +14,7 @@ public class RuntimeException(string message) : Exception(message)
         
         StringBuilder sb = new();
         sb.AppendLine($"{errorName}: {this.Message}");
-        foreach (StackFrame frame in StackTrace)
+        foreach (StackFrame frame in this.InternalStackTrace)
         {
             int pos = frame.Context.Position;
             string content = frame.Context.ExecutionContext.GetAtLine(pos);

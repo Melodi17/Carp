@@ -4,10 +4,23 @@ public class CarpNumber : CarpObject
 {
     public double Value { get; }
     public int ValueFull => (int)this.Value;
+    
+    private static readonly Dictionary<double, CarpNumber> Cache = new();
 
     protected CarpNumber(double value)
     {
         this.Value = value;
+    }
+    
+    
+    public static CarpNumber Create(double value)
+    {
+        if (Cache.TryGetValue(value, out var cached))
+            return cached;
+
+        CarpNumber number = new(value);
+        Cache[value] = number;
+        return number;
     }
 
     public override CarpObject Add(CarpObject right) => right is CarpNumber number
@@ -38,8 +51,6 @@ public class CarpNumber : CarpObject
         : base.Greater(right);
     
     public override CarpObject Negate() => CarpNumber.Create(-this.Value);
-
-    public static CarpNumber Create(double value) => new(value);
     public override CarpString String() => CarpString.Create(this.Value.ToString());
     public override CarpObject Equal(CarpObject right) => right is CarpNumber number
         ? CarpBoolean.Create(this.Value == number.Value)

@@ -3,14 +3,24 @@ namespace Carp.objects;
 public class CarpString : CarpObject
 {
     public static readonly CarpString Empty = new(string.Empty);
+    private static readonly Dictionary<string, CarpString> Cache = new();
     public string Value { get; }
+
 
     protected CarpString(string value)
     {
         this.Value = value;
     }
     
-    public static CarpString Create(string value) => new(value);
+    public static CarpString Create(string value)
+    {
+        if (Cache.TryGetValue(value, out var cached))
+            return cached;
+
+        CarpString str = new(value);
+        Cache[value] = str;
+        return str;
+    }
 
     public override CarpString String() => this;
 

@@ -29,7 +29,7 @@ public class Context : ParserRuleContext
     /// <summary>
     /// Execution context (file) currently being executed
     /// </summary>
-    public IExecutionContext ExecutionContext { get; set; }
+    public IExecutionContext? ExecutionContext { get; set; }
 
     public CarpObject? CurrentObject { get; set; }
 
