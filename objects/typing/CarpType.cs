@@ -86,10 +86,10 @@ public class CarpType : CarpObject
             CarpObject.Type,
             CarpType.Type,
             CarpString.Type,
-            ..CarpNumber.AllTypes,
             CarpNull.Type,
             CarpVoid.Type,
-            CarpBoolean.Type
+            CarpBoolean.Type,
+            ..CarpNumber.AllTypes,
         ];
         
         foreach (Action builder in builderQueue ?? [])

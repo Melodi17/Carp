@@ -19,13 +19,7 @@
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6e171512_002D0572_002D4c10_002Dbaec_002D392af7b7f71d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SimpleSumNumberMethod" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::D31B8E18-CE74-4E78-8BAB-095944B8CB0C::net9.0::CarpTests.LanguageSanityTests.SimpleSumNumberMethod&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
 	
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cebd626e_002D4819_002D4792_002Db0de_002Dd1b1510d6955/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	
+	</wpf:ResourceDictionary>

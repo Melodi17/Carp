@@ -6,7 +6,7 @@ using Carp.scoping;
 
 namespace Carp.objects;
 
-public abstract class CarpNumber : CarpObject
+public abstract class CarpNumber(CarpType type) : CarpObject(type)
 {
     public override abstract CarpType GetCarpType();
     public override abstract CarpString String();
@@ -85,7 +85,7 @@ public class CarpNumber<T> : CarpNumber
 
     private static readonly Dictionary<T, CarpNumber<T>> Cache = new();
 
-    private CarpNumber(T value, CarpType type)
+    private CarpNumber(T value, CarpType type):base(type)
     {
         this._type = type;
         this.Value = value;

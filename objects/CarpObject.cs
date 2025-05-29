@@ -18,10 +18,10 @@ public abstract class CarpObject
             .Doc("The string representation of this object")));
     public Scope Members { get; set; }
 
-    public CarpObject()
+    public CarpObject(CarpType? type = null)
     {
-        if (this.GetCarpType() != null)
-            this.Members = this.GetCarpType().Members.Clone();
+        if (this.GetCarpType() != null || type != null)
+            this.Members = (this.GetCarpType() ?? type).Members.Clone();
         else this.Members = new();
     }
 
