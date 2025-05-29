@@ -12,9 +12,9 @@ public partial class CarpVisitor
         CarpGrammarParser.ExpressionContext rightCtx,
         Context opCtx)
     {
-        var left = this.VisitExpression(leftCtx);
-        var right = this.VisitExpression(rightCtx);
-        var op = this.VisitToken<Comparison>(opCtx);
+        CarpObject? left = this.VisitExpression(leftCtx);
+        CarpObject? right = this.VisitExpression(rightCtx);
+        Comparison op = this.VisitToken<Comparison>(opCtx);
         
         return op switch
         {
@@ -34,8 +34,8 @@ public partial class CarpVisitor
 
     public override object VisitLogicalExpression(CarpGrammarParser.LogicalExpressionContext context)
     {
-        var left = this.VisitExpression(context.left);
-        var op = this.VisitToken<Logical>(context.op);
+        CarpObject? left = this.VisitExpression(context.left);
+        Logical op = this.VisitToken<Logical>(context.op);
 
         CarpObject GetRight() => this.VisitExpression(context.right);
         
@@ -51,10 +51,10 @@ public partial class CarpVisitor
         CarpGrammarParser.ExpressionContext rightCtx,
         Context opCtx)
     {
-        var left = this.VisitExpression(leftCtx);
-        var right = this.VisitExpression(rightCtx);
+        CarpObject? left = this.VisitExpression(leftCtx);
+        CarpObject? right = this.VisitExpression(rightCtx);
         
-        var op = this.VisitToken<Binary>(opCtx);
+        Binary op = this.VisitToken<Binary>(opCtx);
         
         return op switch
         {
@@ -77,8 +77,8 @@ public partial class CarpVisitor
         => this.VisitBinaryExpression(context, context.left, context.right, context.op);
     public override object VisitUnaryExpression(CarpGrammarParser.UnaryExpressionContext context)
     {
-        var obj = this.VisitExpression(context.left);
-        var op = this.VisitToken<Unary>(context.op);
+        CarpObject? obj = this.VisitExpression(context.left);
+        Unary op = this.VisitToken<Unary>(context.op);
 
         return op switch
         {
@@ -140,7 +140,14 @@ public partial class CarpVisitor
     public override object VisitIndexExpression(CarpGrammarParser.IndexExpressionContext context) => base.VisitIndexExpression(context);
     public override object VisitTernaryExpression(CarpGrammarParser.TernaryExpressionContext context) => base.VisitTernaryExpression(context);
     public override object VisitPostfixExpression(CarpGrammarParser.PostfixExpressionContext context) => base.VisitPostfixExpression(context);
-    public override object VisitPropertyExpression(CarpGrammarParser.PropertyExpressionContext context) => base.VisitPropertyExpression(context);
+    public override object VisitPropertyExpression(CarpGrammarParser.PropertyExpressionContext context)
+    {
+        CarpObject obj = VisitExpression(context.obj);
+        string? path = context.path.Text;
+
+        Member member = obj.Member(path, context.CurrentObject);
+        return member.Get(member.Is(Modifiers.Static) ? null : obj);
+    }
     public override object VisitEndRangeExpression(CarpGrammarParser.EndRangeExpressionContext context) => base.VisitEndRangeExpression(context);
     public override object VisitCompareTypeExpression(CarpGrammarParser.CompareTypeExpressionContext context) => base.VisitCompareTypeExpression(context);
 }

@@ -5,6 +5,10 @@ namespace Carp.interpreter.visitors;
 
 public partial class CarpVisitor
 {
+    public override object VisitProgram(CarpGrammarParser.ProgramContext context)
+    {
+        return this.VisitChildren(context) ?? CarpVoid.Instance;
+    }
     public override object VisitBlock(CarpGrammarParser.BlockContext context)
     {
         Scope s = new(context.Scope);
@@ -12,7 +16,7 @@ public partial class CarpVisitor
         object? obj = null;
 
         context.Scope = s;
-        foreach (var statement in context._statements)
+        foreach (CarpGrammarParser.StatementContext? statement in context._statements)
         {
             obj = this.Visit(statement);
         }
@@ -33,4 +37,5 @@ public partial class CarpVisitor
     public override object VisitBreak_statement(CarpGrammarParser.Break_statementContext context) => base.VisitBreak_statement(context);
     public override object VisitContinue_statement(CarpGrammarParser.Continue_statementContext context) => base.VisitContinue_statement(context);
     public override object VisitYield_statement(CarpGrammarParser.Yield_statementContext context) => base.VisitYield_statement(context);
+    public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context) => base.VisitImportStatement(context);
 }

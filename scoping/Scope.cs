@@ -16,7 +16,7 @@ public class Scope : IDisposable
 
     public Member Find(string name)
     {
-        if (this.Values.TryGetValue(name, out var member))
+        if (this.Values.TryGetValue(name, out Member? member))
             return member;
 
         if (this.Parent != null)
@@ -34,7 +34,7 @@ public class Scope : IDisposable
     {
         // TODO: check if the parent needs to be cloned
         Scope clone = new(this.Parent);
-        foreach (var member in this.Values)
+        foreach (KeyValuePair<string, Member> member in this.Values)
             clone.Define(member.Value.Clone());
         return clone;
     }

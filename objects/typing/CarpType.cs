@@ -4,6 +4,10 @@ namespace Carp.objects.typing;
 
 public class CarpType : CarpObject
 {
+    public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type, t => t
+        .Member(new PropertyMember("name", CarpString.Type)
+            .Getter(x => CarpString.Create((x as CarpType)!.Name))));
+    public override CarpType GetCarpType() => Type;
     public CarpType(string name, CarpType? baseType, CarpType[] typeArguments, Func<CarpObject> defaultValueGen = null)
     {
         this.Name = name;
@@ -15,17 +19,17 @@ public class CarpType : CarpObject
     public string Name { get; }
     public CarpType? BaseType { get; }
     public CarpType[] TypeArguments { get; }
-    
+
     public bool IsGeneric => this.TypeArguments.Length > 0;
     public override CarpString String() => CarpString.Create($"<type {this.Name}>");
     public CarpObject DefaultValue()
     {
         if (this.DefaultValueGen != null)
             return this.DefaultValueGen();
-        
+
         return CarpNull.Instance;
     }
-    
+
     protected override bool IsAccessible(Member member, CarpObject? caller)
     {
         if (member.Is(Modifiers.Private))
@@ -33,7 +37,7 @@ public class CarpType : CarpObject
 
         if (!member.Is(Modifiers.Static))
             return false;
-        
+
         return true;
     }
 
@@ -41,49 +45,50 @@ public class CarpType : CarpObject
     {
         if (ReferenceEquals(this, type))
             return true;
-        
+
         if (this.BaseType != null && this.BaseType.Extends(type))
             return true;
-        
+
         if (type == CarpNull.Type)
             return true;
-        
+
         return false;
     }
 
-    public override CarpType GetCarpType() => CarpType.Type;
+    public static CarpType Create(string name, CarpType? baseType, Action<CarpTypeBuilder>? builder = null)
+    {
+        CarpType t = new(name, baseType, []);
+        builderQueue ??= new();
+        if (builder != null)
+            builderQueue.Add(() => builder(new CarpTypeBuilder(t)));
+        return t;
+    }
 
-    public static CarpTypeBuilder Create(string name, CarpType? baseType) => new(name, baseType);
+    private static List<Action>? builderQueue;
+    public static void ConstructTypes()
+    {
+        foreach (Action builder in builderQueue ?? [])
+            builder();
+        builderQueue?.Clear();
+    }
 }
 
 public class CarpTypeBuilder
 {
-    public CarpTypeBuilder(string name, CarpType? baseType)
+    private readonly CarpType _type;
+    public CarpTypeBuilder(CarpType type)
     {
-        this.Name = name;
-        this.BaseType = baseType;
-        this.Members = new();
+        this._type = type;
     }
-    
-    public string Name { get; }
-    public CarpType? BaseType { get; }
-    public List<Member> Members { get; }
-    public Func<CarpObject>? DefaultValueGen { get; set; }
-    
+
     public CarpTypeBuilder Member(Member member)
     {
-        this.Members.Add(member);
+        this._type.Members.Define(member);
         return this;
     }
     public CarpTypeBuilder DefaultValue(Func<CarpObject> defaultValue)
     {
-        this.DefaultValueGen = defaultValue;
+        this._type.DefaultValueGen = defaultValue;
         return this;
-    }
-
-    public CarpType Build()
-    {
-        CarpType type = new(this.Name, this.BaseType, []);
-        return type;
     }
 }

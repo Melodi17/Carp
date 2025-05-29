@@ -79,8 +79,8 @@ CLASS : 'class' ;
 STRUCT : 'struct' ;
 LET : 'let' ;
 FIXED : 'fixed' ;
-//IMPORT : 'import' ;
 
+IMPORT : 'import ' .* [\n]?;
 ID : [a-zA-Z][a-zA-Z0-9_]* ;
 //STRING : '\'' (~['\\])* '\'' ;
 INT : ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
@@ -89,13 +89,14 @@ DOCSTRING : '#:' .*? [\n] ;
 COMMENT : '#' .*? [\n] -> skip ;
 STRING : '\'' SHORT_STRING_ITEM_FOR_SINGLE_QUOTE* '\'' ;
 CHAR : '`' . ;
+
     
 fragment SHORT_STRING_ITEM_FOR_SINGLE_QUOTE : SHORT_STRING_CHAR_NO_SINGLE_QUOTE | ('\\' .);
 fragment SHORT_STRING_CHAR_NO_SINGLE_QUOTE : ~[\\'];
 
 //PATH : [a-zA-Z0-9_\-.]+ ;
 
-program : block EOF ;
+program : (statements+=statement)* EOF ;
 
 block : (statements+=statement)* ;
 
@@ -107,7 +108,8 @@ generic_block
 
 statement
 //    : IMPORT loc+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT)* (':' ver+=(ID | PERIOD | MINUS | SLASH | UNDERSCORE | INT | COLON)+)? ';' # importStatement
-    : wrapped_definition # definitionStatement
+    : IMPORT # importStatement
+    | wrapped_definition # definitionStatement
     | expression # expressionStatement
     | flow_control # flowControlStatement
     ;

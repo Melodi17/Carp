@@ -4,7 +4,7 @@ namespace Carp.objects;
 
 public class CarpBoolean : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("bool", CarpObject.Type).Build();
+    public new static readonly CarpType Type = CarpType.Create("bool", CarpObject.Type);
     public override CarpType GetCarpType() => Type;
     
     public static readonly CarpBoolean True = new(true);

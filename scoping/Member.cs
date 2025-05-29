@@ -35,7 +35,16 @@ public abstract class Member
     {
         this.Name = name;
         this.Type = type;
+        
+        this.Modifiers = Modifiers.None;
+        this.Docstring = null;
+        this.Annotations = [];
     }
+    /// <summary>
+    /// Performs get operation on member
+    /// </summary>
+    /// <param name="self">Should be the object the member belongs to, or should be null when static context.</param>
+    /// <returns>Result from get operation</returns>
     public abstract CarpObject Get(CarpObject? self);
     public virtual void Set(CarpObject self, CarpObject value) 
         => throw new InvalidAssignmentTargetException("Cannot set value of non-settable member");

@@ -8,7 +8,7 @@ namespace Carp.objects;
 
 public abstract class CarpObject
 {
-    public static readonly CarpType Type = CarpType.Create("obj", null)
+    public static readonly CarpType Type = CarpType.Create("obj", null, t => t
         .Member(new PropertyMember("type", CarpType.Type)
             .Getter(x => x.GetCarpType())
             .With(Modifiers.None)
@@ -16,13 +16,14 @@ public abstract class CarpObject
         .Member(new PropertyMember("string", CarpString.Type)
             .Getter(x => x.String())
             .With(Modifiers.None)
-            .Doc("The string representation of this object"))
-        .Build();
+            .Doc("The string representation of this object")));
     public Scope Members { get; }
 
     public CarpObject()
     {
-        this.Members = this.GetCarpType().Members.Clone();
+        if (this.GetCarpType() != null)
+            this.Members = this.GetCarpType().Members.Clone();
+        else this.Members = new();
     }
 
     public abstract CarpType GetCarpType();
@@ -51,6 +52,15 @@ public abstract class CarpObject
     public virtual CarpObject Call(CarpObject[] args) => throw new PrimitiveIncompatibleException("Call", this);
     public virtual CarpObject Index(CarpObject index) => throw new PrimitiveIncompatibleException("Index", this);
     public virtual CarpObject IndexSet(CarpObject index, CarpObject value) => throw new PrimitiveIncompatibleException("IndexSet", this);
+    
+    /// <summary>
+    /// Accesses the object's scope member
+    /// </summary>
+    /// <param name="name">Name of member to find</param>
+    /// <param name="caller">The current object attempting to call this</param>
+    /// <param name="meta">Whether to bypass the access level requirements</param>
+    /// <returns>Member if found</returns>
+    /// <exception cref="MemberNotAccessibleException">Throws when can't find specified member</exception>
     public virtual Member Member(string name, CarpObject? caller = null, bool meta = false)
     {
         Member member = this.Members.Find(name);

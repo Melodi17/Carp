@@ -4,7 +4,7 @@ namespace Carp.objects;
 
 public class CarpNumber : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("int", CarpObject.Type).Build();
+    public new static readonly CarpType Type = CarpType.Create("int", CarpObject.Type);
     public override CarpType GetCarpType() => Type;
     public double Value { get; }
     public int ValueFull => (int)this.Value;
@@ -19,7 +19,7 @@ public class CarpNumber : CarpObject
     
     public static CarpNumber Create(double value)
     {
-        if (Cache.TryGetValue(value, out var cached))
+        if (Cache.TryGetValue(value, out CarpNumber? cached))
             return cached;
 
         CarpNumber number = new(value);

@@ -4,7 +4,7 @@ namespace Carp.objects;
 
 public class CarpString : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type).Build();
+    public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type);
     public override CarpType GetCarpType() => Type;
     public static readonly CarpString Empty = new(string.Empty);
     private static readonly Dictionary<string, CarpString> Cache = new();
@@ -18,7 +18,7 @@ public class CarpString : CarpObject
     
     public static CarpString Create(string value)
     {
-        if (Cache.TryGetValue(value, out var cached))
+        if (Cache.TryGetValue(value, out CarpString? cached))
             return cached;
 
         CarpString str = new(value);
@@ -28,7 +28,7 @@ public class CarpString : CarpObject
 
     public override CarpString String() => this;
 
-    public override string Repr() => $"\"{this.Value}\"";
+    public override string Repr() => $"\'{this.Value}\'";
     public override CarpObject Equal(CarpObject right) => right is CarpString str
         ? CarpBoolean.Create(this.Value == str.Value)
         : CarpBoolean.False;

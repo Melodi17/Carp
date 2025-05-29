@@ -17,8 +17,8 @@ public class RuntimeException(string message) : Exception(message)
         foreach (StackFrame frame in this.InternalStackTrace)
         {
             int pos = frame.Context.Position;
-            string content = frame.Context.ExecutionContext.GetAtLine(pos);
-            sb.AppendLine($"\t--->  {frame.Context.ExecutionContext.Name}  {pos} |  {content}");
+            string content = frame.Context.ExecutionContext?.GetAtLine(pos) ?? "<missing>";
+            sb.AppendLine($"\t--->  {frame.Context.ExecutionContext?.Name ?? "<unknown>"}  {pos} |  {content}");
         }
         
         return sb.ToString().TrimEnd('\r', '\n');

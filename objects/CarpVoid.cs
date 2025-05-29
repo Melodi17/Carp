@@ -5,7 +5,7 @@ namespace Carp.objects;
 
 public class CarpVoid : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("void", CarpObject.Type).Build();
+    public new static readonly CarpType Type = CarpType.Create("void", CarpObject.Type);
     public override CarpType GetCarpType() => Type;
     public static readonly CarpVoid Instance = new();
     

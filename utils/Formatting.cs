@@ -12,7 +12,7 @@ public static class Formatting
         if (text.Length < 2) {
             return text.ToLowerInvariant();
         }
-        var sb = new StringBuilder();
+        StringBuilder? sb = new();
         sb.Append(char.ToLowerInvariant(text[0]));
         for(int i = 1; i < text.Length; ++i) {
             char c = text[i];
