@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using Carp.objects;
 using Carp.scoping;
+using Newtonsoft.Json;
 
 namespace Carp.interpreter;
 
@@ -40,5 +41,23 @@ public class Context : ParserRuleContext
         this.Position = context.Position;
         this.ExecutionContext = context.ExecutionContext;
         this.CurrentObject = context.CurrentObject;
+    }
+
+    public T Clone<T>() where T : Context
+    {
+        var settings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        };
+        // use newtonsoft json to clone the context
+        T copy = JsonConvert.DeserializeObject<T>(
+                                        JsonConvert.SerializeObject(this, settings), settings) ??
+                                    throw new InvalidOperationException("Failed to clone context");
+        
+        // Use non-cloned context data
+        copy.ReplicateParent(this);
+        
+        return copy;
     }
 }

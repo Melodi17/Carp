@@ -1,11 +1,14 @@
 using Carp.objects.typing;
+using Carp.scoping;
 
 namespace Carp.objects;
 
 public class CarpNumber : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("int", CarpObject.Type, b =>
-        b.DefaultValue(() => CarpNumber.Create(0)));
+    public new static readonly CarpType Type = CarpType.Create("int", CarpObject.Type, b => b
+        .DefaultValue(() => CarpNumber.Create(0))
+        .Member(new PropertyMember("full", CarpNumber.Type)
+            .Getter(x => CarpNumber.Create(((CarpNumber)x).ValueFull))));
     public override CarpType GetCarpType() => Type;
     public double Value { get; }
     public int ValueFull => (int)this.Value;

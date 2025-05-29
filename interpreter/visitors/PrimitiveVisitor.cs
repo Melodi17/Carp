@@ -25,7 +25,7 @@ public partial class CarpVisitor
     public override object VisitCharConstant(CarpGrammarParser.CharConstantContext context) => base.VisitCharConstant(context);
     public override object VisitTrueConstant(CarpGrammarParser.TrueConstantContext context) => CarpBoolean.True;
     public override object VisitFalseConstant(CarpGrammarParser.FalseConstantContext context) => CarpBoolean.False;
-    public override object VisitNullConstant(CarpGrammarParser.NullConstantContext context) => base.VisitNullConstant(context);
+    public override object VisitNullConstant(CarpGrammarParser.NullConstantContext context) => CarpNull.Instance;
 
     public override object VisitArray(CarpGrammarParser.ArrayContext context) => base.VisitArray(context);
     public override object VisitMap(CarpGrammarParser.MapContext context) => base.VisitMap(context);

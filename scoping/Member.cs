@@ -46,16 +46,14 @@ public abstract class Member
     /// <param name="self">Should be the object the member belongs to, or should be null when static context.</param>
     /// <returns>Result from get operation</returns>
     public abstract CarpObject Get(CarpObject? self);
-    public virtual void Set(CarpObject self, CarpObject value) 
-        => throw new InvalidAssignmentTargetException("Cannot set value of non-settable member");
-    public Member Clone()
+    public virtual CarpObject Set(CarpObject? self, CarpObject value) 
+        => throw new InvalidAssignmentTargetException($"Cannot set value of non-settable member '{Name}'");
+    public virtual Member Clone()
     {
-        // Memberwise clone
-        Member clone = (Member)this.MemberwiseClone();
-        
-        // Deep clone annotations
-        clone.Annotations = new(this.Annotations);
+        // // Memberwise clone
+        // Member clone = (Member)this.MemberwiseClone();
 
-        return clone;
+        // This is so child classes can override this method and return a new instance
+        return this;
     }
 }

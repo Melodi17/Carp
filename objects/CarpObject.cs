@@ -1,4 +1,3 @@
-using Carp.exceptions;
 using Carp.exceptions.impl;
 using Carp.interpreter;
 using Carp.objects.typing;
@@ -17,7 +16,7 @@ public abstract class CarpObject
             .Getter(x => x.String())
             .With(Modifiers.None)
             .Doc("The string representation of this object")));
-    public Scope Members { get; }
+    public Scope Members { get; set; }
 
     public CarpObject()
     {
@@ -112,6 +111,17 @@ public abstract class CarpObject
             return CarpObject.IsTruthy(this.Equal(co));
 
         return false;
+    }
+    
+    public virtual CarpObject Coerce(CarpType type)
+    {
+        if (this.GetCarpType() == type)
+            return this;
+        
+        if (this.GetCarpType().Extends(type))
+            return this;
+
+        throw new ConversionException(this.GetCarpType(), type);
     }
 
     public override string ToString() => this.Repr();

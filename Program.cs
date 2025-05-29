@@ -46,11 +46,9 @@ public class Program
 
     private static void WriteRichError(RuntimeException ex)
     {
-        string errorName = ex.GetType().Name;
-        
         void Print(string text) => Console.Error.WriteLine(Coloring.SubstituteStyles(text));
         
-        Print($" %red%{errorName}: %white%{ex.Message}");
+        Print($" %red%{ex.ErrorFriendlyName}: %white%{ex.Message}");
         foreach (StackFrame frame in ex.InternalStackTrace)
         {
             int pos = frame.Context.Position;

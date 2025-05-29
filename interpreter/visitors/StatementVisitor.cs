@@ -20,7 +20,7 @@ public partial class CarpVisitor
         
         return res;
     }
-    private object VisitBlock(IList<CarpGrammarParser.StatementContext> statements)
+    public object VisitBlock(IList<CarpGrammarParser.StatementContext> statements)
     {
         object? obj = null;
 

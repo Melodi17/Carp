@@ -4,9 +4,7 @@ namespace Carp.objects.typing;
 
 public class CarpType : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type, t => t
-        .Member(new PropertyMember("name", CarpString.Type)
-            .Getter(x => CarpString.Create((x as CarpType)!.Name))));
+    public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type);
     public override CarpType GetCarpType() => Type;
     public CarpType(string name, CarpType? baseType, CarpType[] typeArguments, Func<CarpObject> defaultValueGen = null)
     {
@@ -21,7 +19,7 @@ public class CarpType : CarpObject
     public CarpType[] TypeArguments { get; }
 
     public bool IsGeneric => this.TypeArguments.Length > 0;
-    public override CarpString String() => CarpString.Create($"<type {this.Name}>");
+    public override CarpString String() => CarpString.Create($"{this.Name}");
     public CarpObject DefaultValue()
     {
         if (this.DefaultValueGen != null)
@@ -59,8 +57,20 @@ public class CarpType : CarpObject
     {
         CarpType t = new(name, baseType, []);
         builderQueue ??= new();
+        
+        void DeclareBaseTypeMembers(CarpType t)
+        {
+            if (t.BaseType != null)
+                t.Members = t.BaseType.Members.Clone();
+        }
+        
         if (builder != null)
-            builderQueue.Add(() => builder(new CarpTypeBuilder(t)));
+            builderQueue.Add(() =>
+            {
+                DeclareBaseTypeMembers(t);
+                builder(new CarpTypeBuilder(t));
+            });
+        else builderQueue.Add(() => DeclareBaseTypeMembers(t));
         return t;
     }
 

@@ -1,10 +1,13 @@
 using Carp.objects.typing;
+using Carp.scoping;
 
 namespace Carp.objects;
 
 public class CarpString : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type);
+    public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type, b => b
+        .Member(new PropertyMember("length", CarpNumber.Type)
+            .Getter(x => CarpNumber.Create(((CarpString)x).Value.Length))));
     public override CarpType GetCarpType() => Type;
     public static readonly CarpString Empty = new(string.Empty);
     private static readonly Dictionary<string, CarpString> Cache = new();
@@ -15,7 +18,7 @@ public class CarpString : CarpObject
     {
         this.Value = value;
     }
-    
+
     public static CarpString Create(string value)
     {
         if (Cache.TryGetValue(value, out CarpString? cached))

@@ -1,4 +1,5 @@
 using Carp.exceptions;
+using Carp.exceptions.impl;
 using Carp.objects;
 using Carp.parser;
 using Carp.scoping;
@@ -120,10 +121,46 @@ public partial class CarpVisitor
             _ => throw new ArgumentOutOfRangeException()
         };
     }
-    public override object VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context) => base.VisitAssignmentExpression(context);
+    public override object VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context)
+    {
+        CarpGrammarParser.ExpressionContext assignmentTarget = context.left;
+        // since we're not directly visiting the left side, copy the context to it
+        assignmentTarget.ReplicateParent(context);
+        
+        CarpObject value = this.VisitExpression(context.right);
+
+        if (assignmentTarget is CarpGrammarParser.VariableExpressionContext vec)
+        {
+            string name = vec.ID().GetText();
+            Member member = context.Scope.Find(name);
+            return member.Set(null, value);
+        }
+        else if (assignmentTarget is CarpGrammarParser.IndexExpressionContext iec)
+        {
+            // TODO: Implement index assignment
+            throw new NotImplementedException("Index assignment is not implemented yet");
+        }
+        else if (assignmentTarget is CarpGrammarParser.PropertyExpressionContext pec)
+        {
+            CarpObject obj = this.VisitExpression(pec.obj);
+            string? path = pec.path.Text;
+
+            Member member = obj.Member(path, context.CurrentObject);
+            return member.Set(member.Is(Modifiers.Static) ? null : obj, value);
+        }
+        else
+            throw new InvalidAssignmentTargetException("target of assignment is not a variable, index or property expression");
+    }
     public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context)
     {
         string name = context.ID().GetText();
+        if (name == "this")
+        {
+            if (context.CurrentObject == null)
+                throw new ThisOutsideObjectException();
+            return context.CurrentObject;
+        }
+        
         Member member = context.Scope.Find(name);
         
         // Self is null because we are looking at
