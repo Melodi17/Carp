@@ -55,6 +55,9 @@ public partial class CarpVisitor
         CarpObject? left = this.VisitExpression(leftCtx);
         CarpObject? right = this.VisitExpression(rightCtx);
         
+        if (left.GetCarpType().Group == "number")
+            right = right.Coerce(left.GetCarpType());
+        
         Binary op = this.VisitToken<Binary>(opCtx);
         
         return op switch

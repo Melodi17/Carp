@@ -16,29 +16,27 @@ public abstract class CarpNumber(CarpType type) : CarpObject(type)
     public static void ConstructAllTypes()
     {
         _creators = new();
-        
+
         ConstructType<sbyte>("i8");
         ConstructType<short>("i16");
         ConstructType<int>("i32");
         ConstructType<long>("i64");
-        ConstructType<BigInteger>("i128");
         ConstructType<byte>("u8");
         ConstructType<ushort>("u16");
         ConstructType<uint>("u32");
         ConstructType<ulong>("u64");
-        ConstructType<BigInteger>("u128");
         ConstructType<float>("f32");
         ConstructType<double>("f64");
         ConstructType<BigInteger>("arb");
     }
-    
+
     public static CarpType[] AllTypes
     {
         get
         {
             if (_creators == null)
                 ConstructAllTypes();
-            
+
             return _creators.Values.Select(c => c.Type).ToArray();
         }
     }
@@ -52,14 +50,51 @@ public abstract class CarpNumber(CarpType type) : CarpObject(type)
         carpType.Group = "number";
         _creators[name] = (
             carpType,
-            value => CarpNumber<T>.CreateDirect((T)Convert.ChangeType(value, typeof(T)), carpType)
+            value =>
+            {
+                try
+                {
+                    return CarpNumber<T>.CreateDirect((T)ConvertTo<T>(value), carpType);
+                }
+                catch (OverflowException)
+                {
+                    throw new NumericDataOverflowException(value.ToString(), carpType);
+                }
+            }
         );
     }
+
+    private static object ConvertTo<T>(object value)
+    {
+        if (typeof(T) == typeof(BigInteger))
+        {
+            return value switch 
+            {
+                int i => new BigInteger(i),
+                long l => new BigInteger(l),
+                double d => new BigInteger(d),
+                float f => new BigInteger(f),
+                sbyte sb => new BigInteger(sb),
+                short sh => new BigInteger(sh),
+                byte b => new BigInteger(b),
+                ushort us => new BigInteger(us),
+                uint ui => new BigInteger(ui),
+                ulong ul => new BigInteger(ul),
+                BigInteger bi => bi,
+                _ => throw new InvalidCastException($"Cannot convert {value.GetType()} to {typeof(T)}")
+            };
+        }
+
+        // Use Convert.ChangeType for other numeric types
+        return Convert.ChangeType(value, typeof(T));
+    }
+
+
     public static CarpNumber Create(string typeName, object value)
     {
         if (_creators == null)
             ConstructAllTypes();
-        
+
         if (_creators.TryGetValue(typeName, out var creator))
         {
             return creator.Creator(value);
@@ -72,6 +107,11 @@ public abstract class CarpNumber(CarpType type) : CarpObject(type)
 
     public static CarpNumber Create(double value)
         => Create("f64", value); // Default to f64 if no type is specified
+
+    public T Coerce<T>(CarpType newType) where T : CarpNumber
+    {
+        return ((T)this.Coerce(newType));
+    }
 }
 
 public class CarpNumber<T> : CarpNumber
@@ -85,7 +125,7 @@ public class CarpNumber<T> : CarpNumber
 
     private static readonly Dictionary<T, CarpNumber<T>> Cache = new();
 
-    private CarpNumber(T value, CarpType type):base(type)
+    private CarpNumber(T value, CarpType type) : base(type)
     {
         this._type = type;
         this.Value = value;
@@ -101,20 +141,27 @@ public class CarpNumber<T> : CarpNumber
         return number;
     }
 
-    public override CarpObject Add(CarpObject right) => right is CarpNumber<T> number
-        ? CarpNumber<T>.CreateDirect(this.Value + number.Value, this._type)
+    private T CoerceValue(CarpNumber number)
+    {
+        return number.Coerce<CarpNumber<T>>(this._type).Value;
+    }
+
+    public override CarpObject Add(CarpObject right) => right is CarpNumber number
+        ? CarpNumber<T>.CreateDirect(this.Value + CoerceValue(number), this._type)
         : base.Add(right);
-    public override CarpObject Subtract(CarpObject right) => right is CarpNumber<T> number
-        ? CarpNumber<T>.CreateDirect(this.Value - number.Value, this._type)
+    public override CarpObject Subtract(CarpObject right) => right is CarpNumber number
+        ? CarpNumber<T>.CreateDirect(this.Value - this.CoerceValue(number), this._type)
         : base.Subtract(right);
-    public override CarpObject Multiply(CarpObject right) => right is CarpNumber<T> number
-        ? CarpNumber<T>.CreateDirect(this.Value * number.Value, this._type)
+    public override CarpObject Multiply(CarpObject right) => right is CarpNumber number
+        ? CarpNumber<T>.CreateDirect(this.Value * this.CoerceValue(number), this._type)
         : base.Multiply(right);
-    public override CarpObject Divide(CarpObject right) => right is CarpNumber<T> number
-        ? CarpNumber<T>.CreateDirect(this.Value / number.Value, this._type)
+    public override CarpObject Divide(CarpObject right) => right is CarpNumber number
+        ? CarpNumber<T>.CreateDirect(this.Value / this.CoerceValue(number), this._type)
         : base.Divide(right);
     public override CarpObject Power(CarpObject right)
     {
+        if (right is not CarpNumber number) throw new PrimitiveIncompatibleException("Power", this);
+        
         if (Value is BigInteger bigInt && right is CarpNumber<BigInteger> bigIntNumber)
             return CarpNumber<BigInteger>.CreateDirect(BigInteger.Pow(bigInt, (int)bigIntNumber.Value), this._type);
 
