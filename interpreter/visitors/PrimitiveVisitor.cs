@@ -1,5 +1,6 @@
 using Carp.exceptions;
 using Carp.objects;
+using Carp.objects.typing;
 using Carp.parser;
 
 namespace Carp.interpreter.visitors;
@@ -27,7 +28,13 @@ public partial class CarpVisitor
     public override object VisitFalseConstant(CarpGrammarParser.FalseConstantContext context) => CarpBoolean.False;
     public override object VisitNullConstant(CarpGrammarParser.NullConstantContext context) => CarpNull.Instance;
 
-    public override object VisitArray(CarpGrammarParser.ArrayContext context) => base.VisitArray(context);
+    public override object VisitArray(CarpGrammarParser.ArrayContext context)
+    {
+        CarpObject[] arr = (CarpObject[])this.Visit(context.expression_list());
+        CarpType type = CarpType.HighestCommonType(arr.Select(x => x.GetCarpType()).ToArray());
+
+        return new CarpCollection(type, arr);
+    }
     public override object VisitMap(CarpGrammarParser.MapContext context) => base.VisitMap(context);
     public override object VisitRangeExpression(CarpGrammarParser.RangeExpressionContext context) => base.VisitRangeExpression(context);
     public override object VisitType_name_list(CarpGrammarParser.Type_name_listContext context)
