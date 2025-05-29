@@ -30,4 +30,16 @@ public partial class CarpVisitor
     public override object VisitArray(CarpGrammarParser.ArrayContext context) => base.VisitArray(context);
     public override object VisitMap(CarpGrammarParser.MapContext context) => base.VisitMap(context);
     public override object VisitRangeExpression(CarpGrammarParser.RangeExpressionContext context) => base.VisitRangeExpression(context);
+    public override object VisitType_name_list(CarpGrammarParser.Type_name_listContext context)
+    {
+        return context._types.Zip(context._names, (type, name) => 
+            (CarpType: this.VisitType(type), Name: name.Text))
+            .ToArray();
+    }
+    public override object VisitExpression_list(CarpGrammarParser.Expression_listContext context)
+    {
+        return context._expressions
+            .Select(expr => this.VisitExpression(expr))
+            .ToArray();
+    }
 }

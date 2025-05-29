@@ -7,15 +7,16 @@ namespace Carp.objects;
 
 public class InternalFunction : CarpFunction
 {
-    private readonly CarpGrammarParser.BlockContext _block;
+    private readonly CarpGrammarParser.FunctionDefinitionContext _block;
     private readonly Dictionary<string, CarpType> _parameters;
     private readonly CarpVisitor _visitor;
 
     public readonly string ID = Helpers.GenerateID();
     
-    public InternalFunction(CarpType returnType, CarpGrammarParser.BlockContext block, Dictionary<string, CarpType> parameters, CarpVisitor visitor) : base(returnType)
+    public InternalFunction(CarpType returnType, CarpGrammarParser.FunctionDefinitionContext block, Dictionary<string, CarpType> parameters, CarpVisitor visitor) : base(returnType)
     {
-        this._block = block.Clone<CarpGrammarParser.BlockContext>();
+        // this._block = block.Clone<CarpGrammarParser.BlockContext>();
+        this._block = block;
         this._parameters = parameters;
         this._visitor = visitor;
     }
@@ -39,9 +40,22 @@ public class InternalFunction : CarpFunction
         }
         
         // Execute the block in the new scope
-        CarpObject result = (CarpObject)this._visitor.VisitBlock(this._block._statements);
+        CarpObject result = (CarpObject)this._visitor.Visit(this._block.body);
         return result.Coerce(this.ReturnType);
 
     }
-    public override bool Accepts(CarpObject[] args) => throw new NotImplementedException();
+    public override bool Accepts(CarpObject[] args)
+    {
+        if (args.Length != this._parameters.Count)
+            return false;
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            var paramName = this._parameters.Keys.ElementAt(i);
+            if (!args[i].GetCarpType().Extends(this._parameters[paramName]))
+                return false;
+        }
+        
+        return true;
+    }
 }

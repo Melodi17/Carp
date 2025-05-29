@@ -17,9 +17,10 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2f215d55_002Df649_002D4e8d_002Da1e1_002D8eebc210ec7a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3e799849_002D7364_002D487b_002D86da_002D7f5977d3cce5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SimpleVariableDeclaration" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6e171512_002D0572_002D4c10_002Dbaec_002D392af7b7f71d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SimpleSumNumberMethod" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::D31B8E18-CE74-4E78-8BAB-095944B8CB0C::net9.0::CarpTests.LanguageSanityTests.SimpleVariableDeclaration&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::D31B8E18-CE74-4E78-8BAB-095944B8CB0C::net9.0::CarpTests.LanguageSanityTests.SimpleSumNumberMethod&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

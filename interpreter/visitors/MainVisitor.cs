@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
@@ -36,7 +37,7 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         throw new InterpreterException(
             $"Expected type, but got {contextRtype.GetType().GetFormattedName()} instead.");
     }
-
+    
     public override object Visit(IParseTree tree)
     {
         if (tree is Context ctx)
@@ -49,7 +50,7 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         
         return base.Visit(tree);
     }
-
+    
     public override object VisitChildren(IRuleNode node)
     {
         object result = this.DefaultResult;

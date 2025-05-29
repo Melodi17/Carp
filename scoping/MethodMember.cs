@@ -8,8 +8,8 @@ public class MethodMember : Member
 {
     private readonly List<CarpFunction> _overloads;
 
-    public MethodMember(string name, CarpType type, params CarpFunction[] overloads)
-        : base(name, type)
+    public MethodMember(string name, params CarpFunction[] overloads)
+        : base(name, CarpFunction.Type)
     {
         _overloads = overloads.ToList();
     }
@@ -35,5 +35,14 @@ public class MethodMember : Member
     {
         // Optional: union of return types, or just first
         return _overloads[0].ReturnType;
+    }
+    public void Merge(MethodMember other)
+    {
+        // copy overloads from other to this
+        foreach (var overload in other._overloads)
+            _overloads.Add(overload);
+        
+        this.Docstring ??= other.Docstring;
+        this.Modifiers |= other.Modifiers;
     }
 }

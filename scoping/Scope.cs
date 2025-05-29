@@ -36,7 +36,19 @@ public class Scope : IDisposable
         else
             throw new MemberNotFoundException(owner, name);
     }
+    
+    public bool TryFind(string name, out Member? member)
+    {
+        if (this.Values.TryGetValue(name, out member))
+            return true;
 
+        if (this.Parent != null)
+            return this.Parent.TryFind(name, out member);
+
+        member = null;
+        return false;
+    }
+    
     public void Define(Member member)
     {
         if (!this.Values.TryAdd(member.Name, member))

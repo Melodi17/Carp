@@ -48,7 +48,8 @@ public class Context : ParserRuleContext
         var settings = new JsonSerializerSettings
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            TypeNameHandling = TypeNameHandling.Auto,
         };
         // use newtonsoft json to clone the context
         T copy = JsonConvert.DeserializeObject<T>(

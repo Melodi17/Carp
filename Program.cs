@@ -22,7 +22,7 @@ public class Program
         while (true)
         {
             Console.Write(" : ");
-            CarpObject res = RunString(Console.ReadLine()!, globalScope);
+            CarpObject res = RunString(Console.ReadLine()!, globalScope, WriteRichError);
             if (res != CarpVoid.Instance)
                 WriteRichObject(res);
         }
@@ -66,7 +66,7 @@ public class Program
         return s;
     }
 
-    public static CarpObject RunString(string text, Scope? scope = null)
+    public static CarpObject RunString(string text, Scope? scope = null, Action<RuntimeException>? OnError = null)
     {
         CarpGrammarParser.ProgramContext program = null;
         try
@@ -102,7 +102,7 @@ public class Program
         }
         catch (RuntimeException e)
         {
-            WriteRichError(e);
+            OnError?.Invoke(e);
             // Console.Error.WriteLine(e.ToString());
             return CarpVoid.Instance;
         }

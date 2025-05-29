@@ -170,7 +170,13 @@ public partial class CarpVisitor
     public override object VisitWindExpression(CarpGrammarParser.WindExpressionContext context) => base.VisitWindExpression(context);
     public override object VisitCastExpression(CarpGrammarParser.CastExpressionContext context) => base.VisitCastExpression(context);
     public override object VisitParenthesizedExpression(CarpGrammarParser.ParenthesizedExpressionContext context) => base.VisitParenthesizedExpression(context);
-    public override object VisitCallExpression(CarpGrammarParser.CallExpressionContext context) => base.VisitCallExpression(context);
+    public override object VisitCallExpression(CarpGrammarParser.CallExpressionContext context)
+    {
+        CarpObject? obj = this.VisitExpression(context.obj);
+        CarpObject[] args = this.Visit(context.parameters) as CarpObject[] 
+                         ?? throw new InterpreterException("Parameters must be a CarpObject array");
+        return obj.Call(args);
+    }
     public override object VisitInfixExpression(CarpGrammarParser.InfixExpressionContext context) => base.VisitInfixExpression(context);
     public override object VisitCompoundAssignmentExpression(CarpGrammarParser.CompoundAssignmentExpressionContext context) => base.VisitCompoundAssignmentExpression(context);
     public override object VisitFilterExpression(CarpGrammarParser.FilterExpressionContext context) => base.VisitFilterExpression(context);
