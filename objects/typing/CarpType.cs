@@ -17,7 +17,8 @@ public class CarpType : CarpObject
     public string Name { get; }
     public CarpType? BaseType { get; }
     public CarpType[] TypeArguments { get; }
-
+    // Used for grouping types, e.g. "List" for "List<int>" or Number for "Number<int>"
+    public string? Group { get; set; }
     public bool IsGeneric => this.TypeArguments.Length > 0;
     public override CarpString String() => CarpString.Create($"{this.Name}");
     public CarpObject DefaultValue()
@@ -48,6 +49,9 @@ public class CarpType : CarpObject
             return true;
 
         if (type == CarpNull.Type)
+            return true;
+        
+        if (this.Group == type.Group)
             return true;
 
         return false;
@@ -82,7 +86,7 @@ public class CarpType : CarpObject
             CarpObject.Type,
             CarpType.Type,
             CarpString.Type,
-            CarpNumber.Type,
+            ..CarpNumber.AllTypes,
             CarpNull.Type,
             CarpVoid.Type,
             CarpBoolean.Type
