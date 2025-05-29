@@ -65,11 +65,24 @@ public class CarpType : CarpObject
     }
 
     private static List<Action>? builderQueue;
-    public static void ConstructTypes()
+    public static CarpType[] ConstructTypes()
     {
+        CarpType[] knownTypes =
+        [
+            CarpObject.Type,
+            CarpType.Type,
+            CarpString.Type,
+            CarpNumber.Type,
+            CarpNull.Type,
+            CarpVoid.Type,
+            CarpBoolean.Type
+        ];
+        
         foreach (Action builder in builderQueue ?? [])
             builder();
         builderQueue?.Clear();
+        
+        return knownTypes;
     }
 }
 

@@ -46,17 +46,8 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
                 ctx.ReplicateParent(parent);
             //Console.WriteLine($"Visiting {ctx.GetType().GetFormattedName()} at line {ctx.Position}");
         }
-
-        try
-        {
-            return base.Visit(tree);
-        }
-        catch (RuntimeException e)
-        {
-            if (tree is Context ctx2)
-                e.AddStackFrame(new(ctx2));
-            throw;
-        }
+        
+        return base.Visit(tree);
     }
 
     public override object VisitChildren(IRuleNode node)

@@ -1,3 +1,4 @@
+using Carp.exceptions;
 using Carp.objects;
 using Carp.scoping;
 
@@ -7,21 +8,34 @@ public partial class CarpVisitor
 {
     public override object VisitProgram(CarpGrammarParser.ProgramContext context)
     {
-        return this.VisitChildren(context) ?? CarpVoid.Instance;
+        return this.VisitBlock(context._statements) ?? CarpVoid.Instance;
     }
     public override object VisitBlock(CarpGrammarParser.BlockContext context)
     {
         Scope s = new(context.Scope);
+        context.Scope = s;
 
+        var res = this.VisitBlock(context._statements);
+        s.Dispose();
+        
+        return res;
+    }
+    private object VisitBlock(IList<CarpGrammarParser.StatementContext> statements)
+    {
         object? obj = null;
 
-        context.Scope = s;
-        foreach (CarpGrammarParser.StatementContext? statement in context._statements)
+        foreach (CarpGrammarParser.StatementContext? statement in statements)
         {
-            obj = this.Visit(statement);
+            try
+            {
+                obj = this.Visit(statement);
+            }
+            catch (RuntimeException e)
+            {
+                e.AddStackFrame(new(statement));
+                throw;
+            }
         }
-        
-        s.Dispose();
 
         return obj as CarpObject ?? CarpVoid.Instance;
     }

@@ -63,7 +63,7 @@ public abstract class CarpObject
     /// <exception cref="MemberNotAccessibleException">Throws when can't find specified member</exception>
     public virtual Member Member(string name, CarpObject? caller = null, bool meta = false)
     {
-        Member member = this.Members.Find(name);
+        Member member = this.Members.Find(name, this);
 
         if (this.IsAccessible(member, caller) || meta)
             return member;

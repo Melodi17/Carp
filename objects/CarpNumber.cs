@@ -4,7 +4,8 @@ namespace Carp.objects;
 
 public class CarpNumber : CarpObject
 {
-    public new static readonly CarpType Type = CarpType.Create("int", CarpObject.Type);
+    public new static readonly CarpType Type = CarpType.Create("int", CarpObject.Type, b =>
+        b.DefaultValue(() => CarpNumber.Create(0)));
     public override CarpType GetCarpType() => Type;
     public double Value { get; }
     public int ValueFull => (int)this.Value;
