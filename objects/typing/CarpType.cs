@@ -56,7 +56,7 @@ public class CarpType : CarpObject
 
     public bool Extends(CarpType type)
     {
-        if (object.ReferenceEquals(this, type))
+        if (ReferenceEquals(this, type))
             return true;
 
         if (this.BaseType != null && this.BaseType.Extends(type))
@@ -108,7 +108,17 @@ public class CarpType : CarpObject
     }
     public static CarpType[] ConstructTypes()
     {
-        CarpType[] knownTypes = [CarpObject.Type, CarpType.Type, CarpString.Type, CarpNull.Type, CarpVoid.Type, CarpBoolean.Type, CarpCollection.Type, ..CarpNumber.AllTypes];
+        CarpType[] knownTypes =
+        [
+            CarpObject.Type,
+            CarpType.Type,
+            CarpString.Type,
+            CarpNull.Type,
+            CarpVoid.Type,
+            CarpBoolean.Type,
+            CarpCollection.Type,
+            ..CarpNumber.AllTypes,
+        ];
 
         foreach (Action builder in CarpType.builderQueue ?? [])
             builder();

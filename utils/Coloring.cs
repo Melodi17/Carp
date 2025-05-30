@@ -133,7 +133,17 @@ public class Coloring
     public static string ColorTest(bool noNewLine = false)
     {
         string result = "";
-        string[] colors = ["black", "red", "yellow", "green", "cyan", "blue", "magenta", "white"];
+        string[] colors =
+        [
+            "black",
+            "red",
+            "yellow",
+            "green",
+            "cyan",
+            "blue",
+            "magenta",
+            "white",
+        ];
 
         // Enum.GetValues<ConsoleColor>();
 
