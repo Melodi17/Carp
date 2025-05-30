@@ -22,7 +22,11 @@ public class Program
         while (true)
         {
             Console.Write(" : ");
-            CarpObject res = Program.RunString(Console.ReadLine()!, globalScope, Program.WriteRichError, blockCount);
+            string? input = Console.ReadLine();
+            if (input == null)
+                return;
+            
+            CarpObject res = Program.RunString(input, globalScope, Program.WriteRichError, blockCount);
             if (res != CarpVoid.Instance)
                 Program.WriteRichObject(res);
             blockCount++;
@@ -62,7 +66,8 @@ public class Program
     {
         Scope s = new();
         foreach (CarpType type in types)
-            s.Define(new FieldMember(type.Name, CarpType.Type, type));
+            s.Define(new FieldMember(type.Name, CarpType.Type, type)
+                .With(Modifiers.Final));
 
         return s;
     }

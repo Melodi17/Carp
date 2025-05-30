@@ -176,7 +176,14 @@ public partial class CarpVisitor
     public override object VisitCompoundAssignmentExpression(CarpGrammarParser.CompoundAssignmentExpressionContext context) => base.VisitCompoundAssignmentExpression(context);
     public override object VisitFilterExpression(CarpGrammarParser.FilterExpressionContext context) => base.VisitFilterExpression(context);
     public override object VisitIndexExpression(CarpGrammarParser.IndexExpressionContext context) => base.VisitIndexExpression(context);
-    public override object VisitTernaryExpression(CarpGrammarParser.TernaryExpressionContext context) => base.VisitTernaryExpression(context);
+    public override object VisitTernaryExpression(CarpGrammarParser.TernaryExpressionContext context)
+    {
+        CarpObject? condition = this.VisitExpression(context.condition);
+        if (CarpObject.IsTruthy(condition))
+            return this.VisitExpression(context.left);
+
+        return this.VisitExpression(context.right);
+    }
     public override object VisitPostfixExpression(CarpGrammarParser.PostfixExpressionContext context) => base.VisitPostfixExpression(context);
     public override object VisitPropertyExpression(CarpGrammarParser.PropertyExpressionContext context)
     {
