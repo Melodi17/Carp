@@ -1,14 +1,16 @@
-using Carp.exceptions.impl;
-using Carp.objects;
-
 namespace Carp.scoping;
+
+using exceptions.impl;
+using objects;
 
 public class Scope : IDisposable
 {
+    public Scope(Scope? parent = null)
+    {
+        this.Parent = parent;
+    }
     public Dictionary<string, Member> Values { get; } = new();
     public Scope? Parent { get; }
-
-    public Scope(Scope? parent = null) => this.Parent = parent;
 
     public void Dispose()
     {
@@ -16,12 +18,14 @@ public class Scope : IDisposable
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="name"></param>
     /// <param name="owner">Owner is only relevant when member belongs to an object</param>
     /// <returns>Specified member if found</returns>
-    /// <exception cref="ReferenceDoesNotExistException">Thrown when a value can not be found in the scope, and the value has no owner</exception>
+    /// <exception cref="ReferenceDoesNotExistException">
+    ///     Thrown when a value can not be found in the scope, and the value has
+    ///     no owner
+    /// </exception>
     /// <exception cref="MemberNotFoundException">Thrown when a value can not be found in the scope, and the value has an owner</exception>
     public Member Find(string name, CarpObject? owner = null)
     {
@@ -33,10 +37,9 @@ public class Scope : IDisposable
 
         if (owner == null)
             throw new ReferenceDoesNotExistException(name);
-        else
-            throw new MemberNotFoundException(owner, name);
+        throw new MemberNotFoundException(owner, name);
     }
-    
+
     public bool TryFind(string name, out Member? member)
     {
         if (this.Values.TryGetValue(name, out member))
@@ -48,7 +51,7 @@ public class Scope : IDisposable
         member = null;
         return false;
     }
-    
+
     public void Define(Member member)
     {
         if (!this.Values.TryAdd(member.Name, member))

@@ -1,27 +1,23 @@
-using System.Text;
-using Carp.objects.typing;
-using Carp.scoping;
-
 namespace Carp.objects;
+
+using scoping;
+using typing;
 
 public class CarpCollection : CarpObject
 {
-    public static new readonly CarpType Type = CarpType.Create("collection", CarpObject.Type, b => b
-        .Member(new PropertyMember("length", CarpNumber.Type)
-            .Getter(x => CarpNumber.Create(((CarpCollection)x).Items.Count))));
+    public new static readonly CarpType Type = CarpType.Create("collection", CarpObject.Type,
+        b => b.Member(new PropertyMember("length", CarpNumber.Type).Getter(x => CarpNumber.Create(((CarpCollection) x).Items.Count))));
     private readonly CarpType _itemType;
-    public List<CarpObject> Items { get; }
-    public CarpCollection(CarpType itemType, IEnumerable<CarpObject> items) : base(CarpType.CreateGeneric(Type, itemType))
+    public CarpCollection(CarpType itemType, IEnumerable<CarpObject> items) : base(CarpType.CreateGeneric(CarpCollection.Type, itemType))
     {
         this._itemType = itemType;
         this.Items = items.ToList();
     }
-    public override CarpType GetCarpType() => CarpType.CreateGeneric(Type, this._itemType);
+    public List<CarpObject> Items { get; }
+    public override CarpType GetCarpType() => CarpType.CreateGeneric(CarpCollection.Type, this._itemType);
     public override CarpString String()
     {
-        return CarpString.Create($"[" +
-                                 $"{string.Join(", ", this.Items.Select(i => i.Repr()))}" +
-                                 $"]");
+        return CarpString.Create($"[" + $"{string.Join(", ", this.Items.Select(i => i.Repr()))}" + $"]");
     }
 
     public override CarpObject Coerce(CarpType type)
@@ -29,9 +25,9 @@ public class CarpCollection : CarpObject
         if (type.Extends(CarpCollection.Type))
         {
             CarpType itemType = type.TypeArguments[0];
-            return new CarpCollection(itemType, Items.Select(x => x.Coerce(itemType)));
+            return new CarpCollection(itemType, this.Items.Select(x => x.Coerce(itemType)));
         }
-        
+
         return base.Coerce(type);
     }
 }

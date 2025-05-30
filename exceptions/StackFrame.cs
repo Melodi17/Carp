@@ -1,12 +1,12 @@
-using Carp.interpreter;
-
 namespace Carp.exceptions;
+
+using interpreter;
 
 public class StackFrame
 {
-    public Context Context { get; }
     public StackFrame(Context context)
     {
         this.Context = context;
     }
+    public Context Context { get; }
 }

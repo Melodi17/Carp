@@ -1,42 +1,41 @@
 // See https://aka.ms/new-console-template for more information
 
-using System.Text;
-using Antlr4.Runtime;
-using Carp.exceptions;
-using Carp.interpreter;
-using Carp.interpreter.visitors;
-using Carp.objects;
-using Carp.objects.typing;
-using Carp.scoping;
-using Carp.utils;
-
 namespace Carp;
+
+using Antlr4.Runtime;
+using exceptions;
+using interpreter;
+using interpreter.visitors;
+using objects;
+using objects.typing;
+using scoping;
+using utils;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        var types = CarpType.ConstructTypes();
-        Scope globalScope = MakeScope(types);
+        CarpType[]? types = CarpType.ConstructTypes();
+        Scope globalScope = Program.MakeScope(types);
 
         while (true)
         {
             Console.Write(" : ");
-            CarpObject res = RunString(Console.ReadLine()!, globalScope, WriteRichError);
+            CarpObject res = Program.RunString(Console.ReadLine()!, globalScope, Program.WriteRichError);
             if (res != CarpVoid.Instance)
-                WriteRichObject(res);
+                Program.WriteRichObject(res);
         }
     }
     private static void WriteRichObject(CarpObject res)
     {
         ConsoleColor color = res switch
         {
-            CarpString => (ConsoleColor.Cyan),
-            CarpNumber => (ConsoleColor.Yellow),
-            CarpBoolean => (ConsoleColor.Green),
-            CarpNull _ => (ConsoleColor.DarkGray),
-            CarpVoid _ => (ConsoleColor.DarkGray),
-            _ => (ConsoleColor.White)
+            CarpString => ConsoleColor.Cyan,
+            CarpNumber => ConsoleColor.Yellow,
+            CarpBoolean => ConsoleColor.Green,
+            CarpNull _ => ConsoleColor.DarkGray,
+            CarpVoid _ => ConsoleColor.DarkGray,
+            _ => ConsoleColor.White,
         };
 
         Console.ForegroundColor = color;
@@ -47,7 +46,7 @@ public class Program
     private static void WriteRichError(RuntimeException ex)
     {
         void Print(string text) => Console.Error.WriteLine(Coloring.SubstituteStyles(text));
-        
+
         Print($" %red%{ex.ErrorFriendlyName}: %white%{ex.Message}");
         foreach (StackFrame frame in ex.InternalStackTrace)
         {
@@ -60,7 +59,7 @@ public class Program
     public static Scope MakeScope(CarpType[] types)
     {
         Scope s = new();
-        foreach (var type in types)
+        foreach (CarpType type in types)
             s.Define(new FieldMember(type.Name, CarpType.Type, type));
 
         return s;
@@ -86,9 +85,9 @@ public class Program
         }
 
         if (program == null)
-            throw new("Failed to parse the program.");
+            throw new Exception("Failed to parse the program.");
 
-        program.Scope = scope ?? MakeScope(CarpType.ConstructTypes());
+        program.Scope = scope ?? Program.MakeScope(CarpType.ConstructTypes());
         program.ExecutionContext = new ReplExecutionContext(text);
 
         CarpVisitor visitor = new();
@@ -96,7 +95,7 @@ public class Program
         {
             CarpObject? output = visitor.Visit(program) as CarpObject;
             if (output == null)
-                throw new("Failed to visit the program.");
+                throw new Exception("Failed to visit the program.");
 
             return output;
         }

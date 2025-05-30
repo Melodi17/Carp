@@ -1,8 +1,8 @@
-using Carp.objects;
-using Carp.objects.typing;
-using Carp.scoping;
-
 namespace Carp.interpreter.visitors;
+
+using objects;
+using objects.typing;
+using scoping;
 
 public partial class CarpVisitor
 {
@@ -10,7 +10,7 @@ public partial class CarpVisitor
     {
         string name = context.ID().GetText();
         Member member = context.Scope.Find(name);
-        
+
         // Self is null because we are looking at
         // this outside of an object
         return member.Get(null);

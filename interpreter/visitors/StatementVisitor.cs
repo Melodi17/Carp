@@ -1,23 +1,20 @@
-using Carp.exceptions;
-using Carp.objects;
-using Carp.scoping;
-
 namespace Carp.interpreter.visitors;
+
+using exceptions;
+using objects;
+using scoping;
 
 public partial class CarpVisitor
 {
-    public override object VisitProgram(CarpGrammarParser.ProgramContext context)
-    {
-        return this.VisitBlock(context._statements) ?? CarpVoid.Instance;
-    }
+    public override object VisitProgram(CarpGrammarParser.ProgramContext context) => this.VisitBlock(context._statements) ?? CarpVoid.Instance;
     public override object VisitBlock(CarpGrammarParser.BlockContext context)
     {
         Scope s = new(context.Scope);
         context.Scope = s;
 
-        var res = this.VisitBlock(context._statements);
+        object? res = this.VisitBlock(context._statements);
         s.Dispose();
-        
+
         return res;
     }
     public object VisitBlock(IList<CarpGrammarParser.StatementContext> statements)
@@ -32,7 +29,7 @@ public partial class CarpVisitor
             }
             catch (RuntimeException e)
             {
-                e.AddStackFrame(new(statement));
+                e.AddStackFrame(new StackFrame(statement));
                 throw;
             }
         }

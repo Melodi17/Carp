@@ -8,7 +8,7 @@
         <ApplicationIcon>assets\carplogo.ico</ApplicationIcon>
         <Authors>Melodi17</Authors>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        
+
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>carp</ToolCommandName>
         <PackageProjectUrl>https://github.com/Melodi17/Carp</PackageProjectUrl>
@@ -18,14 +18,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.0" />
-      <PackageReference Include="CommandLineParser" Version="2.9.1" />
-      <PackageReference Include="LLVMSharp" Version="16.0.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.0"/>
+        <PackageReference Include="CommandLineParser" Version="2.9.1"/>
+        <PackageReference Include="LLVMSharp" Version="16.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="gen\" />
+        <Folder Include="gen\"/>
     </ItemGroup>
 
 </Project>

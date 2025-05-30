@@ -1,9 +1,9 @@
-using Carp.interpreter.visitors;
-using Carp.objects.typing;
-using Carp.scoping;
-using Carp.utils;
-
 namespace Carp.objects;
+
+using interpreter.visitors;
+using scoping;
+using typing;
+using utils;
 
 public class InternalFunction : CarpFunction
 {
@@ -12,7 +12,7 @@ public class InternalFunction : CarpFunction
     private readonly CarpVisitor _visitor;
 
     public readonly string ID = Helpers.GenerateID();
-    
+
     public InternalFunction(CarpType returnType, CarpGrammarParser.FunctionDefinitionContext block, Dictionary<string, CarpType> parameters, CarpVisitor visitor) : base(returnType)
     {
         // this._block = block.Clone<CarpGrammarParser.BlockContext>();
@@ -22,10 +22,10 @@ public class InternalFunction : CarpFunction
     }
 
 
-    public override CarpString String() => CarpString.Create($"<internal function {ID}>");
+    public override CarpString String() => CarpString.Create($"<internal function {this.ID}>");
     public override CarpObject Call(CarpObject? self, CarpObject[] args)
     {
-        Scope scope = new Scope(this._block.Scope);
+        Scope scope = new(this._block.Scope);
         this._block.Scope = scope;
         this._block.CurrentObject = self;
 
@@ -34,15 +34,14 @@ public class InternalFunction : CarpFunction
         {
             if (i >= this._parameters.Count)
                 throw new ArgumentException($"Too many arguments provided to function {this.ID}");
-            
-            var paramName = this._parameters.Keys.ElementAt(i);
+
+            string paramName = this._parameters.Keys.ElementAt(i);
             scope.Define(new FieldMember(paramName, this._parameters[paramName], args[i]));
         }
-        
-        // Execute the block in the new scope
-        CarpObject result = (CarpObject)this._visitor.Visit(this._block.body);
-        return result.Coerce(this.ReturnType);
 
+        // Execute the block in the new scope
+        CarpObject result = (CarpObject) this._visitor.Visit(this._block.body);
+        return result.Coerce(this.ReturnType);
     }
     public override bool Accepts(CarpObject[] args)
     {
@@ -51,11 +50,11 @@ public class InternalFunction : CarpFunction
 
         for (int i = 0; i < args.Length; i++)
         {
-            var paramName = this._parameters.Keys.ElementAt(i);
+            string? paramName = this._parameters.Keys.ElementAt(i);
             if (!args[i].GetCarpType().Extends(this._parameters[paramName]))
                 return false;
         }
-        
+
         return true;
     }
 }

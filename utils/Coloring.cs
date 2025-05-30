@@ -1,14 +1,15 @@
-using System.Text.RegularExpressions;
-
 namespace Carp.utils;
+
+using System.Text.RegularExpressions;
 
 public class Coloring
 {
+    private const string Esc = "\x1b";
     public static void Init()
     {
         // TODO: enable vt processing on windows
     }
-    
+
     // Styles are stored in format %style%
     public static string SubstituteStyles(string text)
     {
@@ -26,13 +27,13 @@ public class Coloring
             }
 
             string[] styles = style.Split(' ');
-            string finalStyle = styles.Aggregate("", (c, s) => c + GetStyle(s));
+            string finalStyle = styles.Aggregate("", (c, s) => c + Coloring.GetStyle(s));
 
             result = result.Replace(match.Value, finalStyle);
         }
-        
+
         if (!Regex.IsMatch(text, "^%([^%]*)%$"))
-            result += AnsiStyle("reset", true);
+            result += Coloring.AnsiStyle("reset", true);
 
         // if (matches.Count > 0)
         //     result += AnsiStyle("reset", true);
@@ -50,10 +51,7 @@ public class Coloring
         return result;
     }
 
-    public static string StripAnsi(string text)
-    {
-        return Regex.Replace(text, @"\x1b\[[0-9;]*m", "");
-    }
+    public static string StripAnsi(string text) => Regex.Replace(text, @"\x1b\[[0-9;]*m", "");
 
     private static string GetStyle(string style)
     {
@@ -62,9 +60,9 @@ public class Coloring
             style = style[1..];
 
         if (Enum.TryParse(style, true, out ConsoleColor color))
-            return AnsiColor(color, flag);
+            return Coloring.AnsiColor(color, flag);
 
-        return AnsiStyle(style, flag);
+        return Coloring.AnsiStyle(style, flag);
     }
 
     // Variables are stored in format $var
@@ -74,11 +72,9 @@ public class Coloring
         // We sort the variables by length to avoid replacing substrings, e.g. $name and $name2
         foreach (KeyValuePair<string, string> variable in variables.OrderBy(v => v.Key.Length))
             result = result.Replace($"${variable.Key}", variable.Value);
-        
+
         return result;
     }
-
-    private const string Esc = "\x1b";
 
     private static string AnsiStyle(string style, bool reset)
     {
@@ -89,15 +85,15 @@ public class Coloring
             "underline" => (4, 24),
             "inverse" => (7, 27),
             "reset" => (0, 0),
-            _ => throw new($"Invalid style '{style}'")
+            _ => throw new Exception($"Invalid style '{style}'"),
         };
 
-        return $"{Esc}[{(reset ? styleCodes.Item2 : styleCodes.Item1)}m";
+        return $"{Coloring.Esc}[{(reset ? styleCodes.Item2 : styleCodes.Item1)}m";
     }
 
     // \x1b[31mHello world\x1b[0m
 
-    private static string AnsiColor(string text, int r, int g, int b) => $"{Esc}[38;2;{r};{g};{b}m";
+    private static string AnsiColor(string text, int r, int g, int b) => $"{Coloring.Esc}[38;2;{r};{g};{b}m";
 
     private static string AnsiColor(ConsoleColor color, bool background)
     {
@@ -124,24 +120,20 @@ public class Coloring
             ConsoleColor.DarkCyan => 36,
             ConsoleColor.White => 137,
 
-            _ => throw new("Invalid color")
+            _ => throw new Exception("Invalid color"),
         };
 
         if (background)
             c += 10;
 
-        return c > 100 ? $"{Esc}[1;{c - 100}m" : $"{Esc}[{c}m";
+        return c > 100 ? $"{Coloring.Esc}[1;{c - 100}m" : $"{Coloring.Esc}[{c}m";
         // return $"{Esc}[{c}m";
     }
 
     public static string ColorTest(bool noNewLine = false)
     {
         string result = "";
-        string[] colors =
-        [
-            "black", "red", "yellow", "green", "cyan",
-            "blue", "magenta", "white"
-        ];
+        string[] colors = ["black", "red", "yellow", "green", "cyan", "blue", "magenta", "white"];
 
         // Enum.GetValues<ConsoleColor>();
 
@@ -150,7 +142,7 @@ public class Coloring
             string color = colors[i];
             if (i % (colors.Length / 2) == 0 && i != 0 && !noNewLine)
                 result += "\n";
-            result +=  $"%!{color}%     %reset%";
+            result += $"%!{color}%     %reset%";
         }
 
         return result;
@@ -166,7 +158,7 @@ public class Coloring
             ConsoleColor color = colors[i];
             if (i % (colors.Length / 2) == 0 && i != 0)
                 result += "\n";
-            result += AnsiColor(color, false) + color.ToString().Replace("Dark", "D").PadLeft(9) + AnsiStyle("reset", true);
+            result += Coloring.AnsiColor(color, false) + color.ToString().Replace("Dark", "D").PadLeft(9) + Coloring.AnsiStyle("reset", true);
         }
 
         return result;

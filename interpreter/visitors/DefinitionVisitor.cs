@@ -1,24 +1,19 @@
-using System.Text;
-using Carp.objects;
-using Carp.objects.typing;
-using Carp.scoping;
-
 namespace Carp.interpreter.visitors;
+
+using objects;
+using objects.typing;
+using scoping;
 
 public partial class CarpVisitor
 {
     public override object VisitWrapped_definition(CarpGrammarParser.Wrapped_definitionContext context)
     {
         // Receives a partially constructed member and completes.
-        Member member = (Member)this.Visit(context.def);
+        Member member = (Member) this.Visit(context.def);
 
-        member.Modifiers = context._modifiers
-            .Select(this.VisitToken<Modifiers>)
-            .MergeFlags();
+        member.Modifiers = context._modifiers.Select(this.VisitToken<Modifiers>).MergeFlags();
 
-        member.Annotations = context._attrs
-            .Select(x => this.VisitExpression(x.obj))
-            .ToList();
+        member.Annotations = context._attrs.Select(x => this.VisitExpression(x.obj)).ToList();
 
         string? docstring = this.VisitDocstring(context._docs);
         member.Docstring = docstring;
@@ -29,13 +24,11 @@ public partial class CarpVisitor
     public override object VisitDefinitionStatement(CarpGrammarParser.DefinitionStatementContext context)
     {
         // Define to current scope.
-        Member member = (Member)this.Visit(context.wrapped_definition());
-        
+        Member member = (Member) this.Visit(context.wrapped_definition());
+
         // Basically if the member is a method, and it already exists in the scope,
         // we add an overload
-        if (member is MethodMember mm 
-            && context.Scope.TryFind(mm.Name, out Member? existing)
-            && existing is MethodMember existingMethod)
+        if (member is MethodMember mm && context.Scope.TryFind(mm.Name, out Member? existing) && existing is MethodMember existingMethod)
         {
             existingMethod.Merge(mm);
             return null!;
@@ -49,9 +42,7 @@ public partial class CarpVisitor
     {
         CarpType type = this.VisitType(context.rtype);
         string name = context.key.Text;
-        CarpObject value = context.value != null
-            ? this.VisitExpression(context.value)
-            : type.DefaultValue();
+        CarpObject value = context.value != null ? this.VisitExpression(context.value) : type.DefaultValue();
 
         Member member = new FieldMember(name, type, value);
         return member;
@@ -61,10 +52,9 @@ public partial class CarpVisitor
         // Create a function member.
         string name = context.key.Text;
         CarpType returnType = this.VisitType(context.rtype);
-        (CarpType Type, string Name)[] args = ((CarpType Type, string Name)[])this.Visit(context.values);
+        (CarpType Type, string Name)[] args = ((CarpType Type, string Name)[]) this.Visit(context.values);
 
-        InternalFunction func = new(returnType, context,
-            args.ToDictionary(x => x.Name, x => x.Type), this);
+        InternalFunction func = new(returnType, context, args.ToDictionary(x => x.Name, x => x.Type), this);
 
         MethodMember member = new(name, func);
         return member;

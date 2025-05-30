@@ -1,7 +1,7 @@
-using Carp.parser;
-using Carp.scoping;
-
 namespace Carp.interpreter.visitors;
+
+using parser;
+using scoping;
 
 public partial class CarpVisitor
 {
@@ -11,13 +11,13 @@ public partial class CarpVisitor
     public override object VisitDivideCompound(CarpGrammarParser.DivideCompoundContext context) => Compound.Divide;
     public override object VisitPowerCompound(CarpGrammarParser.PowerCompoundContext context) => Compound.Power;
     public override object VisitModulusCompound(CarpGrammarParser.ModulusCompoundContext context) => Compound.Modulus;
-    
+
     public override object VisitNegateUnary(CarpGrammarParser.NegateUnaryContext context) => Unary.Negate;
     public override object VisitNotUnary(CarpGrammarParser.NotUnaryContext context) => Unary.Not;
-    
+
     public override object VisitAndLogical(CarpGrammarParser.AndLogicalContext context) => Logical.And;
     public override object VisitOrLogical(CarpGrammarParser.OrLogicalContext context) => Logical.Or;
-    
+
     public override object VisitMatchComparison(CarpGrammarParser.MatchComparisonContext context) => Comparison.Equal;
     public override object VisitNotMatchComparison(CarpGrammarParser.NotMatchComparisonContext context) => Comparison.NotEqual;
     public override object VisitGreaterThanComparison(CarpGrammarParser.GreaterThanComparisonContext context) => Comparison.Greater;

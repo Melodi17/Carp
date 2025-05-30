@@ -1,13 +1,11 @@
-using System.Diagnostics;
-using System.Text;
+namespace Carp.interpreter.visitors;
+
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using Carp.exceptions;
-using Carp.objects;
-using Carp.objects.typing;
-using Carp.utils;
-
-namespace Carp.interpreter.visitors;
+using exceptions;
+using objects;
+using objects.typing;
+using utils;
 
 public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
 {
@@ -16,17 +14,16 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         if (this.Visit(context) is CarpObject carpObject)
             return carpObject;
 
-        throw new InterpreterException(
-            $"Expected CarpObject, but got {context.GetType().GetFormattedName()} instead.");
+        throw new InterpreterException($"Expected CarpObject, but got {context.GetType().GetFormattedName()} instead.");
     }
 
-    protected T VisitToken<T>(Context context) where T : Enum
+    protected T VisitToken<T>(Context context)
+        where T : Enum
     {
         if (this.Visit(context) is T token)
             return token;
 
-        throw new InterpreterException(
-            $"Expected token of {typeof(T).Name}, but got {context.GetType().GetFormattedName()} instead.");
+        throw new InterpreterException($"Expected token of {typeof(T).Name}, but got {context.GetType().GetFormattedName()} instead.");
     }
 
     private CarpType VisitType(CarpGrammarParser.TypeContext contextRtype)
@@ -34,10 +31,9 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         if (this.Visit(contextRtype) is CarpType type)
             return type;
 
-        throw new InterpreterException(
-            $"Expected type, but got {contextRtype.GetType().GetFormattedName()} instead.");
+        throw new InterpreterException($"Expected type, but got {contextRtype.GetType().GetFormattedName()} instead.");
     }
-    
+
     public override object Visit(IParseTree tree)
     {
         if (tree is Context ctx)
@@ -47,10 +43,10 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
                 ctx.ReplicateParent(parent);
             //Console.WriteLine($"Visiting {ctx.GetType().GetFormattedName()} at line {ctx.Position}");
         }
-        
+
         return base.Visit(tree);
     }
-    
+
     public override object VisitChildren(IRuleNode node)
     {
         object result = this.DefaultResult;
@@ -71,7 +67,6 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         if (contextDocs.Count == 0)
             return null;
 
-        return string.Join("\n", contextDocs
-            .Select(x => x.Text[2..].Trim()));
+        return string.Join("\n", contextDocs.Select(x => x.Text[2..].Trim()));
     }
 }

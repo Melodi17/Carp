@@ -9,4 +9,3 @@ public enum Compound
     Power,
     Modulus,
 }
-

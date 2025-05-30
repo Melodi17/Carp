@@ -1,11 +1,14 @@
-using Carp.scoping;
-
 namespace Carp.objects.typing;
+
+using scoping;
 
 public class CarpType : CarpObject
 {
     public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type);
-    public override CarpType GetCarpType() => Type;
+
+    private static readonly Dictionary<(CarpType, CarpType[]), CarpType> genericCache = new();
+
+    private static List<Action>? builderQueue;
     public CarpType(string name, CarpType? baseType, CarpType[] typeArguments, Func<CarpObject> defaultValueGen = null)
     {
         this.Name = name;
@@ -20,17 +23,17 @@ public class CarpType : CarpObject
     // Used for grouping types, e.g. "List" for "List<int>" or Number for "Number<int>"
     public string? Group { get; set; }
     public bool IsGeneric => this.TypeArguments.Length > 0;
+    public override CarpType GetCarpType() => CarpType.Type;
     public override CarpString String()
     {
-        if (!IsGeneric)
+        if (!this.IsGeneric)
             return CarpString.Create($"{this.Name}");
-        else if (this.Extends(CarpCollection.Type))
-            return CarpString.Create($"{TypeArguments[0].Repr()}*");
+        if (this.Extends(CarpCollection.Type))
+            return CarpString.Create($"{this.TypeArguments[0].Repr()}*");
         // TODO: implement map type
         // else if (this.Extends(CarpMap.Type))
         //     return CarpString.Create($"{TypeArguments[0].Repr()}:{TypeArguments[1].Repr()}");
-        else
-            return CarpString.Create($"{this.Name}<{(string.Join(", ", TypeArguments.Select(x => x.Repr())))}");
+        return CarpString.Create($"{this.Name}<{string.Join(", ", this.TypeArguments.Select(x => x.Repr()))}");
     }
     public CarpObject DefaultValue()
     {
@@ -53,7 +56,7 @@ public class CarpType : CarpObject
 
     public bool Extends(CarpType type)
     {
-        if (ReferenceEquals(this, type))
+        if (object.ReferenceEquals(this, type))
             return true;
 
         if (this.BaseType != null && this.BaseType.Extends(type))
@@ -71,7 +74,7 @@ public class CarpType : CarpObject
     public static CarpType Create(string name, CarpType? baseType, Action<CarpTypeBuilder>? builder = null)
     {
         CarpType t = new(name, baseType, []);
-        builderQueue ??= new();
+        CarpType.builderQueue ??= new List<Action>();
 
         void DeclareBaseTypeMembers(CarpType t)
         {
@@ -80,57 +83,48 @@ public class CarpType : CarpObject
         }
 
         if (builder != null)
-            builderQueue.Add(() =>
+        {
+            CarpType.builderQueue.Add(() =>
             {
                 DeclareBaseTypeMembers(t);
                 builder(new CarpTypeBuilder(t));
             });
-        else builderQueue.Add(() => DeclareBaseTypeMembers(t));
+        }
+        else
+            CarpType.builderQueue.Add(() => DeclareBaseTypeMembers(t));
         return t;
     }
-
-    private static Dictionary<(CarpType, CarpType[]), CarpType> genericCache = new();
     public static CarpType CreateGeneric(CarpType parentType, params CarpType[] generics)
     {
-        if (genericCache.ContainsKey((parentType, generics)))
-            return genericCache[(parentType, generics)];
-        
+        if (CarpType.genericCache.ContainsKey((parentType, generics)))
+            return CarpType.genericCache[(parentType, generics)];
+
         CarpType t = new(parentType.Name, parentType, generics);
         if (t.BaseType != null)
             t.Members = t.BaseType.Members.Clone();
 
-        genericCache[(parentType, generics)] = t;
+        CarpType.genericCache[(parentType, generics)] = t;
         return t;
     }
-
-    private static List<Action>? builderQueue;
     public static CarpType[] ConstructTypes()
     {
-        CarpType[] knownTypes =
-        [
-            CarpObject.Type,
-            CarpType.Type,
-            CarpString.Type,
-            CarpNull.Type,
-            CarpVoid.Type,
-            CarpBoolean.Type,
-            CarpCollection.Type,
-            ..CarpNumber.AllTypes,
-        ];
+        CarpType[] knownTypes = [CarpObject.Type, CarpType.Type, CarpString.Type, CarpNull.Type, CarpVoid.Type, CarpBoolean.Type, CarpCollection.Type, ..CarpNumber.AllTypes];
 
-        foreach (Action builder in builderQueue ?? [])
+        foreach (Action builder in CarpType.builderQueue ?? [])
             builder();
-        builderQueue?.Clear();
+        CarpType.builderQueue?.Clear();
 
         return knownTypes;
     }
-    
+
     public static CarpType HighestCommonType(CarpType[] arr)
     {
-        if (arr.Length == 0) return CarpObject.Type;
-        
+        if (arr.Length == 0)
+            return CarpObject.Type;
+
         CarpType type = arr[0];
-        while (arr.Any(x => !x.Extends(type))) type = type.BaseType;
+        while (arr.Any(x => !x.Extends(type)))
+            type = type.BaseType;
         return type;
     }
 }

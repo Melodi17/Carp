@@ -9,5 +9,5 @@ public enum Binary
     Power,
     Modulus,
     LeftShift,
-    RightShift
+    RightShift,
 }
