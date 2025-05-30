@@ -117,6 +117,7 @@ public class CarpType : CarpObject
             CarpVoid.Type,
             CarpBoolean.Type,
             CarpCollection.Type,
+            CarpFunction.Type,
             ..CarpNumber.AllTypes,
         ];
 

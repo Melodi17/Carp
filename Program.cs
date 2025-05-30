@@ -18,12 +18,14 @@ public class Program
         CarpType[]? types = CarpType.ConstructTypes();
         Scope globalScope = Program.MakeScope(types);
 
+        int blockCount = 0;
         while (true)
         {
             Console.Write(" : ");
-            CarpObject res = Program.RunString(Console.ReadLine()!, globalScope, Program.WriteRichError);
+            CarpObject res = Program.RunString(Console.ReadLine()!, globalScope, Program.WriteRichError, blockCount);
             if (res != CarpVoid.Instance)
                 Program.WriteRichObject(res);
+            blockCount++;
         }
     }
     private static void WriteRichObject(CarpObject res)
@@ -65,7 +67,7 @@ public class Program
         return s;
     }
 
-    public static CarpObject RunString(string text, Scope? scope = null, Action<RuntimeException>? OnError = null)
+    public static CarpObject RunString(string text, Scope? scope = null, Action<RuntimeException>? OnError = null, int? blockNum = null)
     {
         CarpGrammarParser.ProgramContext program = null;
         try
@@ -88,7 +90,7 @@ public class Program
             throw new Exception("Failed to parse the program.");
 
         program.Scope = scope ?? Program.MakeScope(CarpType.ConstructTypes());
-        program.ExecutionContext = new ReplExecutionContext(text);
+        program.ExecutionContext = new ReplExecutionContext(blockNum, text);
 
         CarpVisitor visitor = new();
         try

@@ -36,6 +36,33 @@ public partial class CarpVisitor
 
         return obj as CarpObject ?? CarpVoid.Instance;
     }
+
+    public override object VisitLambdaExpressionBlock(CarpGrammarParser.LambdaExpressionBlockContext context)
+    {
+        try
+        {
+            return this.Visit(context.expression());
+        }
+        catch (RuntimeException e)
+        {
+            e.AddStackFrame(new StackFrame(context.expression()));
+            throw;
+        }
+    }
+    public override object VisitLambdaBlock(CarpGrammarParser.LambdaBlockContext context)
+    {
+        try
+        { 
+            this.Visit(context.statement());
+            return CarpVoid.Instance;
+        }
+        catch (RuntimeException e)
+        {
+            e.AddStackFrame(new StackFrame(context.statement()));
+            throw;
+        }
+    }
+
     public override object VisitExpressionStatement(CarpGrammarParser.ExpressionStatementContext context) => base.VisitExpressionStatement(context);
     public override object VisitFlowControlStatement(CarpGrammarParser.FlowControlStatementContext context) => base.VisitFlowControlStatement(context);
     public override object VisitIf_statement(CarpGrammarParser.If_statementContext context) => base.VisitIf_statement(context);

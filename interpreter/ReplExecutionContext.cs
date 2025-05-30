@@ -1,9 +1,9 @@
 namespace Carp.interpreter;
 
-public class ReplExecutionContext(string text) : IExecutionContext
+public class ReplExecutionContext(int? blockIdx, string text) : IExecutionContext
 {
     private readonly string[] _lines = text.Replace("\r", "").Split('\n');
-    public string Name => "REPL";
+    public string Name => blockIdx != null ? $"REPL block {blockIdx + 1}" : "REPL";
 
     public string GetAtLine(int position)
     {
