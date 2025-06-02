@@ -55,7 +55,7 @@ public partial class CarpVisitor
     public override object VisitLambdaBlock(CarpGrammarParser.LambdaBlockContext context)
     {
         try
-        { 
+        {
             this.Visit(context.statement());
             return CarpVoid.Instance;
         }
@@ -71,17 +71,16 @@ public partial class CarpVisitor
         CarpObject? condition = this.VisitExpression(context.cond);
         if (CarpObject.IsTruthy(condition))
             this.Visit(context.body);
-        
+
         else if (context.else_block != null)
             this.Visit(context.else_block);
-            
-            
+
         // TODO implement else if
         return null!;
     }
     public override object VisitWhile_statement(CarpGrammarParser.While_statementContext context)
     {
-        var cond = context.cond;
+        CarpGrammarParser.ExpressionContext? cond = context.cond;
 
         while (CarpObject.IsTruthy(this.VisitExpression(cond)))
         {
@@ -104,8 +103,8 @@ public partial class CarpVisitor
         CarpObject iterable = this.VisitExpression(context.iter);
         if (iterable is not IIterable carpIterable)
             throw new ConversionException(iterable.GetCarpType(), IIterable.Type);
-        
-        var iterator = carpIterable.GetIterator();
+
+        IEnumerable<CarpObject> iterator = carpIterable.GetIterator();
         foreach (CarpObject _ in iterator)
         {
             try
@@ -118,7 +117,7 @@ public partial class CarpVisitor
                 break;
             }
         }
-        
+
         return null!;
     }
     public override object VisitIterAsStatement(CarpGrammarParser.IterAsStatementContext context)
@@ -126,19 +125,19 @@ public partial class CarpVisitor
         CarpObject iterable = this.VisitExpression(context.iter);
         if (iterable is not IIterable carpIterable)
             throw new ConversionException(iterable.GetCarpType(), IIterable.Type);
-        
-        CarpType type = VisitType(context.type());
+
+        CarpType type = this.VisitType(context.type());
         if (type == CarpType.Auto)
             // Set the item type to the type of the iterable
             type = iterable.GetCarpType().TypeArguments[0];
 
         string varName = context.ID().GetText();
-        
-        var iterator = carpIterable.GetIterator();
-        
+
+        IEnumerable<CarpObject> iterator = carpIterable.GetIterator();
+
         // We set the value to void since it is undefined at this point.
         Member iterMember = new FieldMember(varName, type, CarpVoid.Instance);
-        context.Scope = new(context.Scope);
+        context.Scope = new Scope(context.Scope);
         context.Scope.Define(iterMember);
         foreach (CarpObject item in iterator)
         {
@@ -163,17 +162,10 @@ public partial class CarpVisitor
     {
         if (context.value != null)
             throw new ReturnException(this.VisitExpression(context.value));
-        else
-            throw new ReturnException(CarpVoid.Instance);
+        throw new ReturnException(CarpVoid.Instance);
     }
-    public override object VisitBreak_statement(CarpGrammarParser.Break_statementContext context)
-    {
-        throw new BreakException();
-    }
-    public override object VisitContinue_statement(CarpGrammarParser.Continue_statementContext context)
-    {
-        throw new ContinueException();
-    }
+    public override object VisitBreak_statement(CarpGrammarParser.Break_statementContext context) => throw new BreakException();
+    public override object VisitContinue_statement(CarpGrammarParser.Continue_statementContext context) => throw new ContinueException();
     public override object VisitYield_statement(CarpGrammarParser.Yield_statementContext context) => base.VisitYield_statement(context);
     public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context) => base.VisitImportStatement(context);
 }

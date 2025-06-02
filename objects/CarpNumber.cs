@@ -157,11 +157,11 @@ public class CarpNumber<T> : CarpNumber
 
         throw new PrimitiveIncompatibleException("Power", this);
     }
-    public override CarpObject Modulus(CarpObject right) => right is CarpNumber<T> number ? CarpNumber<T>.CreateDirect(this.Value % number.Value, this._type) : base.Modulus(right);
+    public override CarpObject Modulus(CarpObject right) => right is CarpNumber number ? CarpNumber<T>.CreateDirect(this.Value % this.CoerceValue(number), this._type) : base.Modulus(right);
 
-    public override CarpObject Less(CarpObject right) => right is CarpNumber<T> number ? CarpBoolean.Create(this.Value < number.Value) : base.Less(right);
+    public override CarpObject Less(CarpObject right) => right is CarpNumber number ? CarpBoolean.Create(this.Value < this.CoerceValue(number)) : base.Less(right);
 
-    public override CarpObject Greater(CarpObject right) => right is CarpNumber<T> number ? CarpBoolean.Create(this.Value > number.Value) : base.Greater(right);
+    public override CarpObject Greater(CarpObject right) => right is CarpNumber number ? CarpBoolean.Create(this.Value > this.CoerceValue(number)) : base.Greater(right);
 
     public override CarpObject LeftShift(CarpObject right)
     {

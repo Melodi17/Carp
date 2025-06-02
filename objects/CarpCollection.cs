@@ -14,6 +14,11 @@ public class CarpCollection : CarpObject, IIterable
         this.Items = items.ToList();
     }
     public List<CarpObject> Items { get; }
+
+    public IEnumerable<CarpObject> GetIterator()
+    {
+        return this.Items.Select(item => item.Coerce(this._itemType));
+    }
     public override CarpType GetCarpType() => CarpType.CreateGeneric(CarpCollection.Type, this._itemType);
     public override CarpString String()
     {
@@ -29,10 +34,5 @@ public class CarpCollection : CarpObject, IIterable
         }
 
         return base.Coerce(type);
-    }
-
-    public IEnumerable<CarpObject> GetIterator()
-    {
-        return this.Items.Select(item => item.Coerce(this._itemType));
     }
 }

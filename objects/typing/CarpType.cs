@@ -57,7 +57,7 @@ public class CarpType : CarpObject
 
     public bool Extends(CarpType type)
     {
-        if (ReferenceEquals(this, type))
+        if (object.ReferenceEquals(this, type))
             return true;
 
         if (this.BaseType != null && this.BaseType.Extends(type))
