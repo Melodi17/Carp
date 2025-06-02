@@ -3,9 +3,9 @@ namespace Carp.objects;
 using scoping;
 using typing;
 
-public class CarpCollection : CarpObject
+public class CarpCollection : CarpObject, IIterable
 {
-    public new static readonly CarpType Type = CarpType.Create("collection", CarpObject.Type,
+    public new static readonly CarpType Type = CarpType.Create("collection", IIterable.Type,
         b => b.Member(new PropertyMember("length", CarpNumber.Type).Getter(x => CarpNumber.Create(((CarpCollection) x).Items.Count))));
     private readonly CarpType _itemType;
     public CarpCollection(CarpType itemType, IEnumerable<CarpObject> items) : base(CarpType.CreateGeneric(CarpCollection.Type, itemType))
@@ -29,5 +29,10 @@ public class CarpCollection : CarpObject
         }
 
         return base.Coerce(type);
+    }
+
+    public IEnumerable<CarpObject> GetIterator()
+    {
+        return this.Items.Select(item => item.Coerce(this._itemType));
     }
 }

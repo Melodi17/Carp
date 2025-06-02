@@ -140,10 +140,10 @@ try_statement
 
 iter_statement
     : ITER iter=expression body=generic_block # iterStatement
-    | ITER type ID ':'  iter=expression  body=generic_block # iterAsStatement
-    | ITER '(' type ID ':'  iter=expression ')'  body=generic_block # iterAsStatement
-    | ITER type_name_list ':'  iter=expression  body=generic_block # iterAsUnpackedStatement
-    | ITER '(' type_name_list ':'  iter=expression ')'  body=generic_block # iterAsUnpackedStatement
+    | ITER type ID ':'  iter=expression body=generic_block # iterAsStatement
+    | ITER '(' type ID ':'  iter=expression ')' body=generic_block # iterAsStatement
+    | ITER type_name_list ':'  iter=expression body=generic_block # iterAsUnpackedStatement
+    | ITER '(' type_name_list ':'  iter=expression ')' body=generic_block # iterAsUnpackedStatement
     ;
 
 return_statement : RETURN value=expression? ;
@@ -282,6 +282,7 @@ modifier
 type
     : key=type ':' value=type # mapType
     | element=type (ASTERISK_RSPACE | ASTERISK_NSPC) # listType
+    //| element=type '?' # nullableType
     | main=type '<' subs+=type (',' subs+=type)* '>' # genericType
     | main=ID ('.' parts+=ID)+ # propertyType
     | ID # namedType

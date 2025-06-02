@@ -11,7 +11,7 @@ public class Context : ParserRuleContext
 
     public Context(ParserRuleContext parent, int invokingStateNumber) : base(parent, invokingStateNumber) { }
 
-    public Scope? Scope { get; set; }
+    public Scope Scope { get; set; } = null!;
 
     /// <summary>
     ///     Current thread ID

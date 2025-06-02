@@ -5,6 +5,7 @@ using scoping;
 public class CarpType : CarpObject
 {
     public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type);
+    public new static readonly CarpType Auto = CarpType.Create("auto", null);
 
     private static readonly Dictionary<(CarpType, CarpType[]), CarpType> genericCache = new();
 
@@ -28,7 +29,7 @@ public class CarpType : CarpObject
     {
         if (!this.IsGeneric)
             return CarpString.Create($"{this.Name}");
-        if (this.Extends(CarpCollection.Type))
+        if (this.Extends(IIterable.Type))
             return CarpString.Create($"{this.TypeArguments[0].Repr()}*");
         // TODO: implement map type
         // else if (this.Extends(CarpMap.Type))
@@ -112,6 +113,8 @@ public class CarpType : CarpObject
         [
             CarpObject.Type,
             CarpType.Type,
+            CarpType.Auto,
+            IIterable.Type,
             CarpString.Type,
             CarpNull.Type,
             CarpVoid.Type,

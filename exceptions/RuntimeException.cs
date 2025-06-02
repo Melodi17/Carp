@@ -9,6 +9,8 @@ public class RuntimeException(string message)
     public List<StackFrame> InternalStackTrace { get; } = new();
     public void AddStackFrame(StackFrame frame)
     {
+        if (frame.Equals(this.InternalStackTrace.LastOrDefault()))
+            return; // Avoid adding duplicate frames for the same context
         this.InternalStackTrace.Add(frame);
     }
 

@@ -122,11 +122,12 @@ public abstract class CarpObject
         if (this.GetCarpType().Extends(type))
             return this;
 
-        if (type == CarpVoid.Type)
+        if (type == CarpVoid.Type || this.GetCarpType() == CarpVoid.Type)
             return CarpVoid.Instance;
 
         throw new ConversionException(this.GetCarpType(), type);
     }
 
+    /// ToString is a shortcut to requesting the object's representation, not its string value.
     public override string ToString() => this.Repr();
 }

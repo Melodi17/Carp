@@ -25,7 +25,7 @@ public class Program
             string? input = Console.ReadLine();
             if (input == null)
                 return;
-            
+
             CarpObject res = Program.RunString(input, globalScope, Program.WriteRichError, blockCount);
             if (res != CarpVoid.Instance)
                 Program.WriteRichObject(res);
@@ -66,8 +66,15 @@ public class Program
     {
         Scope s = new();
         foreach (CarpType type in types)
-            s.Define(new FieldMember(type.Name, CarpType.Type, type)
-                .With(Modifiers.Final));
+            s.Define(new FieldMember(type.Name, CarpType.Type, type).With(Modifiers.Final));
+
+        s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, objs =>
+        {
+            foreach (CarpObject obj in objs)
+                Console.Write(obj.String().Value);
+            Console.WriteLine();
+            return CarpVoid.Instance;
+        })));
 
         return s;
     }

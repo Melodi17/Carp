@@ -3,12 +3,23 @@ namespace Carp.scoping;
 [Flags]
 public enum Modifiers
 {
-    None = 0, // No special modifiers
-    Private = 1, // Inaccessible outside the object
-    Static = 2, // Accessed through the class, not the instance
-    Protected = 4, // Implementations can't override this member
-    Abstract = 8, // Must be implemented in a subclass
-    Final = 16, // Read only
+    /// No special modifiers
+    None = 0,
+    
+    /// Inaccessible outside the object
+    Private = 1,
+    
+    /// Accessed through the class, not the instance
+    Static = 2,
+    
+    /// Subclasses can't override this member
+    Protected = 4,
+    
+    /// Must be implemented in a subclass
+    Abstract = 8,
+    
+    /// Read only
+    Final = 16,
 }
 
 public static class ModifierHelpers
