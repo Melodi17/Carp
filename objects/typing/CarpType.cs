@@ -120,6 +120,7 @@ public class CarpType : CarpObject
             CarpVoid.Type,
             CarpBoolean.Type,
             CarpCollection.Type,
+            CarpRange.Type,
             CarpFunction.Type,
             ..CarpNumber.AllTypes,
         ];
@@ -131,7 +132,7 @@ public class CarpType : CarpObject
         return knownTypes;
     }
 
-    public static CarpType HighestCommonType(CarpType[] arr)
+    public static CarpType HighestCommonType(params CarpType[] arr)
     {
         if (arr.Length == 0)
             return CarpObject.Type;

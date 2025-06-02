@@ -45,6 +45,8 @@ public abstract class CarpNumber(CarpType type)
         IModulusOperators<T, T, T>, IComparisonOperators<T, T, bool>, IUnaryNegationOperators<T, T>, IParsable<T>, IFormattable
     {
         CarpType carpType = CarpType.Create(name, CarpObject.Type);
+        carpType.DefaultValueGen = () => Create(name, default(T));
+        
         carpType.Group = "number";
         CarpNumber._creators[name] = (carpType, value =>
         {
@@ -215,6 +217,9 @@ public class CarpNumber<T> : CarpNumber
 
         return CarpBoolean.False;
     }
+
+    public override CarpObject Step() => CarpNumber<T>.CreateDirect(this.Value + (dynamic) 1, this._type);
+    public override CarpObject Fall() => CarpNumber<T>.CreateDirect(this.Value - (dynamic) 1, this._type);
 
     // All numbers can be coerced to any other number type
     public override CarpObject Coerce(CarpType type)

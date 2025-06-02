@@ -193,6 +193,5 @@ public partial class CarpVisitor
         Member member = obj.Member(path, context.CurrentObject);
         return member.Get(member.Is(Modifiers.Static) ? null : obj);
     }
-    public override object VisitEndRangeExpression(CarpGrammarParser.EndRangeExpressionContext context) => base.VisitEndRangeExpression(context);
     public override object VisitCompareTypeExpression(CarpGrammarParser.CompareTypeExpressionContext context) => base.VisitCompareTypeExpression(context);
 }

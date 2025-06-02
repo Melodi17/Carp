@@ -35,7 +35,23 @@ public partial class CarpVisitor
         return new CarpCollection(type, arr);
     }
     public override object VisitMap(CarpGrammarParser.MapContext context) => base.VisitMap(context);
-    public override object VisitRangeExpression(CarpGrammarParser.RangeExpressionContext context) => base.VisitRangeExpression(context);
+    public override object VisitRangeExpression(CarpGrammarParser.RangeExpressionContext context)
+    {
+        CarpObject start = this.VisitExpression(context.left);
+        CarpObject end = this.VisitExpression(context.right);
+        
+        CarpType itemType = CarpType.HighestCommonType(start.GetCarpType(), end.GetCarpType());
+        return new CarpRange(itemType, start, end);
+    }
+    public override object VisitEndRangeExpression(CarpGrammarParser.EndRangeExpressionContext context)
+    {
+        CarpObject end = this.VisitExpression(context.right);
+        CarpType itemType = end.GetCarpType();
+        CarpObject start = itemType.DefaultValue();
+
+        return new CarpRange(itemType, start, end);
+    }
+
     public override object VisitType_name_list(CarpGrammarParser.Type_name_listContext context)
     {
         return context._types.Zip(context._names, (type, name) => (CarpType: this.VisitType(type), Name: name.Text)).ToArray();
