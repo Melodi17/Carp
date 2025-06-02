@@ -25,10 +25,18 @@ public class Program
         try
         {
             if (obj.Line != null)
-                Runtime.Execute(new LineExecutionContext(obj.Line), scope);
+            {
+                CarpObject res = Runtime.Execute(new LineExecutionContext(obj.Line), scope);
+                if (res != CarpVoid.Instance)
+                    Program.WriteRichObject(res);
+            }
 
             if (obj.File != null)
-                Runtime.Execute(new FileExecutionContext(obj.File), scope);
+            {
+                CarpObject res = Runtime.Execute(new FileExecutionContext(obj.File), scope);
+                if (res != CarpVoid.Instance)
+                    Program.WriteRichObject(res);
+            }
         }
         catch (ParserException e)
         {
@@ -66,7 +74,7 @@ public class Program
             {
                 CarpObject res = Runtime.Execute(executionContext, globalScope);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res);
+                    Program.WriteRichObject(res, true);
             }
             catch (ParserException e)
             {
@@ -78,12 +86,12 @@ public class Program
             }
             catch (RuntimeException e)
             {
-                Program.WriteRichError(e);
+                Program.WriteRichError(e, true);
             }
             blockCount++;
         }
     }
-    private static void WriteRichObject(CarpObject res)
+    private static void WriteRichObject(CarpObject res, bool indented = false)
     {
         ConsoleColor color = res switch
         {
@@ -96,20 +104,26 @@ public class Program
         };
 
         Console.ForegroundColor = color;
-        Console.WriteLine(" " + res.Repr());
+        if (indented)
+            Console.Write(" ");
+        Console.WriteLine(res.Repr());
         Console.ResetColor();
     }
 
-    private static void WriteRichError(RuntimeException ex)
+    private static void WriteRichError(RuntimeException ex, bool indented = false)
     {
         void Print(string text) => Console.Error.WriteLine(Coloring.SubstituteStyles(text));
 
-        Print($" %red%{ex.ErrorFriendlyName}: %white%{ex.Message}");
+        if (indented)
+            Console.Write(" ");
+        Print($"%red%{ex.ErrorFriendlyName}: %white%{ex.Message}");
         foreach (StackFrame frame in ex.InternalStackTrace)
         {
             int pos = frame.Context.Position;
             string content = frame.Context.ExecutionContext?.GetAtPosition(pos) ?? "<missing>";
-            Print($" \t%gray%--->  %cyan%{frame.Context.ExecutionContext?.Name ?? "<unknown>"}  %darkred%{pos} %white%|  %gray italic%{content.Replace("%", "%%")}");
+            if (indented)
+                Console.Write(" ");
+            Print($"\t%gray%--->  %cyan%{frame.Context.ExecutionContext?.Name ?? "<unknown>"}  %darkred%{pos} %white%|  %gray italic%{content.Replace("%", "%%")}");
         }
     }
 }
