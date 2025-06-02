@@ -21,7 +21,7 @@ public class RuntimeException(string message)
         foreach (StackFrame frame in this.InternalStackTrace)
         {
             int pos = frame.Context.Position;
-            string content = frame.Context.ExecutionContext?.GetAtLine(pos) ?? "<missing>";
+            string content = frame.Context.ExecutionContext?.GetAtPosition(pos) ?? "<missing>";
             sb.AppendLine($"\t--->  {frame.Context.ExecutionContext?.Name ?? "<unknown>"}  {pos} |  {content}");
         }
 

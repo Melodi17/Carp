@@ -1,11 +1,12 @@
-namespace Carp.interpreter;
+namespace Carp.interpreter.execution;
 
 public class ReplExecutionContext(int? blockIdx, string text) : IExecutionContext
 {
     private readonly string[] _lines = text.Replace("\r", "").Split('\n');
+    private readonly string _text = text;
     public string Name => blockIdx != null ? $"REPL block {blockIdx + 1}" : "REPL";
 
-    public string GetAtLine(int position)
+    public string GetAtPosition(int position)
     {
         position -= 1; // Convert to 0-based index
 
@@ -16,4 +17,5 @@ public class ReplExecutionContext(int? blockIdx, string text) : IExecutionContex
 
         return this._lines[position];
     }
+    public string GetContent() => this._text;
 }

@@ -45,8 +45,8 @@ public abstract class CarpNumber(CarpType type)
         IModulusOperators<T, T, T>, IComparisonOperators<T, T, bool>, IUnaryNegationOperators<T, T>, IParsable<T>, IFormattable
     {
         CarpType carpType = CarpType.Create(name, CarpObject.Type);
-        carpType.DefaultValueGen = () => Create(name, default(T));
-        
+        carpType.DefaultValueGen = () => CarpNumber.Create(name, default(T));
+
         carpType.Group = "number";
         CarpNumber._creators[name] = (carpType, value =>
         {

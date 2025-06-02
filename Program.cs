@@ -1,22 +1,57 @@
-
 namespace Carp;
 
-using Antlr4.Runtime;
+using CommandLine;
 using exceptions;
-using interpreter;
-using interpreter.visitors;
+using interpreter.execution;
 using objects;
 using objects.typing;
 using scoping;
+using toolkit;
 using utils;
+using CommandLineParser = CommandLine.Parser;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        CarpType[]? types = CarpType.ConstructTypes();
-        Scope globalScope = Program.MakeScope(types);
+        CommandLineParser.Default.ParseArguments<RunnerOptions>(args).WithParsed(Program.RunProgram);
+    }
 
+    private static void RunProgram(RunnerOptions obj)
+    {
+        CarpType[]? types = CarpType.ConstructTypes();
+        Scope scope = Runtime.MakeScope(types);
+
+        try
+        {
+            if (obj.Line != null)
+                Runtime.Execute(new LineExecutionContext(obj.Line), scope);
+
+            if (obj.File != null)
+                Runtime.Execute(new FileExecutionContext(obj.File), scope);
+        }
+        catch (ParserException e)
+        {
+            Console.Error.WriteLine($"[Parser] {e.Message}");
+        }
+        catch (InterpreterException e)
+        {
+            Console.Error.WriteLine($"[Interpreter] {e.Message}");
+        }
+        catch (RuntimeException e)
+        {
+            Program.WriteRichError(e);
+        }
+
+        if (obj.Interactive || (obj.File == null && obj.Line == null))
+        {
+            Console.WriteLine("Entering REPL mode. Press Ctrl+C to exit.");
+            Program.REPL(scope);
+        }
+    }
+
+    private static void REPL(Scope globalScope)
+    {
         int blockCount = 0;
         while (true)
         {
@@ -25,9 +60,26 @@ public class Program
             if (input == null)
                 return;
 
-            CarpObject res = Program.RunString(input, globalScope, Program.WriteRichError, blockCount);
-            if (res != CarpVoid.Instance)
-                Program.WriteRichObject(res);
+            ReplExecutionContext executionContext = new(blockCount, input);
+
+            try
+            {
+                CarpObject res = Runtime.Execute(executionContext, globalScope);
+                if (res != CarpVoid.Instance)
+                    Program.WriteRichObject(res);
+            }
+            catch (ParserException e)
+            {
+                Console.Error.WriteLine($"[Parser] {e.Message}");
+            }
+            catch (InterpreterException e)
+            {
+                Console.Error.WriteLine($"[Interpreter] {e.Message}");
+            }
+            catch (RuntimeException e)
+            {
+                Program.WriteRichError(e);
+            }
             blockCount++;
         }
     }
@@ -56,67 +108,8 @@ public class Program
         foreach (StackFrame frame in ex.InternalStackTrace)
         {
             int pos = frame.Context.Position;
-            string content = frame.Context.ExecutionContext?.GetAtLine(pos) ?? "<missing>";
+            string content = frame.Context.ExecutionContext?.GetAtPosition(pos) ?? "<missing>";
             Print($" \t%gray%--->  %cyan%{frame.Context.ExecutionContext?.Name ?? "<unknown>"}  %darkred%{pos} %white%|  %gray italic%{content.Replace("%", "%%")}");
-        }
-    }
-
-    public static Scope MakeScope(CarpType[] types)
-    {
-        Scope s = new();
-        foreach (CarpType type in types)
-            s.Define(new FieldMember(type.Name, CarpType.Type, type).With(Modifiers.Final));
-
-        s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, objs =>
-        {
-            foreach (CarpObject obj in objs)
-                Console.Write(obj.String().Value);
-            Console.WriteLine();
-            return CarpVoid.Instance;
-        })));
-
-        return s;
-    }
-
-    public static CarpObject RunString(string text, Scope? scope = null, Action<RuntimeException>? OnError = null, int? blockNum = null)
-    {
-        CarpGrammarParser.ProgramContext program = null;
-        try
-        {
-            AntlrInputStream stream = new(text);
-            CarpGrammarLexer lexer = new(stream);
-            lexer.RemoveErrorListeners();
-            CommonTokenStream tokens = new(lexer);
-
-            CarpGrammarParser parser = new(tokens);
-            program = parser.program();
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-            return CarpVoid.Instance;
-        }
-
-        if (program == null)
-            throw new Exception("Failed to parse the program.");
-
-        program.Scope = scope ?? Program.MakeScope(CarpType.ConstructTypes());
-        program.ExecutionContext = new ReplExecutionContext(blockNum, text);
-
-        CarpVisitor visitor = new();
-        try
-        {
-            CarpObject? output = visitor.Visit(program) as CarpObject;
-            if (output == null)
-                throw new Exception("Failed to visit the program.");
-
-            return output;
-        }
-        catch (RuntimeException e)
-        {
-            OnError?.Invoke(e);
-            // Console.Error.WriteLine(e.ToString());
-            return CarpVoid.Instance;
         }
     }
 }

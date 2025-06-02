@@ -39,7 +39,7 @@ public partial class CarpVisitor
     {
         CarpObject start = this.VisitExpression(context.left);
         CarpObject end = this.VisitExpression(context.right);
-        
+
         CarpType itemType = CarpType.HighestCommonType(start.GetCarpType(), end.GetCarpType());
         return new CarpRange(itemType, start, end);
     }

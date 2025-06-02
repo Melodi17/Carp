@@ -51,15 +51,15 @@ public abstract class CarpObject
 
     /// Call primitive is used to invoke the object as a function. This is done with the func(args) syntax.
     public virtual CarpObject Call(CarpObject[] args) => throw new PrimitiveIncompatibleException("Call", this);
-    
+
     /// Index primitive is used to access an element of the object, like obj[index].
     public virtual CarpObject Index(CarpObject index) => throw new PrimitiveIncompatibleException("Index", this);
-    
+
     /// IndexSet primitive is used to set an element of the object, like obj[index] = value.
     public virtual CarpObject IndexSet(CarpObject index, CarpObject value) => throw new PrimitiveIncompatibleException("IndexSet", this);
 
     /// <summary>
-    /// Accesses the object's scope member. This is used to find a member of the object, like obj.member.
+    ///     Accesses the object's scope member. This is used to find a member of the object, like obj.member.
     /// </summary>
     /// <param name="name">Name of member to find</param>
     /// <param name="caller">The current object attempting to call this</param>
@@ -75,7 +75,7 @@ public abstract class CarpObject
 
         throw new MemberNotAccessibleException(this, name);
     }
-    
+
     public virtual CarpObject Step() => throw new PrimitiveIncompatibleException("Step", this);
     public virtual CarpObject Fall() => throw new PrimitiveIncompatibleException("Fall", this);
 
@@ -91,10 +91,14 @@ public abstract class CarpObject
     }
 
     /// Returns whether the object is truthy or not.
-    /// - true (boolean) -> <c>true</c>
-    /// - false (boolean) -> <c>false</c>
-    /// - null -> <c>false</c>
-    /// - everything else -> <c>true</c>
+    /// - true (boolean) ->
+    /// <c>true</c>
+    /// - false (boolean) ->
+    /// <c>false</c>
+    /// - null ->
+    /// <c>false</c>
+    /// - everything else ->
+    /// <c>true</c>
     public static bool IsTruthy(CarpObject obj)
     {
         if (obj is CarpBoolean boolean)
