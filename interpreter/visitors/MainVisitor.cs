@@ -3,8 +3,10 @@ namespace Carp.interpreter.visitors;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using exceptions;
+using exceptions.impl;
 using objects;
 using objects.typing;
+using scoping;
 using utils;
 
 public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
@@ -34,6 +36,35 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         throw new InterpreterException($"Expected type, but got {contextRtype.GetType().GetFormattedName()} instead.");
     }
 
+    /// Returns a function that can be used to set a value to the assignment target.
+    protected Func<CarpObject, CarpObject> VisitSetter(CarpGrammarParser.ExpressionContext assignmentTarget)
+    {
+        // since we're not directly visiting the left side, copy the context to it
+        assignmentTarget.ReplicateParent(assignmentTarget.Parent as Context 
+                                         ?? throw new InvalidOperationException("Parent context is null"));
+        
+        if (assignmentTarget is CarpGrammarParser.VariableExpressionContext vec)
+        {
+            string name = vec.ID().GetText();
+            Member member = assignmentTarget.Scope.Find(name);
+            return value => member.Set(null, value);
+        }
+        if (assignmentTarget is CarpGrammarParser.IndexExpressionContext iec)
+        {
+            // TODO: Implement index assignment
+            throw new NotImplementedException("Index assignment is not implemented yet");
+        }
+        if (assignmentTarget is CarpGrammarParser.PropertyExpressionContext pec)
+        {
+            CarpObject obj = this.VisitExpression(pec.obj);
+            string? path = pec.path.Text;
+
+            Member member = obj.Member(path, assignmentTarget.CurrentObject);
+            return value => member.Set(member.Is(Modifiers.Static) ? null : obj, value);
+        }
+        throw new InvalidAssignmentTargetException("target of assignment is not a variable, index or property expression");
+    }
+    
     public override object Visit(IParseTree tree)
     {
         if (tree is Context ctx)

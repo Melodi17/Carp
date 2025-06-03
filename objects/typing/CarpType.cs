@@ -121,6 +121,7 @@ public class CarpType : CarpObject
             CarpBoolean.Type,
             CarpCollection.Type,
             CarpRange.Type,
+            CarpWound.Type,
             CarpFunction.Type,
             ..CarpNumber.AllTypes,
         ];

@@ -170,8 +170,7 @@ definition
 
 expression
     : constant # constantExpression
-    | obj=expression '~' dest=type # castExpression
-    | obj=expression TILDE_TILDE dest=type # compareTypeExpression
+    | obj=expression op=(TILDE_TILDE|'~>') dest=type # compareTypeExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
@@ -194,7 +193,9 @@ expression
     | ELIPSIS right=expression # endRangeExpression
     | '(' obj=expression ')' # parenthesizedExpression
     | inner=expression '::' # windExpression
+    | inner=expression ':~' dest=type # windCastExpression
     | inner=expression ';;' # filterExpression
+    | obj=expression '~' dest=type # castExpression
     | left=expression '=' right=expression # assignmentExpression // Side effects
     // add += -= *= /= %= ^=
     | left=expression op=compoundAssignment right=expression # compoundAssignmentExpression // Side effects

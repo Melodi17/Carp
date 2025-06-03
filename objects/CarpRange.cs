@@ -21,7 +21,7 @@ public class CarpRange : CarpObject, IIterable
         while (CarpObject.IsTruthy(current.Less(this.End)))
         {
             yield return current.Coerce(this._itemType);
-            current = current.Step();
+            current = current.Rise();
         }
     }
     public override CarpType GetCarpType() => CarpType.CreateGeneric(CarpRange.Type, this._itemType);

@@ -3,6 +3,7 @@ namespace Carp.interpreter.visitors;
 using exceptions;
 using exceptions.impl;
 using objects;
+using objects.typing;
 using parser;
 using scoping;
 
@@ -121,31 +122,10 @@ public partial class CarpVisitor
     public override object VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context)
     {
         CarpGrammarParser.ExpressionContext assignmentTarget = context.left;
-        // since we're not directly visiting the left side, copy the context to it
-        assignmentTarget.ReplicateParent(context);
-
         CarpObject value = this.VisitExpression(context.right);
 
-        if (assignmentTarget is CarpGrammarParser.VariableExpressionContext vec)
-        {
-            string name = vec.ID().GetText();
-            Member member = context.Scope.Find(name);
-            return member.Set(null, value);
-        }
-        if (assignmentTarget is CarpGrammarParser.IndexExpressionContext iec)
-        {
-            // TODO: Implement index assignment
-            throw new NotImplementedException("Index assignment is not implemented yet");
-        }
-        if (assignmentTarget is CarpGrammarParser.PropertyExpressionContext pec)
-        {
-            CarpObject obj = this.VisitExpression(pec.obj);
-            string? path = pec.path.Text;
-
-            Member member = obj.Member(path, context.CurrentObject);
-            return member.Set(member.Is(Modifiers.Static) ? null : obj, value);
-        }
-        throw new InvalidAssignmentTargetException("target of assignment is not a variable, index or property expression");
+        Func<CarpObject, CarpObject> setter = this.VisitSetter(assignmentTarget);
+        return setter(value);
     }
     public override object VisitVariableExpression(CarpGrammarParser.VariableExpressionContext context)
     {
@@ -163,18 +143,13 @@ public partial class CarpVisitor
         // this outside of an object
         return member.Get(null);
     }
-    public override object VisitWindExpression(CarpGrammarParser.WindExpressionContext context) => base.VisitWindExpression(context);
-    public override object VisitCastExpression(CarpGrammarParser.CastExpressionContext context) => base.VisitCastExpression(context);
-    public override object VisitParenthesizedExpression(CarpGrammarParser.ParenthesizedExpressionContext context) => base.VisitParenthesizedExpression(context);
     public override object VisitCallExpression(CarpGrammarParser.CallExpressionContext context)
     {
         CarpObject? obj = this.VisitExpression(context.obj);
         CarpObject[] args = this.Visit(context.parameters) as CarpObject[] ?? throw new InterpreterException("Parameters must be a CarpObject array");
         return obj.Call(args);
     }
-    public override object VisitInfixExpression(CarpGrammarParser.InfixExpressionContext context) => base.VisitInfixExpression(context);
     public override object VisitCompoundAssignmentExpression(CarpGrammarParser.CompoundAssignmentExpressionContext context) => base.VisitCompoundAssignmentExpression(context);
-    public override object VisitFilterExpression(CarpGrammarParser.FilterExpressionContext context) => base.VisitFilterExpression(context);
     public override object VisitIndexExpression(CarpGrammarParser.IndexExpressionContext context) => base.VisitIndexExpression(context);
     public override object VisitTernaryExpression(CarpGrammarParser.TernaryExpressionContext context)
     {
@@ -184,7 +159,25 @@ public partial class CarpVisitor
 
         return this.VisitExpression(context.right);
     }
-    public override object VisitPostfixExpression(CarpGrammarParser.PostfixExpressionContext context) => base.VisitPostfixExpression(context);
+    public override object VisitInfixExpression(CarpGrammarParser.InfixExpressionContext context)
+    {
+        var setter = this.VisitSetter(context.expr);
+        CarpObject value = this.VisitExpression(context.expr);
+
+        CarpObject newValue = context.token.Type == CarpGrammarParser.PLUS_PLUS ? value.Rise() : value.Fall();
+
+        return setter(newValue);
+    }
+    public override object VisitPostfixExpression(CarpGrammarParser.PostfixExpressionContext context)
+    {
+        var setter = this.VisitSetter(context.expr);
+        CarpObject value = this.VisitExpression(context.expr);
+
+        CarpObject newValue = context.token.Type == CarpGrammarParser.PLUS_PLUS ? value.Rise() : value.Fall();
+
+        setter(newValue);
+        return value;
+    }
     public override object VisitPropertyExpression(CarpGrammarParser.PropertyExpressionContext context)
     {
         CarpObject obj = this.VisitExpression(context.obj);
@@ -193,5 +186,51 @@ public partial class CarpVisitor
         Member member = obj.Member(path, context.CurrentObject);
         return member.Get(member.Is(Modifiers.Static) ? null : obj);
     }
-    public override object VisitCompareTypeExpression(CarpGrammarParser.CompareTypeExpressionContext context) => base.VisitCompareTypeExpression(context);
+
+    public override object VisitCompareTypeExpression(CarpGrammarParser.CompareTypeExpressionContext context)
+    {
+        CarpObject obj = this.VisitExpression(context.obj);
+        CarpType type = this.VisitType(context.dest);
+
+        bool strict = context.op.Type == CarpGrammarParser.TILDE_TILDE;
+
+        return strict ? CarpBoolean.Create(obj.GetCarpType() == type) : CarpBoolean.Create(obj.GetCarpType().Extends(type));
+    }
+    public override object VisitCastExpression(CarpGrammarParser.CastExpressionContext context)
+    {
+        CarpObject obj = this.VisitExpression(context.obj);
+        CarpType type = this.VisitType(context.dest);
+
+        return obj.Coerce(type);
+    }
+    public override object VisitWindExpression(CarpGrammarParser.WindExpressionContext context)
+    {
+        CarpObject obj = this.VisitExpression(context.inner);
+        if (obj is not IIterable carpIterable)
+            throw new ConversionException(obj.GetCarpType(), IIterable.Type);
+        
+        CarpWound wound = new CarpWound(obj.GetCarpType().TypeArguments[0], carpIterable.GetIterator());
+        return wound;
+    }
+    public override object VisitWindCastExpression(CarpGrammarParser.WindCastExpressionContext context)
+    {
+        CarpObject obj = this.VisitExpression(context.inner);
+        if (obj is not IIterable carpIterable)
+            throw new ConversionException(obj.GetCarpType(), IIterable.Type);
+        
+        CarpType type = this.VisitType(context.dest);
+
+        IEnumerable<CarpObject> iter = carpIterable.GetIterator().Select(x => x.Coerce(type));
+        CarpWound wound = new CarpWound(obj.GetCarpType().TypeArguments[0], iter);
+        return wound;
+    }
+    public override object VisitFilterExpression(CarpGrammarParser.FilterExpressionContext context)
+    {
+        CarpObject obj = this.VisitExpression(context.inner);
+        if (obj is not IIterable carpIterable)
+            throw new ConversionException(obj.GetCarpType(), IIterable.Type);
+        
+        CarpWound wound = new CarpWoundFilter(obj.GetCarpType().TypeArguments[0], carpIterable.GetIterator());
+        return wound;
+    }
 }

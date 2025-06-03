@@ -76,7 +76,7 @@ public abstract class CarpObject
         throw new MemberNotAccessibleException(this, name);
     }
 
-    public virtual CarpObject Step() => throw new PrimitiveIncompatibleException("Step", this);
+    public virtual CarpObject Rise() => throw new PrimitiveIncompatibleException("Rise", this);
     public virtual CarpObject Fall() => throw new PrimitiveIncompatibleException("Fall", this);
 
     protected virtual bool IsAccessible(Member member, CarpObject? caller)
@@ -140,6 +140,9 @@ public abstract class CarpObject
 
         if (type == CarpVoid.Type || this.GetCarpType() == CarpVoid.Type)
             return CarpVoid.Instance;
+        
+        if (type == CarpString.Type)
+            return this.String();
 
         throw new ConversionException(this.GetCarpType(), type);
     }
