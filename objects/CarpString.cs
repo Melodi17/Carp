@@ -6,7 +6,13 @@ using typing;
 public class CarpString : CarpObject
 {
     public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type,
-        b => b.Member(new PropertyMember("length", CarpNumber.Type).Getter(x => CarpNumber.Create(((CarpString) x).Value.Length))));
+        b => b
+            .Member(new PropertyMember("length", CarpNumber.Type).Getter(x
+                => CarpNumber.Create(((CarpString) x).Value.Length)))
+            .Member(new PropertyMember("lower", CarpNumber.Type).Getter(x
+                => CarpString.Create(((CarpString) x).Value.ToLower())))
+            .Member(new PropertyMember("upper", CarpString.Type).Getter(x
+                => CarpString.Create(((CarpString) x).Value.ToUpper()))));
     public static readonly CarpString Empty = new(string.Empty);
     private static readonly Dictionary<string, CarpString> Cache = new();
 
