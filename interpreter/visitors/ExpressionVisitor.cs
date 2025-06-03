@@ -194,7 +194,7 @@ public partial class CarpVisitor
 
         bool strict = context.op.Type == CarpGrammarParser.TILDE_TILDE;
 
-        return strict ? CarpBoolean.Create(obj.GetCarpType() == type) : CarpBoolean.Create(obj.GetCarpType().Extends(type));
+        return strict ? CarpBoolean.Create(obj.GetCarpType().Equals(type)) : CarpBoolean.Create(obj.GetCarpType().Extends(type));
     }
     public override object VisitCastExpression(CarpGrammarParser.CastExpressionContext context)
     {

@@ -57,7 +57,7 @@ public class CarpType : CarpObject
 
     public bool Extends(CarpType type)
     {
-        if (ReferenceEquals(this, type))
+        if (ReferenceEquals(this, type) || Equals(type))
             return true;
 
         if (this.BaseType != null && this.BaseType.Extends(type))
@@ -142,6 +142,19 @@ public class CarpType : CarpObject
         while (arr.Any(x => !x.Extends(type)))
             type = type.BaseType;
         return type;
+    }
+
+    public override bool Equals(object? obj) 
+    {
+        if (obj is CarpType type)
+            return this.Name == type.Name && this.TypeArguments.SequenceEqual(type.TypeArguments);
+
+        return false;
+    }
+    
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(this.Name, this.TypeArguments);
     }
 }
 

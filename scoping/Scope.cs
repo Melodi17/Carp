@@ -62,7 +62,7 @@ public class Scope : IDisposable
         // TODO: check if the parent needs to be cloned
         Scope clone = new(this.Parent);
         foreach (KeyValuePair<string, Member> member in this.Values)
-            clone.Define(member.Value.Clone());
+        clone.Define(member.Value.Clone());
         return clone;
     }
 }
