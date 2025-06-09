@@ -233,4 +233,15 @@ public partial class CarpVisitor
         CarpWound wound = new CarpWoundFilter(obj.GetCarpType().TypeArguments[0], carpIterable.GetIterator());
         return wound;
     }
+
+    public override object VisitLambdaExpression(CarpGrammarParser.LambdaExpressionContext context)
+    {
+        // Create a function member.
+        CarpType returnType = CarpType.Auto;
+        (CarpType Type, string Name)[] args = ((CarpType Type, string Name)[]) this.Visit(context.values);
+
+        InternalFunction func = new(returnType, context, context.body, args.ToDictionary(x => x.Name, x => x.Type), this);
+
+        return func;
+    }
 }

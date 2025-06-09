@@ -30,7 +30,7 @@ public static class Semantics
 
     public static bool ShouldMultiline(CommonTokenStream tokenStream)
     {
-        if (tokenStream.Size == 0)
+        if (tokenStream.Size < 2)
             return false;
         
         // If the depth is greater than 0, we should multiline

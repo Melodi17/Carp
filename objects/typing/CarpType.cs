@@ -66,7 +66,7 @@ public class CarpType : CarpObject
         if (type == CarpNull.Type)
             return true;
 
-        if (this.Group == type.Group)
+        if (this.Group != null && this.Group == type.Group)
             return true;
 
         return false;

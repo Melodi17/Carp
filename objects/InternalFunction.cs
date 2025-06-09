@@ -1,5 +1,6 @@
 namespace Carp.objects;
 
+using interpreter;
 using interpreter.visitors;
 using scoping;
 using typing;
@@ -7,15 +8,17 @@ using utils;
 
 public class InternalFunction : CarpFunction
 {
-    private readonly CarpGrammarParser.FunctionDefinitionContext _block;
+    private readonly Context _context;
+    private readonly CarpGrammarParser.Generic_blockContext _block;
     private readonly Dictionary<string, CarpType> _parameters;
     private readonly CarpVisitor _visitor;
 
     public readonly string ID = Helpers.GenerateID();
 
-    public InternalFunction(CarpType returnType, CarpGrammarParser.FunctionDefinitionContext block, Dictionary<string, CarpType> parameters, CarpVisitor visitor) : base(returnType)
+    public InternalFunction(CarpType returnType, Context context, CarpGrammarParser.Generic_blockContext block, Dictionary<string, CarpType> parameters, CarpVisitor visitor) : base(returnType)
     {
         // this._block = block.Clone<CarpGrammarParser.BlockContext>();
+        this._context = context;
         this._block = block;
         this._parameters = parameters;
         this._visitor = visitor;
@@ -25,9 +28,9 @@ public class InternalFunction : CarpFunction
     public override CarpString String() => CarpString.Create($"<internal function {this.ID}>");
     public override CarpObject Call(CarpObject? self, CarpObject[] args)
     {
-        Scope scope = new(this._block.Scope);
-        this._block.Scope = scope;
-        this._block.CurrentObject = self;
+        Scope scope = new(this._context.Scope);
+        this._context.Scope = scope;
+        this._context.CurrentObject = self;
 
         // Add parameters to the scope
         for (int i = 0; i < args.Length; i++)
@@ -40,7 +43,7 @@ public class InternalFunction : CarpFunction
         }
 
         // Execute the block in the new scope
-        CarpObject result = (CarpObject) this._visitor.Visit(this._block.body);
+        CarpObject result = (CarpObject) this._visitor.Visit(this._block);
         return result.Coerce(this.ReturnType);
     }
     public override bool Accepts(CarpObject[] args)

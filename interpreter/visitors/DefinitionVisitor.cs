@@ -43,6 +43,8 @@ public partial class CarpVisitor
         CarpType type = this.VisitType(context.rtype);
         string name = context.key.Text;
         CarpObject value = context.value != null ? this.VisitExpression(context.value) : type.DefaultValue();
+        if (type == CarpType.Auto)
+            type = value.GetCarpType();
 
         Member member = new FieldMember(name, type, value);
         return member;
@@ -54,7 +56,7 @@ public partial class CarpVisitor
         CarpType returnType = this.VisitType(context.rtype);
         (CarpType Type, string Name)[] args = ((CarpType Type, string Name)[]) this.Visit(context.values);
 
-        InternalFunction func = new(returnType, context, args.ToDictionary(x => x.Name, x => x.Type), this);
+        InternalFunction func = new(returnType, context, context.body, args.ToDictionary(x => x.Name, x => x.Type), this);
 
         MethodMember member = new(name, func);
         return member;
