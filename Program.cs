@@ -69,10 +69,26 @@ public class Program
                 return;
 
             ReplExecutionContext executionContext = new(blockCount, input);
-
             try
             {
-                CarpObject res = Runtime.Execute(executionContext, globalScope);
+                var lexed = Runtime.Lex(executionContext);
+                while (Semantics.ShouldMultiline(lexed))
+                {
+                    int depth = Semantics.CalculateDepth(lexed);
+                    Console.Write(" ... " + new string(' ', Math.Max(0, depth - 1) * 2));
+
+                    string? nextLine = Console.ReadLine();
+                    if (nextLine == null)
+                        return;
+
+                    input += "\n" + nextLine;
+                    executionContext.Text = input;
+
+                    lexed = Runtime.Lex(executionContext);
+                }
+
+                CarpGrammarParser.ProgramContext ast = Runtime.Parse(lexed, executionContext);
+                CarpObject res = Runtime.Execute(ast, executionContext, globalScope);
                 if (res != CarpVoid.Instance)
                     Program.WriteRichObject(res, true);
             }
@@ -123,7 +139,8 @@ public class Program
             string content = frame.Context.ExecutionContext?.GetAtPosition(pos) ?? "<missing>";
             if (indented)
                 Console.Write(" ");
-            Print($"\t%gray%--->  %cyan%{frame.Context.ExecutionContext?.Name ?? "<unknown>"}  %darkred%{pos} %white%|  %gray italic%{content.Replace("%", "%%")}");
+            Print(
+                $"\t%gray%--->  %cyan%{frame.Context.ExecutionContext?.Name ?? "<unknown>"}  %darkred%{pos} %white%|  %gray italic%{content.Replace("%", "%%")}");
         }
     }
 }

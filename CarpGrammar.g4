@@ -165,7 +165,8 @@ definition
     | rtype=type key=ID ('=' value=expression)? # variableDefinition
     | CLASS key=ID (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=wrapped_definition* '}' # classDefinition
     | STRUCT key=ID (':' inherits+=type (',' inherits+=type)*)? '{' definitions+=wrapped_definition* '}' # structDefinition
-    | FIXED key=ID '{' keys+=ID* '}' # enumDefinition
+    | FIXED key=ID '{' (keys+=ID ':' value+=expression (',' keys+=ID ':' value+=expression)*)? '}' # enumDefinition
+    | FIXED key=ID '{' (keys+=ID (',' keys+=ID)*)? '}' # enumDefinitionAutoValues
     ;
 
 expression

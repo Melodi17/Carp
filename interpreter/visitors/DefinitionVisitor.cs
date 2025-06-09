@@ -62,4 +62,5 @@ public partial class CarpVisitor
     public override object VisitClassDefinition(CarpGrammarParser.ClassDefinitionContext context) => base.VisitClassDefinition(context);
     public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context) => base.VisitStructDefinition(context);
     public override object VisitEnumDefinition(CarpGrammarParser.EnumDefinitionContext context) => base.VisitEnumDefinition(context);
+    public override object VisitEnumDefinitionAutoValues(CarpGrammarParser.EnumDefinitionAutoValuesContext context) => base.VisitEnumDefinitionAutoValues(context);
 }

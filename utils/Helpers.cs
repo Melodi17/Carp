@@ -1,6 +1,8 @@
 namespace Carp.utils;
 
-public class Helpers
+using interpreter.execution;
+
+public static class Helpers
 {
     private static readonly int _idCounter = 0;
     public static string GenerateID()
