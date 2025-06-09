@@ -52,11 +52,11 @@ public partial class CarpVisitor
         return new CarpRange(itemType, start, end);
     }
 
-    public override object VisitType_name_list(CarpGrammarParser.Type_name_listContext context)
+    public override (CarpType CarpType, string Name)[] VisitType_name_list(CarpGrammarParser.Type_name_listContext context)
     {
         return context._types.Zip(context._names, (type, name) => (CarpType: this.VisitType(type), Name: name.Text)).ToArray();
     }
-    public override object VisitExpression_list(CarpGrammarParser.Expression_listContext context)
+    public override CarpObject[] VisitExpression_list(CarpGrammarParser.Expression_listContext context)
     {
         return context._expressions.Select(expr => this.VisitExpression(expr)).ToArray();
     }

@@ -80,12 +80,12 @@ STRUCT : 'struct' ;
 LET : 'let' ;
 FIXED : 'fixed' ;
 
-IMPORT : 'import ' .* [\n]?;
+IMPORT : 'import ' .*? ([\n] | EOF);
 ID : [a-zA-Z][a-zA-Z0-9_]* ;
 //STRING : '\'' (~['\\])* '\'' ;
 INT : ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
 WS : [ \t\r\n]+ -> skip ;
-DOCSTRING : '#:' .*? [\n] ;
+DOCSTRING : '#:' .*? ([\n] | EOF) ;
 COMMENT : '#' .*? [\n] -> skip ;
 STRING : '\'' SHORT_STRING_ITEM_FOR_SINGLE_QUOTE* '\'' ;
 CHAR : '`' . ;

@@ -54,7 +54,7 @@ public partial class CarpVisitor
         // Create a function member.
         string name = context.key.Text;
         CarpType returnType = this.VisitType(context.rtype);
-        (CarpType Type, string Name)[] args = ((CarpType Type, string Name)[]) this.Visit(context.values);
+        (CarpType Type, string Name)[] args = this.VisitType_name_list(context.values);
 
         InternalFunction func = new(returnType, context, context.body, args.ToDictionary(x => x.Name, x => x.Type), this);
 

@@ -60,8 +60,8 @@ public class CarpWound : CarpObject, IIterable
         => this.Select(x => x.GreaterEqual(right));
     public override CarpObject LessEqual(CarpObject right) => this.Select(x => x.LessEqual(right));
     public override CarpObject Call(CarpObject[] args) => this.Select(x => x.Call(args));
-    public override CarpObject Index(CarpObject index) => this.Select(x => x.Index(index));
-    public override CarpObject IndexSet(CarpObject index, CarpObject value)
+    public override CarpObject Index(CarpObject[] index) => this.Select(x => x.Index(index));
+    public override CarpObject IndexSet(CarpObject[] index, CarpObject value)
         => this.Select(x => x.IndexSet(index, value));
     public override Member Member(string name, CarpObject? caller = null, bool meta = false)
     {

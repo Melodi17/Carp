@@ -6,8 +6,11 @@ public class CarpBoolean : CarpObject
 {
     public new static readonly CarpType Type = CarpType.Create("bool", CarpObject.Type);
 
-    public static readonly CarpBoolean True = new(true);
-    public static readonly CarpBoolean False = new(false);
+    private static CarpBoolean? _true;
+    private static CarpBoolean? _false;
+    
+    public static CarpBoolean True => CarpBoolean._true ??= new CarpBoolean(true);
+    public static CarpBoolean False => CarpBoolean._false ??= new CarpBoolean(false);
 
     private CarpBoolean(bool value)
     {

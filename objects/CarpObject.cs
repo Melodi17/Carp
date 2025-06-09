@@ -8,8 +8,14 @@ public abstract class CarpObject
 {
     public static readonly CarpType Type = CarpType.Create("obj", null,
         t => t
-            .Member(new PropertyMember("type", CarpType.Type).Getter(x => x.GetCarpType()).With(Modifiers.None).Doc("The type of this object"))
-            .Member(new PropertyMember("string", CarpString.Type).Getter(x => x.String()).With(Modifiers.None).Doc("The string representation of this object")));
+            .Member(new PropertyMember("type", CarpType.Type)
+                .Getter(x => x.GetCarpType())
+                .With(Modifiers.None)
+                .Doc("The type of this object"))
+            .Member(new PropertyMember("string", CarpString.Type)
+                .Getter(x => x.String())
+                .With(Modifiers.None)
+                .Doc("The string representation of this object")));
 
     public CarpObject(CarpType? type = null)
     {
@@ -31,8 +37,10 @@ public abstract class CarpObject
     public virtual CarpObject Power(CarpObject right) => throw new PrimitiveIncompatibleException("Power", this);
     public virtual CarpObject Modulus(CarpObject right) => throw new PrimitiveIncompatibleException("Modulus", this);
 
-    public virtual CarpObject LeftShift(CarpObject right) => throw new PrimitiveIncompatibleException("LeftShift", this);
-    public virtual CarpObject RightShift(CarpObject right) => throw new PrimitiveIncompatibleException("RightShift", this);
+    public virtual CarpObject LeftShift(CarpObject right)
+        => throw new PrimitiveIncompatibleException("LeftShift", this);
+    public virtual CarpObject RightShift(CarpObject right)
+        => throw new PrimitiveIncompatibleException("RightShift", this);
 
     public virtual CarpObject Negate() => throw new PrimitiveIncompatibleException("Negate", this);
     public virtual CarpObject Not() => throw new PrimitiveIncompatibleException("Not", this);
@@ -53,10 +61,11 @@ public abstract class CarpObject
     public virtual CarpObject Call(CarpObject[] args) => throw new PrimitiveIncompatibleException("Call", this);
 
     /// Index primitive is used to access an element of the object, like obj[index].
-    public virtual CarpObject Index(CarpObject index) => throw new PrimitiveIncompatibleException("Index", this);
+    public virtual CarpObject Index(CarpObject[] index) => throw new PrimitiveIncompatibleException("Index", this);
 
     /// IndexSet primitive is used to set an element of the object, like obj[index] = value.
-    public virtual CarpObject IndexSet(CarpObject index, CarpObject value) => throw new PrimitiveIncompatibleException("IndexSet", this);
+    public virtual CarpObject IndexSet(CarpObject[] index, CarpObject value)
+        => throw new PrimitiveIncompatibleException("IndexSet", this);
 
     /// <summary>
     ///     Accesses the object's scope member. This is used to find a member of the object, like obj.member.
@@ -109,13 +118,15 @@ public abstract class CarpObject
 
         return true;
     }
-
+    
+    /// Logical OR operation that evaluates the left operand first, and lazy-evaluates the right operand if the left is not truthy.
     public static CarpObject LogicalOr(CarpObject left, Func<CarpObject> right)
     {
         bool truthy = CarpObject.IsTruthy(left);
         return truthy ? left : right();
     }
 
+    /// Logical AND operation that evaluates the left operand first, and lazy-evaluates the right operand if the left is truthy.
     public static CarpObject LogicalAnd(CarpObject left, Func<CarpObject> right)
     {
         bool truthy = CarpObject.IsTruthy(left);
@@ -134,7 +145,7 @@ public abstract class CarpObject
     {
         if (this.GetCarpType() == type)
             return this;
-        
+
         if (type == CarpString.Type)
             return this.String();
 
@@ -143,6 +154,9 @@ public abstract class CarpObject
 
         if (type == CarpVoid.Type || this.GetCarpType() == CarpVoid.Type)
             return CarpVoid.Instance;
+
+        if (type == CarpType.Auto)
+            return this;
 
         throw new ConversionException(this.GetCarpType(), type);
     }

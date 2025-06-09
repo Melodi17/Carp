@@ -51,8 +51,10 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         }
         if (assignmentTarget is CarpGrammarParser.IndexExpressionContext iec)
         {
-            // TODO: Implement index assignment
-            throw new NotImplementedException("Index assignment is not implemented yet");
+            CarpObject obj = this.VisitExpression(iec.obj);
+            CarpObject[] indexes = this.VisitExpression_list(iec.parameters);
+
+            return value => obj.IndexSet(indexes, value);
         }
         if (assignmentTarget is CarpGrammarParser.PropertyExpressionContext pec)
         {
