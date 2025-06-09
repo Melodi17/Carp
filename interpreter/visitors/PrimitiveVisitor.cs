@@ -6,7 +6,7 @@ using objects.typing;
 
 public partial class CarpVisitor
 {
-    public override object VisitIntConstant(CarpGrammarParser.IntConstantContext context)
+    public override CarpNumber VisitIntConstant(CarpGrammarParser.IntConstantContext context)
     {
         bool success = double.TryParse(context.INT().GetText(), out double result);
         if (!success)
@@ -14,7 +14,7 @@ public partial class CarpVisitor
 
         return CarpNumber.Create(result);
     }
-    public override object VisitStringConstant(CarpGrammarParser.StringConstantContext context)
+    public override CarpString VisitStringConstant(CarpGrammarParser.StringConstantContext context)
     {
         string text = context.STRING().GetText();
         if (text.Length < 2)
@@ -22,12 +22,13 @@ public partial class CarpVisitor
         text = text[1..^1]; // Remove the quotes
         return CarpString.Create(text);
     }
-    public override object VisitCharConstant(CarpGrammarParser.CharConstantContext context) => base.VisitCharConstant(context);
-    public override object VisitTrueConstant(CarpGrammarParser.TrueConstantContext context) => CarpBoolean.True;
-    public override object VisitFalseConstant(CarpGrammarParser.FalseConstantContext context) => CarpBoolean.False;
-    public override object VisitNullConstant(CarpGrammarParser.NullConstantContext context) => CarpNull.Instance;
+    public override object VisitCharConstant(CarpGrammarParser.CharConstantContext context)
+        => base.VisitCharConstant(context);
+    public override CarpBoolean VisitTrueConstant(CarpGrammarParser.TrueConstantContext context) => CarpBoolean.True;
+    public override CarpBoolean VisitFalseConstant(CarpGrammarParser.FalseConstantContext context) => CarpBoolean.False;
+    public override CarpNull VisitNullConstant(CarpGrammarParser.NullConstantContext context) => CarpNull.Instance;
 
-    public override object VisitArray(CarpGrammarParser.ArrayContext context)
+    public override CarpCollection VisitArray(CarpGrammarParser.ArrayContext context)
     {
         CarpObject[] arr = (CarpObject[]) this.Visit(context.expression_list());
         CarpType type = CarpType.HighestCommonType(arr.Select(x => x.GetCarpType()).ToArray());
@@ -35,7 +36,7 @@ public partial class CarpVisitor
         return new CarpCollection(type, arr);
     }
     public override object VisitMap(CarpGrammarParser.MapContext context) => base.VisitMap(context);
-    public override object VisitRangeExpression(CarpGrammarParser.RangeExpressionContext context)
+    public override CarpRange VisitRangeExpression(CarpGrammarParser.RangeExpressionContext context)
     {
         CarpObject start = this.VisitExpression(context.left);
         CarpObject end = this.VisitExpression(context.right);
@@ -43,21 +44,35 @@ public partial class CarpVisitor
         CarpType itemType = CarpType.HighestCommonType(start.GetCarpType(), end.GetCarpType());
         return new CarpRange(itemType, start, end);
     }
-    public override object VisitEndRangeExpression(CarpGrammarParser.EndRangeExpressionContext context)
+
+    public override CarpRange VisitRangeEndExpression(CarpGrammarParser.RangeEndExpressionContext context)
     {
         CarpObject end = this.VisitExpression(context.right);
         CarpType itemType = end.GetCarpType();
-        CarpObject start = itemType.DefaultValue();
 
-        return new CarpRange(itemType, start, end);
+        return new CarpRange(itemType, null, end);
+    }
+    public override CarpRange VisitRangeStartExpression(CarpGrammarParser.RangeStartExpressionContext context)
+    {
+        CarpObject start = this.VisitExpression(context.left);
+        CarpType itemType = start.GetCarpType();
+
+        return new CarpRange(itemType, start, null);
     }
 
-    public override (CarpType CarpType, string Name)[] VisitType_name_list(CarpGrammarParser.Type_name_listContext context)
+    public override (CarpType CarpType, string Name)[] VisitType_name_list(
+        CarpGrammarParser.Type_name_listContext context)
     {
-        return context._types.Zip(context._names, (type, name) => (CarpType: this.VisitType(type), Name: name.Text)).ToArray();
+        context.TryReplicateParent();
+        
+        return context
+            ._types.Zip(context._names, (type, name) => (CarpType: this.VisitType(type), Name: name.Text))
+            .ToArray();
     }
     public override CarpObject[] VisitExpression_list(CarpGrammarParser.Expression_listContext context)
     {
-        return context._expressions.Select(expr => this.VisitExpression(expr)).ToArray();
+        context.TryReplicateParent();
+        
+        return context._expressions.Select(this.VisitExpression).ToArray();
     }
 }

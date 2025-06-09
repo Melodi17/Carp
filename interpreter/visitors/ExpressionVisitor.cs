@@ -15,8 +15,8 @@ public partial class CarpVisitor
         CarpGrammarParser.ExpressionContext rightCtx,
         Context opCtx)
     {
-        CarpObject? left = this.VisitExpression(leftCtx);
-        CarpObject? right = this.VisitExpression(rightCtx);
+        CarpObject left = this.VisitExpression(leftCtx);
+        CarpObject right = this.VisitExpression(rightCtx);
         Comparison op = this.VisitToken<Comparison>(opCtx);
 
         return op switch
@@ -38,7 +38,7 @@ public partial class CarpVisitor
 
     public override CarpObject VisitLogicalExpression(CarpGrammarParser.LogicalExpressionContext context)
     {
-        CarpObject? left = this.VisitExpression(context.left);
+        CarpObject left = this.VisitExpression(context.left);
         Logical op = this.VisitToken<Logical>(context.op);
 
         CarpObject GetRight() => this.VisitExpression(context.right);
@@ -56,8 +56,8 @@ public partial class CarpVisitor
         CarpGrammarParser.ExpressionContext rightCtx,
         Context opCtx)
     {
-        CarpObject? left = this.VisitExpression(leftCtx);
-        CarpObject? right = this.VisitExpression(rightCtx);
+        CarpObject left = this.VisitExpression(leftCtx);
+        CarpObject right = this.VisitExpression(rightCtx);
 
         if (left.GetCarpType().Group == "number")
             right = right.Coerce(left.GetCarpType());
@@ -86,7 +86,7 @@ public partial class CarpVisitor
         => this.VisitBinaryExpression(context, context.left, context.right, context.op);
     public override CarpObject VisitUnaryExpression(CarpGrammarParser.UnaryExpressionContext context)
     {
-        CarpObject? obj = this.VisitExpression(context.left);
+        CarpObject obj = this.VisitExpression(context.left);
         Unary op = this.VisitToken<Unary>(context.op);
 
         return op switch
@@ -126,7 +126,7 @@ public partial class CarpVisitor
         Meta op = this.VisitToken<Meta>(context.op);
 
         // Meta flag is used to access even private members
-        Member objMember = context.Scope!.Find(member);
+        Member objMember = context.Scope.Find(member);
         return op switch
         {
             Meta.Doc => objMember.Docstring == null ? CarpString.Empty : CarpString.Create(objMember.Docstring),
@@ -160,7 +160,7 @@ public partial class CarpVisitor
     }
     public override CarpObject VisitCallExpression(CarpGrammarParser.CallExpressionContext context)
     {
-        CarpObject? obj = this.VisitExpression(context.obj);
+        CarpObject obj = this.VisitExpression(context.obj);
         CarpObject[] args = this.Visit(context.parameters) as CarpObject[]
                             ?? throw new InterpreterException("Parameters must be a CarpObject array");
         return obj.Call(args);
@@ -177,7 +177,7 @@ public partial class CarpVisitor
     }
     public override CarpObject VisitTernaryExpression(CarpGrammarParser.TernaryExpressionContext context)
     {
-        CarpObject? condition = this.VisitExpression(context.condition);
+        CarpObject condition = this.VisitExpression(context.condition);
         if (CarpObject.IsTruthy(condition))
             return this.VisitExpression(context.left);
 

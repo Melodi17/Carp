@@ -6,7 +6,7 @@ using scoping;
 
 public partial class CarpVisitor
 {
-    public override object VisitWrapped_definition(CarpGrammarParser.Wrapped_definitionContext context)
+    public override Member VisitWrapped_definition(CarpGrammarParser.Wrapped_definitionContext context)
     {
         // Receives a partially constructed member and completes.
         Member member = (Member) this.Visit(context.def);
@@ -38,7 +38,7 @@ public partial class CarpVisitor
         return null!;
     }
 
-    public override object VisitVariableDefinition(CarpGrammarParser.VariableDefinitionContext context)
+    public override FieldMember VisitVariableDefinition(CarpGrammarParser.VariableDefinitionContext context)
     {
         CarpType type = this.VisitType(context.rtype);
         string name = context.key.Text;
@@ -46,10 +46,10 @@ public partial class CarpVisitor
         if (type == CarpType.Auto)
             type = value.GetCarpType();
 
-        Member member = new FieldMember(name, type, value);
+        FieldMember member = new FieldMember(name, type, value);
         return member;
     }
-    public override object VisitFunctionDefinition(CarpGrammarParser.FunctionDefinitionContext context)
+    public override MethodMember VisitFunctionDefinition(CarpGrammarParser.FunctionDefinitionContext context)
     {
         // Create a function member.
         string name = context.key.Text;

@@ -39,11 +39,17 @@ public class Context : ParserRuleContext
         this.ExecutionContext = context.ExecutionContext;
         this.CurrentObject = context.CurrentObject;
     }
+    
+    public void TryReplicateParent()
+    {
+        if (this.Parent is Context context)
+            this.ReplicateParent(context);
+    }
 
     public T Clone<T>()
         where T : Context
     {
-        JsonSerializerSettings? settings = new()
+        JsonSerializerSettings settings = new()
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,

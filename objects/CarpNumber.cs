@@ -1,3 +1,4 @@
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 namespace Carp.objects;
 
 using System.Numerics;
@@ -9,23 +10,24 @@ public abstract class CarpNumber(CarpType type)
     : CarpObject(type)
 {
     // i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, f32, f64, arb
-    protected static Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)>? _creators;
+    protected static Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)> Creators = null!;
 
     public static CarpType[] AllTypes
     {
         get
         {
-            if (CarpNumber._creators == null)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if (CarpNumber.Creators == null)
                 CarpNumber.ConstructAllTypes();
 
-            return CarpNumber._creators.Values.Select(c => c.Type).ToArray();
+            return CarpNumber.Creators.Values.Select(c => c.Type).ToArray();
         }
     }
     public override abstract CarpType GetCarpType();
     public override abstract CarpString String();
     public static void ConstructAllTypes()
     {
-        CarpNumber._creators = new Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)>();
+        CarpNumber.Creators = new Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)>();
 
         CarpNumber.ConstructType<sbyte>("i8");
         CarpNumber.ConstructType<short>("i16");
@@ -48,7 +50,7 @@ public abstract class CarpNumber(CarpType type)
         carpType.DefaultValueGen = () => CarpNumber.Create(name, default(T));
 
         carpType.Group = "number";
-        CarpNumber._creators[name] = (carpType, value =>
+        CarpNumber.Creators[name] = (carpType, value =>
         {
             try
             {
@@ -56,7 +58,7 @@ public abstract class CarpNumber(CarpType type)
             }
             catch (OverflowException)
             {
-                throw new NumericDataOverflowException(value.ToString(), carpType);
+                throw new NumericDataOverflowException(value.ToString()!, carpType);
             }
         });
     }
@@ -89,10 +91,11 @@ public abstract class CarpNumber(CarpType type)
 
     public static CarpNumber Create(string typeName, object value)
     {
-        if (CarpNumber._creators == null)
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (CarpNumber.Creators == null)
             CarpNumber.ConstructAllTypes();
 
-        if (CarpNumber._creators.TryGetValue(typeName, out (CarpType Type, Func<object, CarpNumber> Creator) creator))
+        if (CarpNumber.Creators.TryGetValue(typeName, out (CarpType Type, Func<object, CarpNumber> Creator) creator))
             return creator.Creator(value);
         throw new InterpreterException($"Unknown number type: {typeName}");
     }
@@ -139,7 +142,7 @@ public class CarpNumber<T> : CarpNumber
     public override CarpObject Divide(CarpObject right) => right is CarpNumber number ? CarpNumber<T>.CreateDirect(this.Value / this.CoerceValue(number), this._type) : base.Divide(right);
     public override CarpObject Power(CarpObject right)
     {
-        if (right is not CarpNumber number)
+        if (right is not CarpNumber)
             throw new PrimitiveIncompatibleException("Power", this);
 
         if (this.Value is BigInteger bigInt && right is CarpNumber<BigInteger> bigIntNumber)
@@ -202,7 +205,7 @@ public class CarpNumber<T> : CarpNumber
     }
 
     public override CarpObject Negate() => CarpNumber<T>.CreateDirect(-this.Value, this._type);
-    public override CarpString String() => CarpString.Create(this.Value.ToString());
+    public override CarpString String() => CarpString.Create(this.Value.ToString()!);
     public override CarpObject Equal(CarpObject right)
     {
         // try to coerce CarpNumber to CarpNumber<T>
@@ -210,8 +213,7 @@ public class CarpNumber<T> : CarpNumber
             return CarpBoolean.Create(this.Value.Equals(number.Value));
         if (right is CarpNumber numberObj)
         {
-            CarpNumber<T>? coerced = numberObj.Coerce(this.GetCarpType()) as CarpNumber<T>;
-            if (coerced != null)
+            if (numberObj.Coerce(this.GetCarpType()) is CarpNumber<T> coerced)
                 return CarpBoolean.Create(this.Value.Equals(coerced.Value));
         }
 
@@ -224,7 +226,7 @@ public class CarpNumber<T> : CarpNumber
     // All numbers can be coerced to any other number type
     public override CarpObject Coerce(CarpType type)
     {
-        if (CarpNumber._creators.TryGetValue(type.Name, out (CarpType Type, Func<object, CarpNumber> Creator) creator))
+        if (CarpNumber.Creators.TryGetValue(type.Name, out (CarpType Type, Func<object, CarpNumber> Creator) creator))
             return creator.Creator(this.Value);
 
         return base.Coerce(type);

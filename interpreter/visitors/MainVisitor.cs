@@ -74,7 +74,7 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
             ctx.Position = ctx.Start.Line;
             if (tree.Parent is Context parent)
                 ctx.ReplicateParent(parent);
-            //Console.WriteLine($"Visiting {ctx.GetType().GetFormattedName()} at line {ctx.Position}");
+            Console.WriteLine($"Visiting {ctx.GetType().GetFormattedName()} at line {ctx.Position} {(ctx.Scope != null ? $"in scope" : "")}");
         }
 
         return base.Visit(tree);

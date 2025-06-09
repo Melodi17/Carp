@@ -11,7 +11,7 @@ public static class Formatting
         ArgumentNullException.ThrowIfNull(text);
         if (text.Length < 2)
             return text.ToLowerInvariant();
-        StringBuilder? sb = new();
+        StringBuilder sb = new();
         sb.Append(char.ToLowerInvariant(text[0]));
         for (int i = 1; i < text.Length; ++i)
         {

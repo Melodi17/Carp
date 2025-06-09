@@ -216,6 +216,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitEnumDefinitionAutoValues([NotNull] CarpGrammarParser.EnumDefinitionAutoValuesContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>rangeEndExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRangeEndExpression([NotNull] CarpGrammarParser.RangeEndExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>comparisonCompareExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// </summary>
@@ -285,6 +292,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitIndexExpression([NotNull] CarpGrammarParser.IndexExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>rangeStartExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRangeStartExpression([NotNull] CarpGrammarParser.RangeStartExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>unaryExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
@@ -411,13 +425,6 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitPropertyExpression([NotNull] CarpGrammarParser.PropertyExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>endRangeExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitEndRangeExpression([NotNull] CarpGrammarParser.EndRangeExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>compareTypeExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.

@@ -5,7 +5,7 @@ using scoping;
 public class CarpType : CarpObject
 {
     public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type);
-    public new static readonly CarpType Auto = CarpType.Create("auto", null);
+    public static readonly CarpType Auto = CarpType.Create("auto", null);
 
     private static readonly Dictionary<(CarpType, CarpType[]), CarpType> genericCache = new();
 
@@ -139,7 +139,7 @@ public class CarpType : CarpObject
             return CarpObject.Type;
 
         CarpType type = arr[0];
-        while (arr.Any(x => !x.Extends(type)))
+        while (arr.Any(x => !x.Extends(type!)))
             type = type.BaseType;
         return type;
     }

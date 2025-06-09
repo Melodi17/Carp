@@ -191,7 +191,8 @@ expression
     | array # arrayExpression
     | ID # variableExpression
     | left=expression ELIPSIS right=expression # rangeExpression 
-    | ELIPSIS right=expression # endRangeExpression
+    | ELIPSIS right=expression # rangeEndExpression
+    | left=expression ELIPSIS # rangeStartExpression 
     | '(' obj=expression ')' # parenthesizedExpression
     | inner=expression '::' # windExpression
     | inner=expression ':~' dest=type # windCastExpression

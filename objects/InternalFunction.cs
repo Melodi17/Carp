@@ -53,7 +53,7 @@ public class InternalFunction : CarpFunction
 
         for (int i = 0; i < args.Length; i++)
         {
-            string? paramName = this._parameters.Keys.ElementAt(i);
+            string paramName = this._parameters.Keys.ElementAt(i);
             if (!args[i].GetCarpType().Extends(this._parameters[paramName]))
                 return false;
         }

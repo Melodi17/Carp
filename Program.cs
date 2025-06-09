@@ -19,7 +19,7 @@ public class Program
 
     private static void RunProgram(RunnerOptions obj)
     {
-        CarpType[]? types = CarpType.ConstructTypes();
+        CarpType[] types = CarpType.ConstructTypes();
         Scope scope = Runtime.MakeScope(types);
 
         try

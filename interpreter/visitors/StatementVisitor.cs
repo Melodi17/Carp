@@ -15,7 +15,7 @@ public partial class CarpVisitor
         Scope s = new(context.Scope);
         context.Scope = s;
 
-        object? res = this.VisitBlock(context._statements);
+        object res = this.VisitBlock(context._statements);
         s.Dispose();
 
         return res;
@@ -68,7 +68,7 @@ public partial class CarpVisitor
 
     public override object VisitIf_statement(CarpGrammarParser.If_statementContext context)
     {
-        CarpObject? condition = this.VisitExpression(context.cond);
+        CarpObject condition = this.VisitExpression(context.cond);
         if (CarpObject.IsTruthy(condition))
             this.Visit(context.body);
 
