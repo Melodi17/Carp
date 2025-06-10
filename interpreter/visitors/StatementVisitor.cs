@@ -167,5 +167,14 @@ public partial class CarpVisitor
     public override object VisitBreak_statement(CarpGrammarParser.Break_statementContext context) => throw new BreakException();
     public override object VisitContinue_statement(CarpGrammarParser.Continue_statementContext context) => throw new ContinueException();
     public override object VisitYield_statement(CarpGrammarParser.Yield_statementContext context) => base.VisitYield_statement(context);
-    public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context) => base.VisitImportStatement(context);
+    public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
+    {
+        string fullPath = context.GetText()[7..].Trim(); // Remove "import "
+        
+        string? ver = fullPath.Contains(":") ? fullPath.Split(':')[1] : null;
+        string[] parts = fullPath.Split(":")[0].Split('.');
+        
+        // define into current scope once found
+        throw new NotImplementedException("Import statements are not implemented yet.");
+    }
 }

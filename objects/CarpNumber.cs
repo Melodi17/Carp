@@ -11,10 +11,10 @@ public abstract class CarpNumber(CarpType type)
 {
     public const string Group = "number";
     // i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, f32, f64, arb
-    protected static Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)> Creators = null!;
+    public static Dictionary<string, (CarpType Type, Type native, Func<object, CarpNumber> Creator)> Creators = null!;
     
     public abstract int ValueAsFull { get; }
-    public abstract float ValueAsFraction { get; }
+    public abstract double ValueAsFraction { get; }
 
     public static CarpType[] AllTypes
     {
@@ -31,7 +31,7 @@ public abstract class CarpNumber(CarpType type)
     public override abstract CarpString String();
     public static void ConstructAllTypes()
     {
-        CarpNumber.Creators = new Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)>();
+        CarpNumber.Creators = new Dictionary<string, (CarpType Type, Type native, Func<object, CarpNumber> Creator)>();
 
         CarpNumber.ConstructType<sbyte>("i8");
         CarpNumber.ConstructType<short>("i16");
@@ -54,7 +54,7 @@ public abstract class CarpNumber(CarpType type)
         carpType.DefaultValueGen = () => CarpNumber.Create(name, default(T));
 
         carpType.Group = CarpNumber.Group;
-        CarpNumber.Creators[name] = (carpType, value =>
+        CarpNumber.Creators[name] = (carpType, typeof(T), value =>
         {
             try
             {
@@ -99,7 +99,7 @@ public abstract class CarpNumber(CarpType type)
         if (CarpNumber.Creators == null)
             CarpNumber.ConstructAllTypes();
 
-        if (CarpNumber.Creators.TryGetValue(typeName, out (CarpType Type, Func<object, CarpNumber> Creator) creator))
+        if (CarpNumber.Creators.TryGetValue(typeName, out (CarpType Type, Type native, Func<object, CarpNumber> Creator) creator))
             return creator.Creator(value);
         throw new InterpreterException($"Unknown number type: {typeName}");
     }
@@ -122,7 +122,7 @@ public class CarpNumber<T> : CarpNumber
 
     public override int ValueAsFull =>
         this.Value is BigInteger bigInt ? (int) bigInt : Convert.ToInt32(this.Value);
-    public override float ValueAsFraction =>
+    public override double ValueAsFraction =>
         this.Value is BigInteger bigInt ? (float) bigInt : Convert.ToSingle(this.Value);
 
     private CarpNumber(T value, CarpType type) : base(type)
@@ -235,7 +235,7 @@ public class CarpNumber<T> : CarpNumber
     // All numbers can be coerced to any other number type
     public override CarpObject Coerce(CarpType type)
     {
-        if (CarpNumber.Creators.TryGetValue(type.Name, out (CarpType Type, Func<object, CarpNumber> Creator) creator))
+        if (CarpNumber.Creators.TryGetValue(type.Name, out (CarpType Type, Type native, Func<object, CarpNumber> Creator) creator))
             return creator.Creator(this.Value);
 
         return base.Coerce(type);

@@ -4,6 +4,7 @@ using Antlr4.Runtime;
 using exceptions;
 using interpreter.execution;
 using interpreter.visitors;
+using libraries.std.io;
 using objects;
 using objects.typing;
 using scoping;
@@ -16,17 +17,20 @@ public class Runtime
         foreach (CarpType type in types)
             s.Define(new FieldMember(type.Name, CarpType.Type, type).With(Modifiers.Final));
 
-        s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, (_, objs) =>
-        {
-            foreach (CarpObject obj in objs)
-                Console.Write(obj.String().Value);
-            Console.WriteLine();
-            return CarpVoid.Instance;
-        })));
+        // s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, (_, objs) =>
+        // {
+        //     foreach (CarpObject obj in objs)
+        //         Console.Write(obj.String().Value);
+        //     Console.WriteLine();
+        //     return CarpVoid.Instance;
+        // })));
+
+        s.Define(new FieldMember("Console", CarpType.Type, new NativePolyType(typeof(Console)))
+            .With(Modifiers.Final));
 
         return s;
     }
-    
+
     /// <summary>
     /// </summary>
     /// <param name="executionContext"></param>
@@ -55,7 +59,10 @@ public class Runtime
     /// <exception cref="ParserException">Thrown when syntax issue is detected at the parser step</exception>
     /// <exception cref="InterpreterException">Thrown when issue with ast-gen step</exception>
     /// <exception cref="RuntimeException">Thrown when carp-level code errors, at the interpreter step</exception>
-    public static CarpObject Execute(CarpGrammarParser.ProgramContext parsedContext, IExecutionContext executionContext, Scope? scope = null)
+    public static CarpObject Execute(
+        CarpGrammarParser.ProgramContext parsedContext,
+        IExecutionContext executionContext,
+        Scope? scope = null)
     {
         parsedContext.Scope = scope ?? Runtime.MakeScope(CarpType.ConstructTypes());
         parsedContext.ExecutionContext = executionContext;
@@ -67,7 +74,7 @@ public class Runtime
 
         return output;
     }
-    
+
     /// <summary>
     /// Parses the content of the execution context into a CarpGrammarParser.ProgramContext.
     /// </summary>
@@ -103,7 +110,7 @@ public class Runtime
             CommonTokenStream tokens = new(lexer);
             tokens.Fill();
             tokens.Seek(0);
-            return tokens;   
+            return tokens;
         }
         catch (Exception e)
         {
