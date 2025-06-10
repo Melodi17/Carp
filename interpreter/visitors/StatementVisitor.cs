@@ -1,11 +1,13 @@
 namespace Carp.interpreter.visitors;
 
+using System.Reflection;
 using exceptions;
 using exceptions.flowcontrol;
 using exceptions.impl;
 using objects;
 using objects.typing;
 using scoping;
+using toolkit;
 
 public partial class CarpVisitor
 {
@@ -173,8 +175,9 @@ public partial class CarpVisitor
         
         string? ver = fullPath.Contains(":") ? fullPath.Split(':')[1] : null;
         string[] parts = fullPath.Split(":")[0].Split('.');
-        
-        // define into current scope once found
-        throw new NotImplementedException("Import statements are not implemented yet.");
+
+        context.LibraryLoader.Import(context.Scope, parts);
+
+        return null!;
     }
 }

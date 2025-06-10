@@ -56,5 +56,5 @@ public class NativePolyType : CarpType
     }
 
     public override CarpType GetCarpType() => CarpType.Type;
-    public override CarpString String() => CarpString.Create($"<native poly type {this.NativeType.Name}>");
+    public override CarpString String() => CarpString.Create($"{this.NativeType.Name}");
 }

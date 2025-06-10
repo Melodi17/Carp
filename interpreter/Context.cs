@@ -5,6 +5,7 @@ using execution;
 using Newtonsoft.Json;
 using objects;
 using scoping;
+using toolkit;
 
 public class Context : ParserRuleContext
 {
@@ -30,6 +31,7 @@ public class Context : ParserRuleContext
     public IExecutionContext? ExecutionContext { get; set; }
 
     public CarpObject? CurrentObject { get; set; }
+    public LibraryLoader LibraryLoader { get; set; }
 
     public void ReplicateParent(Context context)
     {
@@ -38,6 +40,7 @@ public class Context : ParserRuleContext
         this.Position = context.Position;
         this.ExecutionContext = context.ExecutionContext;
         this.CurrentObject = context.CurrentObject;
+        this.LibraryLoader = context.LibraryLoader;
     }
     
     public void TryReplicateParent()

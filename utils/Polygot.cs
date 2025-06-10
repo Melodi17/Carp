@@ -22,6 +22,9 @@ public static class Polygot
 
         if (obj is int i)
             return CarpNumber.Create(i);
+        
+        if (obj is byte t)
+            return CarpNumber.Create(t);
 
         if (obj is double d)
             return CarpNumber.Create(d);
@@ -36,9 +39,12 @@ public static class Polygot
                 objs);
         }
 
-        if (obj is IEnumerable<object> enumerable)
+        if (obj is IEnumerable enumerable)
         {
-            CarpObject[] objs = enumerable.Select(x => Polygot.ObjFromNative(x)).ToArray();
+            CarpObject[] objs = enumerable
+                .Cast<object>()
+                .Select(x => Polygot.ObjFromNative(x))
+                .ToArray();
             return new CarpCollection(CarpType.HighestCommonType(objs.Select(x => x.GetCarpType()).ToArray()), objs);
         }
         
@@ -63,7 +69,24 @@ public static class Polygot
             return carpBoolean.Value;
 
         if (obj is CarpCollection collection)
-            return collection.Items.Select(x => Polygot.ObjToNative(x)).ToArray();
+        {
+            if (t == null || t == typeof(object[]))
+                return collection.Items.Select(x => Polygot.ObjToNative(x)).ToArray();
+            else if (t.IsArray)
+            {
+                Type itemType = t.GetElementType()!;
+                return Helpers.ConvertToTypedArray(itemType, collection.Items.Select(x => Polygot.ObjToNative(x, itemType)).ToArray());
+            }
+            else if (t.GetInterfaces().Contains(typeof(IEnumerable)))
+            {
+                Type itemType = t.GetGenericArguments().FirstOrDefault() ?? typeof(object);
+                return collection.Items.Select(x => Polygot.ObjToNative(x, itemType)).ToList();
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported collection type: {t}");
+            }
+        }
         
         throw new NotSupportedException($"Unsupported type: {obj.GetCarpType()}");
     }

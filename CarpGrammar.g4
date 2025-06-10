@@ -171,18 +171,11 @@ definition
 
 expression
     : constant # constantExpression
-    | left=expression ELIPSIS right=expression # rangeExpression 
-    | ELIPSIS right=expression # rangeEndExpression
-    | left=expression ELIPSIS # rangeStartExpression
-    | ELIPSIS # rangeEmptyExpression
     | obj=expression op=(TILDE_TILDE|'~>') dest=type # compareTypeExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
     | obj=expression '[' parameters=expression_list ']' # indexExpression
-    | obj=expression '.' member=ID '.' op=meta # metaMemberExpression
-    | member=ID '.' op=meta # metaObjExpression
-    | obj=expression '.' path=ID # propertyExpression
     | op=unary left=expression # unaryExpression
     | left=expression op=binary_geometric right=expression # binaryGeometricExpression // Geometric
     | left=expression op=binary_arithmatic right=expression # binaryArithmaticExpression // Arithmatic
@@ -190,6 +183,13 @@ expression
     | left=expression op=comparison_compare right=expression # comparisonCompareExpression // Comparing
     | left=expression op=comparison_match right=expression # comparisonMatchExpression // Matching
     | left=expression op=logical right=expression # logicalExpression
+    | left=expression ELIPSIS right=expression # rangeExpression 
+    | ELIPSIS right=expression # rangeEndExpression
+    | left=expression ELIPSIS # rangeStartExpression
+    | ELIPSIS # rangeEmptyExpression
+    | obj=expression '.' member=ID '.' op=meta # metaMemberExpression
+    | member=ID '.' op=meta # metaObjExpression
+    | obj=expression '.' path=ID # propertyExpression
     | condition=expression '?' left=expression ':' right=expression # ternaryExpression // Side effects
     | map # mapExpression
     | array # arrayExpression

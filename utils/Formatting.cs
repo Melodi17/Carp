@@ -26,4 +26,8 @@ public static class Formatting
         }
         return sb.ToString();
     }
+    public static string FormatNamespace(string ns)
+    {
+        return string.Join(".", ns.Split(".").Select(x => Formatting.ToSnakeCase(x)).ToArray());
+    }
 }

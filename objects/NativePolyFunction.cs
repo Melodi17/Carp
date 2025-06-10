@@ -12,10 +12,13 @@ public class NativePolyFunction : CarpFunction
     {
         this._func = func;
     }
-    
+
     public override CarpString String() => CarpString.Create($"<native poly function {this.ID}>");
     public override CarpObject Call(CarpObject? self, CarpObject[] args)
-        => Polygot.ObjFromNative(this._func.Invoke(null, args.ToArray<object?>()), this._func.ReturnType);
+        => Polygot.ObjFromNative(
+            this._func.Invoke(null,
+                args.Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i].ParameterType)).ToArray()),
+            this._func.ReturnType);
     public override bool Accepts(CarpObject[] args)
     {
         var parameters = this._func.GetParameters();
@@ -29,7 +32,7 @@ public class NativePolyFunction : CarpFunction
             if (!argType.Extends(paramType))
                 return false;
         }
-        
+
         return true;
     }
 }

@@ -36,9 +36,11 @@ public class CarpString : CarpObject, IIterable
                     if (delimiter.Length == 0)
                         return new CarpCollection(CarpString.Type!, str.Value.Select(CarpString.Create)); 
                     else
-                        return new CarpCollection(CarpString.Type!, str.Value.Split(str.Value).Select(CarpString.Create));
+                        return new CarpCollection(CarpString.Type!, str.Value.Split(delimiter).Select(CarpString.Create));
                 }, [CarpString.Type!])))
             
+            .Member(new PropertyMember("strip", CarpNumber.Type).Getter<CarpString>(x
+                => CarpString.Create(x.Value.Trim())))
             .Member(new PropertyMember("lower", CarpNumber.Type).Getter<CarpString>(x
                 => CarpString.Create(x.Value.ToLower())))
             .Member(new PropertyMember("upper", CarpString.Type!).Getter<CarpString>(x

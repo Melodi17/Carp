@@ -104,10 +104,12 @@ public abstract class CarpNumber(CarpType type)
         throw new InterpreterException($"Unknown number type: {typeName}");
     }
 
+    /// Default to i32 if no type is specified
     public static CarpNumber Create(int value) => CarpNumber.Create("i32", value);
-    // Default to i32 if no type is specified
+    
+    /// Default to f64 if no type is specified
     public static CarpNumber Create(double value) => CarpNumber.Create("f64", value);
-    // Default to f64 if no type is specified
+    public static CarpNumber Create(byte value) => CarpNumber.Create("u8", value);
     public T Coerce<T>(CarpType newType)
         where T : CarpNumber
         => (T) this.Coerce(newType);

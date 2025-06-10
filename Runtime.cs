@@ -1,5 +1,6 @@
 namespace Carp;
 
+using System.Reflection;
 using Antlr4.Runtime;
 using exceptions;
 using interpreter.execution;
@@ -8,6 +9,7 @@ using libraries.std.io;
 using objects;
 using objects.typing;
 using scoping;
+using toolkit;
 
 public class Runtime
 {
@@ -16,17 +18,6 @@ public class Runtime
         Scope s = new();
         foreach (CarpType type in types)
             s.Define(new FieldMember(type.Name, CarpType.Type, type).With(Modifiers.Final));
-
-        // s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, (_, objs) =>
-        // {
-        //     foreach (CarpObject obj in objs)
-        //         Console.Write(obj.String().Value);
-        //     Console.WriteLine();
-        //     return CarpVoid.Instance;
-        // })));
-
-        s.Define(new FieldMember("Console", CarpType.Type, new NativePolyType(typeof(Console)))
-            .With(Modifiers.Final));
 
         return s;
     }
@@ -66,6 +57,12 @@ public class Runtime
     {
         parsedContext.Scope = scope ?? Runtime.MakeScope(CarpType.ConstructTypes());
         parsedContext.ExecutionContext = executionContext;
+
+        parsedContext.LibraryLoader = new();
+        parsedContext.LibraryLoader.Load(new LibraryMeta
+        {
+            StartNamespace = "Carp.libraries"
+        }, Assembly.GetExecutingAssembly());
 
         CarpVisitor visitor = new();
         CarpObject? output = visitor.Visit(parsedContext) as CarpObject;
