@@ -63,7 +63,18 @@ public static class Polygot
             return carpString.Value;
 
         if (obj is CarpNumber carpNumber)
-            return carpNumber.ValueAsFraction;
+        {
+            if (t == null || t == typeof(object) || t == typeof(int))
+                return carpNumber.ValueAsFull;
+            else if (t == typeof(byte))
+                return (byte)carpNumber.ValueAsFull;
+            else if (t == typeof(double))
+                return carpNumber.ValueAsFraction;
+            else if (CarpNumber.Creators.Any(x => x.Value.Type == obj.GetCarpType() && x.Value.native == t))
+                return carpNumber.ValueAsFull; // Return as full int for native types
+            else
+                throw new NotSupportedException($"Unsupported number type: {t}");
+        }
 
         if (obj is CarpBoolean carpBoolean)
             return carpBoolean.Value;
