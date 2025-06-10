@@ -47,7 +47,6 @@ public static class Semantics
 
         int[] multiliners =
         [
-            CarpGrammarParser.ELIPSIS,
             CarpGrammarParser.PERIOD,
             CarpGrammarParser.COMMA,
             CarpGrammarParser.EQUALS,

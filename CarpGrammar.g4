@@ -171,6 +171,9 @@ definition
 
 expression
     : constant # constantExpression
+    | left=expression ELIPSIS right=expression # rangeExpression 
+    | ELIPSIS right=expression # rangeEndExpression
+    | left=expression ELIPSIS # rangeStartExpression
     | obj=expression op=(TILDE_TILDE|'~>') dest=type # compareTypeExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression
@@ -189,10 +192,7 @@ expression
     | condition=expression '?' left=expression ':' right=expression # ternaryExpression // Side effects
     | map # mapExpression
     | array # arrayExpression
-    | ID # variableExpression
-    | left=expression ELIPSIS right=expression # rangeExpression 
-    | ELIPSIS right=expression # rangeEndExpression
-    | left=expression ELIPSIS # rangeStartExpression 
+    | ID # variableExpression 
     | '(' obj=expression ')' # parenthesizedExpression
     | inner=expression '::' # windExpression
     | inner=expression ':~' dest=type # windCastExpression

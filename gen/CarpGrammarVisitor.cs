@@ -286,19 +286,19 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInfixExpression([NotNull] CarpGrammarParser.InfixExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>indexExpression</c>
-	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitIndexExpression([NotNull] CarpGrammarParser.IndexExpressionContext context);
-	/// <summary>
 	/// Visit a parse tree produced by the <c>rangeStartExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitRangeStartExpression([NotNull] CarpGrammarParser.RangeStartExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>indexExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIndexExpression([NotNull] CarpGrammarParser.IndexExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>unaryExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.

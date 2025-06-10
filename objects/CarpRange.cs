@@ -2,11 +2,15 @@ namespace Carp.objects;
 
 using System.Diagnostics;
 using exceptions.impl;
+using scoping;
 using typing;
 
 public class CarpRange : CarpObject, IIterable
 {
-    public new static readonly CarpType Type = CarpType.Create("range", IIterable.Type);
+    public new static readonly CarpType Type = CarpType.Create("range", IIterable.Type,
+        b => b
+            .Member(new PropertyMember("start", CarpType.Auto).Getter<CarpRange>(x => x.Start ?? CarpNull.Instance))
+            .Member(new PropertyMember("end", CarpType.Auto).Getter<CarpRange>(x => x.End ?? CarpNull.Instance)));
     private readonly CarpType _itemType;
     public CarpRange(CarpType itemType, CarpObject? start, CarpObject? end) : base(
         CarpType.CreateGeneric(CarpRange.Type, itemType))
