@@ -44,12 +44,12 @@ public class CarpWound : CarpObject, IIterable
 
     public override CarpObject Add(CarpObject right) => Select(x => x.Add(right));
     public override CarpObject Subtract(CarpObject right) => this.Select(x => x.Subtract(right));
-    public override CarpObject Multiply(CarpObject right) => this.Select(x => x.Subtract(right));
-    public override CarpObject Divide(CarpObject right) => this.Select(x => x.Subtract(right));
-    public override CarpObject Power(CarpObject right) => this.Select(x => x.Subtract(right));
-    public override CarpObject Modulus(CarpObject right) => this.Select(x => x.Subtract(right));
-    public override CarpObject LeftShift(CarpObject right) => this.Select(x => x.Subtract(right));
-    public override CarpObject RightShift(CarpObject right) => this.Select(x => x.Subtract(right));
+    public override CarpObject Multiply(CarpObject right) => this.Select(x => x.Multiply(right));
+    public override CarpObject Divide(CarpObject right) => this.Select(x => x.Divide(right));
+    public override CarpObject Power(CarpObject right) => this.Select(x => x.Power(right));
+    public override CarpObject Modulus(CarpObject right) => this.Select(x => x.Modulus(right));
+    public override CarpObject LeftShift(CarpObject right) => this.Select(x => x.LeftShift(right));
+    public override CarpObject RightShift(CarpObject right) => this.Select(x => x.RightShift(right));
     public override CarpObject Negate() => this.Select(x => x.Negate());
     public override CarpObject Not() => this.Select(x => x.Negate());
     public override CarpObject Equal(CarpObject right) => this.Select(x => x.Equal(right));
