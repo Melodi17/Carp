@@ -384,6 +384,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitCallExpression([NotNull] CarpGrammarParser.CallExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>rangeEmptyExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRangeEmptyExpression([NotNull] CarpGrammarParser.RangeEmptyExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>binaryGeometricExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// </summary>

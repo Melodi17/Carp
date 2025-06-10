@@ -174,6 +174,7 @@ expression
     | left=expression ELIPSIS right=expression # rangeExpression 
     | ELIPSIS right=expression # rangeEndExpression
     | left=expression ELIPSIS # rangeStartExpression
+    | ELIPSIS # rangeEmptyExpression
     | obj=expression op=(TILDE_TILDE|'~>') dest=type # compareTypeExpression
     | token=('++'|'--') expr=expression # infixExpression
     | expr=expression token=('++'|'--') # postfixExpression

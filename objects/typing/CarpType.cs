@@ -29,12 +29,12 @@ public class CarpType : CarpObject
     {
         if (!this.IsGeneric)
             return CarpString.Create($"{this.Name}");
-        if (this.Extends(IIterable.Type))
+        if (this.Extends(CarpCollection.Type))
             return CarpString.Create($"{this.TypeArguments[0].Repr()}*");
         // TODO: implement map type
         // else if (this.Extends(CarpMap.Type))
         //     return CarpString.Create($"{TypeArguments[0].Repr()}:{TypeArguments[1].Repr()}");
-        return CarpString.Create($"{this.Name}<{string.Join(", ", this.TypeArguments.Select(x => x.Repr()))}");
+        return CarpString.Create($"{this.Name}<{string.Join(", ", this.TypeArguments.Select(x => x.Repr()))}>");
     }
     public CarpObject DefaultValue()
     {
@@ -66,7 +66,7 @@ public class CarpType : CarpObject
         if (type == CarpNull.Type)
             return true;
 
-        if (this.Group != null && this.Group == type.Group)
+        if (this.Group != null && this.Group == type?.Group)
             return true;
 
         return false;
@@ -140,7 +140,11 @@ public class CarpType : CarpObject
 
         CarpType type = arr[0];
         while (arr.Any(x => !x.Extends(type!)))
+        {
             type = type.BaseType;
+            if (type == null)
+                return CarpObject.Type; // No common type found, fallback to CarpObject
+        }
         return type;
     }
 

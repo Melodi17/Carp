@@ -145,10 +145,7 @@ public abstract class CarpObject
     {
         if (this.GetCarpType() == type)
             return this;
-
-        if (type == CarpString.Type)
-            return this.String();
-
+        
         if (this.GetCarpType().Extends(type))
             return this;
 
@@ -157,7 +154,13 @@ public abstract class CarpObject
 
         if (type == CarpType.Auto)
             return this;
+        
+        if (this.GetCarpType() == CarpNull.Type)
+            return CarpNull.Instance;
 
+        if (type == CarpString.Type)
+            return this.String();
+        
         throw new ConversionException(this.GetCarpType(), type);
     }
 

@@ -60,6 +60,12 @@ public partial class CarpVisitor
         return new CarpRange(itemType, start, null);
     }
 
+    public override object VisitRangeEmptyExpression(CarpGrammarParser.RangeEmptyExpressionContext context)
+    {
+        CarpType itemType = CarpType.Auto;
+        return new CarpRange(itemType, null, null);
+    }
+
     public override (CarpType CarpType, string Name)[] VisitType_name_list(
         CarpGrammarParser.Type_name_listContext context)
     {

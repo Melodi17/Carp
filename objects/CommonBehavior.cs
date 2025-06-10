@@ -23,6 +23,9 @@ public static class CommonBehavior
             return items[idxValue].Coerce(itemType);
         }
 
+        if (idx is CarpRange { Start: null, End: null })
+            return self;
+
         if (idx is CarpRange range && range.GetCarpType().TypeArguments[0].Group == CarpNumber.Group)
         {
             int start = range.Start != null ? ((CarpNumber) range.Start).ValueAsFull : 0;
@@ -58,6 +61,13 @@ public static class CommonBehavior
                 throw new BoundsExceededException(self, index);
 
             items[idxValue] = value.Coerce(itemType);
+            return value;
+        }
+        
+        if (idx is CarpRange { Start: null, End: null })
+        {
+            for (int i = 0; i < items.Count; i++)
+                items[i] = value.Coerce(itemType);
             return value;
         }
 

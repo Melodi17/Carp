@@ -18,9 +18,6 @@ public class CarpRange : CarpObject, IIterable
         this.Start = start;
         this.End = end;
         this._itemType = itemType;
-        
-        if (start == null && end == null)
-            throw new IllegalOperationException("Range must have at least one value defined (start or end).");
     }
     public CarpObject? Start { get; }
     public CarpObject? End { get; }
@@ -41,7 +38,7 @@ public class CarpRange : CarpObject, IIterable
     public override CarpString String()
         => (Start == null, End == null) switch
         {
-            (true, true) => throw new UnreachableException("Both start and end of a range cannot be null."),
+            (true, true) => CarpString.Create(".."),
             (false, true) => CarpString.Create($"{this.Start!.Repr()}.."),
             (true, false) => CarpString.Create($"..{this.End!.Repr()}"),
             (false, false) => CarpString.Create($"{this.Start!.Repr()}..{this.End!.Repr()}")

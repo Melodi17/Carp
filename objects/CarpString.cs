@@ -27,6 +27,18 @@ public class CarpString : CarpObject, IIterable
                     return CarpString.Create(str.Value.Replace(oldValue, ""));
                 }, [CarpString.Type!])))
             
+            .Member(new MethodMember("split")
+                .Overload(new NativeConstrainedFunction(CarpCollection.Type, (self, args) =>
+                {
+                    CarpString str = (CarpString) self!;
+                    string delimiter = ((CarpString) args[0]).Value;
+
+                    if (delimiter.Length == 0)
+                        return new CarpCollection(CarpString.Type!, str.Value.Select(CarpString.Create)); 
+                    else
+                        return new CarpCollection(CarpString.Type!, str.Value.Split(str.Value).Select(CarpString.Create));
+                }, [CarpString.Type!])))
+            
             .Member(new PropertyMember("lower", CarpNumber.Type).Getter<CarpString>(x
                 => CarpString.Create(x.Value.ToLower())))
             .Member(new PropertyMember("upper", CarpString.Type!).Getter<CarpString>(x
@@ -49,6 +61,18 @@ public class CarpString : CarpObject, IIterable
         CarpString str = new(value);
         CarpString.Cache[value] = str;
         return str;
+    }
+
+    public override CarpObject Add(CarpObject right) => CarpString.Create(this.Value + right.String().Value);
+    public override CarpObject Divide(CarpObject right)
+    {
+        if (right is CarpString str)
+            return CarpString.Create(Path.Join(this.Value, str.Value));
+        
+        if (right is CarpRange { Start: null, End: null })
+            return CarpString.Create(Path.GetDirectoryName(this.Value) ?? string.Empty);
+        
+        return base.Divide(right);
     }
 
     public static CarpString Create(char value) => CarpString.Create(value.ToString());
