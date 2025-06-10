@@ -5,10 +5,10 @@ using utils;
 
 public class NativeFunction : CarpFunction
 {
-    private readonly Func<CarpObject[], CarpObject> _func;
+    private readonly Func<CarpObject?, CarpObject[], CarpObject> _func;
     public readonly string ID = Helpers.GenerateID();
 
-    public NativeFunction(CarpType returnType, Func<CarpObject[], CarpObject> func) : base(returnType)
+    public NativeFunction(CarpType returnType, Func<CarpObject?, CarpObject[], CarpObject> func) : base(returnType)
     {
         this._func = func;
     }
@@ -16,6 +16,6 @@ public class NativeFunction : CarpFunction
     public override CarpObject Call(CarpObject? self, CarpObject[] args)
         =>
             // Native functions do not use self, so we ignore it
-            this._func(args);
+            this._func(self, args);
     public override bool Accepts(CarpObject[] args) => true;
 }

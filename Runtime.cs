@@ -16,7 +16,7 @@ public class Runtime
         foreach (CarpType type in types)
             s.Define(new FieldMember(type.Name, CarpType.Type, type).With(Modifiers.Final));
 
-        s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, objs =>
+        s.Define(new MethodMember("print", new NativeFunction(CarpVoid.Type, (_, objs) =>
         {
             foreach (CarpObject obj in objs)
                 Console.Write(obj.String().Value);

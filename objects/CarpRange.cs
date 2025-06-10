@@ -45,12 +45,6 @@ public class CarpRange : CarpObject, IIterable
 
     public override CarpObject Coerce(CarpType type)
     {
-        if (type.Extends(CarpCollection.Type))
-        {
-            CarpType itemType = type.TypeArguments[0];
-            return new CarpCollection(itemType, this.GetIterator().Select(x => x.Coerce(itemType)));
-        }
-
-        return base.Coerce(type);
+        return CommonBehavior.CoerceIIterable(this, type) ?? base.Coerce(type);
     }
 }

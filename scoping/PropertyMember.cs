@@ -22,10 +22,22 @@ public class PropertyMember : Member
         this._getter = getter;
         return this;
     }
+    
+    public PropertyMember Getter<TSelf>(Func<TSelf, CarpObject> getter) where TSelf : CarpObject
+    {
+        this._getter = self => getter((TSelf) self!);
+        return this;
+    }
 
     public PropertyMember Setter(Action<CarpObject?, CarpObject> setter)
     {
         this._setter = setter;
+        return this;
+    }
+    
+    public PropertyMember Setter<TSelf>(Action<TSelf, CarpObject> setter) where TSelf : CarpObject
+    {
+        this._setter = (self, value) => setter((TSelf) self!, value);
         return this;
     }
 

@@ -9,8 +9,12 @@ using typing;
 public abstract class CarpNumber(CarpType type)
     : CarpObject(type)
 {
+    public const string Group = "number";
     // i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, f32, f64, arb
     protected static Dictionary<string, (CarpType Type, Func<object, CarpNumber> Creator)> Creators = null!;
+    
+    public abstract int ValueAsFull { get; }
+    public abstract float ValueAsFraction { get; }
 
     public static CarpType[] AllTypes
     {
@@ -49,7 +53,7 @@ public abstract class CarpNumber(CarpType type)
         CarpType carpType = CarpType.Create(name, CarpObject.Type);
         carpType.DefaultValueGen = () => CarpNumber.Create(name, default(T));
 
-        carpType.Group = "number";
+        carpType.Group = CarpNumber.Group;
         CarpNumber.Creators[name] = (carpType, value =>
         {
             try
@@ -115,6 +119,11 @@ public class CarpNumber<T> : CarpNumber
 {
     private static readonly Dictionary<T, CarpNumber<T>> Cache = new();
     private readonly CarpType _type;
+
+    public override int ValueAsFull =>
+        this.Value is BigInteger bigInt ? (int) bigInt : Convert.ToInt32(this.Value);
+    public override float ValueAsFraction =>
+        this.Value is BigInteger bigInt ? (float) bigInt : Convert.ToSingle(this.Value);
 
     private CarpNumber(T value, CarpType type) : base(type)
     {

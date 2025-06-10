@@ -3,16 +3,34 @@ namespace Carp.objects;
 using scoping;
 using typing;
 
-public class CarpString : CarpObject
+public class CarpString : CarpObject, IIterable
 {
-    public new static readonly CarpType Type = CarpType.Create("string", CarpObject.Type,
+    public new static readonly CarpType Type = CarpType.Create("string", IIterable.Type,
         b => b
-            .Member(new PropertyMember("length", CarpNumber.Type).Getter(x
-                => CarpNumber.Create(((CarpString) x).Value.Length)))
-            .Member(new PropertyMember("lower", CarpNumber.Type).Getter(x
-                => CarpString.Create(((CarpString) x).Value.ToLower())))
-            .Member(new PropertyMember("upper", CarpString.Type).Getter(x
-                => CarpString.Create(((CarpString) x).Value.ToUpper()))));
+                
+            .Member(new MethodMember("replace")
+                .Overload(new NativeConstrainedFunction(CarpString.Type!, (self, args) =>
+                {
+                    CarpString str = (CarpString) self!;
+                    string oldValue = ((CarpString) args[0]).Value;
+                    string newValue = ((CarpString) args[1]).Value;
+
+                    return CarpString.Create(str.Value.Replace(oldValue, newValue));
+                }, [CarpString.Type!, CarpString.Type!])))
+            
+            .Member(new MethodMember("remove")
+                .Overload(new NativeConstrainedFunction(CarpString.Type!, (self, args) =>
+                {
+                    CarpString str = (CarpString) self!;
+                    string oldValue = ((CarpString) args[0]).Value;
+
+                    return CarpString.Create(str.Value.Replace(oldValue, ""));
+                }, [CarpString.Type!])))
+            
+            .Member(new PropertyMember("lower", CarpNumber.Type).Getter<CarpString>(x
+                => CarpString.Create(x.Value.ToLower())))
+            .Member(new PropertyMember("upper", CarpString.Type!).Getter<CarpString>(x
+                => CarpString.Create(x.Value.ToUpper()))));
     public static readonly CarpString Empty = new(string.Empty);
     private static readonly Dictionary<string, CarpString> Cache = new();
 
@@ -33,8 +51,25 @@ public class CarpString : CarpObject
         return str;
     }
 
+    public static CarpString Create(char value) => CarpString.Create(value.ToString());
+
+    public override CarpObject Index(CarpObject[] index)
+        => CommonBehavior.Index(this, this.Value.Select(x => (CarpObject) CarpString.Create(x)).ToList(),
+            CarpString.Type, index);
+
+    public override CarpObject IndexSet(CarpObject[] index, CarpObject value)
+        => CommonBehavior.IndexSet(this, this.Value.Select(x => (CarpObject) CarpString.Create(x)).ToList(),
+            CarpString.Type, index, value);
+
     public override CarpString String() => this;
 
     public override string Repr() => $"\'{this.Value}\'";
-    public override CarpObject Equal(CarpObject right) => right is CarpString str ? CarpBoolean.Create(this.Value == str.Value) : CarpBoolean.False;
+    public override CarpObject Equal(CarpObject right)
+        => right is CarpString str ? CarpBoolean.Create(this.Value == str.Value) : CarpBoolean.False;
+    public IEnumerable<CarpObject> GetIterator() => this.Value.Select(c => CarpString.Create(c));
+
+    public override CarpObject Coerce(CarpType type)
+    {
+        return CommonBehavior.CoerceIIterable(this, type) ?? base.Coerce(type);
+    }
 }

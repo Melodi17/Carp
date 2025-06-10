@@ -19,7 +19,7 @@ public class CarpWoundFilter : CarpWound
         IEnumerable<(CarpObject First, CarpObject Second)> filteredItems =
             this
                 .Items.Zip(this._filter)
-                .Select(x => (First: x.First, Second: selector(x.Second)))
+                .Select(x => (x.First, Second: selector(x.Second)))
                 .Where(x => CarpObject.IsTruthy(x.Second))
                 .ToArray();
 

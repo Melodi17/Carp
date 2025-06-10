@@ -7,7 +7,7 @@ public class NativeConstrainedFunction : NativeFunction
     private readonly CarpType[] _argTypes;
 
 
-    public NativeConstrainedFunction(CarpType returnType, Func<CarpObject[], CarpObject> func, CarpType[] argTypes) : base(returnType, func)
+    public NativeConstrainedFunction(CarpType returnType, Func<CarpObject?, CarpObject[], CarpObject> func, CarpType[] argTypes) : base(returnType, func)
     {
         this._argTypes = argTypes;
     }

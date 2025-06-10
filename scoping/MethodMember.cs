@@ -16,7 +16,7 @@ public class MethodMember : Member
     public override CarpObject Get(CarpObject? self)
     {
         // Wrap dispatch into a new external func that selects the right overload
-        return new NativeFunction(this.ResolveReturnType(), args => this.Dispatch(self, args));
+        return new NativeFunction(this.ResolveReturnType(), (_, args) => this.Dispatch(self, args));
     }
 
     private CarpObject Dispatch(CarpObject? self, CarpObject[] args)
@@ -42,5 +42,11 @@ public class MethodMember : Member
 
         this.Docstring ??= other.Docstring;
         this.Modifiers |= other.Modifiers;
+    }
+    
+    public MethodMember Overload(CarpFunction overload)
+    {
+        this._overloads.Add(overload);
+        return this;
     }
 }
