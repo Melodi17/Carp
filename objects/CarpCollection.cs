@@ -37,6 +37,13 @@ public class CarpCollection : CarpObject, IIterable
             collection.Items.RemoveAt(index);
             return self;
         }, [CarpNumber.Type])))
+        .Member(new MethodMember("join")
+            .Overload(new NativeConstrainedFunction(CarpString.Type, (self, args) =>
+            {
+                CarpCollection collection = (CarpCollection) self!;
+                string separator = ((CarpString) args[0]).Value;
+                return CarpString.Create(string.Join(separator, collection.Items.Select(x => x.String().Value)));
+            }, [CarpString.Type])))
         .Member(new MethodMember("contains").Overload(new NativeConstrainedFunction(CarpBoolean.Type, (self, args) =>
         {
             CarpCollection collection = (CarpCollection) self!;

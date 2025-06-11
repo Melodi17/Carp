@@ -39,6 +39,15 @@ public class CarpString : CarpObject, IIterable
                         return new CarpCollection(CarpString.Type!, str.Value.Split(delimiter).Select(CarpString.Create));
                 }, [CarpString.Type!])))
             
+            .Member(new MethodMember("contains")
+                .Overload(new NativeConstrainedFunction(CarpBoolean.Type, (self, args) =>
+                {
+                    CarpString str = (CarpString) self!;
+                    string substring = ((CarpString) args[0]).Value;
+
+                    return CarpBoolean.Create(str.Value.Contains(substring));
+                }, [CarpString.Type!])))
+            
             .Member(new PropertyMember("strip", CarpNumber.Type).Getter<CarpString>(x
                 => CarpString.Create(x.Value.Trim())))
             .Member(new PropertyMember("lower", CarpNumber.Type).Getter<CarpString>(x
