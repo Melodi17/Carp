@@ -5,7 +5,7 @@ using scoping;
 public class CarpType : CarpObject
 {
     public new static readonly CarpType Type = CarpType.Create("type", CarpObject.Type,
-        b => b.Member(new PropertyMember("name", CarpString.Type)));
+        b => b.Member(new PropertyMember("type_name", CarpString.Type)));
     public static readonly CarpType Auto = CarpType.Create("auto", null);
 
     private static readonly Dictionary<(CarpType, CarpType[]), CarpType> genericCache = new();

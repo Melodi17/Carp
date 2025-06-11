@@ -48,13 +48,16 @@ public static class Polygot
             return new CarpCollection(CarpType.HighestCommonType(objs.Select(x => x.GetCarpType()).ToArray()), objs);
         }
         
-        throw new NotSupportedException($"Unsupported type: {obj.GetType()}");
+        return NativePolyObject.Create(obj, expectedType ?? obj.GetType());
     }
     
     public static object? ObjToNative(CarpObject? obj, Type? t = null)
     {
         if (obj is null || obj is CarpNull)
             return null;
+        
+        if (obj is NativePolyObject polyObj)
+            return polyObj.NativeObject;
         
         if (obj is CarpVoid)
             return null;
@@ -111,7 +114,7 @@ public static class Polygot
             return CarpBoolean.Type;
 
         if (type.IsArray || type.GetInterfaces().Contains(typeof(IEnumerable)))
-            return CarpCollection.Type;
+            return CarpType.CreateGeneric(CarpCollection.Type, Polygot.TypeFromNative(type.GetElementType() ?? typeof(object)));
 
         if (type == typeof(void))
             return CarpVoid.Type;
@@ -121,6 +124,11 @@ public static class Polygot
         
         if (type == typeof(object))
             return CarpObject.Type;
+        
+        if (type == typeof(Type))
+            return NativePolyType.Type;
+
+        return NativePolyType.Create(type);
 
         throw new NotSupportedException($"Unsupported native type: {type}");
     }

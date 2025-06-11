@@ -34,7 +34,7 @@ public class LibraryLoader
         Type[] types = this.FindTypes(path);
 
         foreach (Type type in types)
-            scope.Define(new FieldMember(type.Name, CarpType.Type, new NativePolyType(type))
+            scope.Define(new FieldMember(type.Name, CarpType.Type, NativePolyType.Create(type))
                 .With(Modifiers.Final)
                 .Doc(type.GetCustomAttribute<DocAttribute>()?.Text ?? ""));
     }

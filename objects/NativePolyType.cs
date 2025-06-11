@@ -8,9 +8,21 @@ using utils;
 
 public class NativePolyType : CarpType
 {
+    public static readonly CarpType Type = CarpType.Create("NativePolyType", CarpObject.Type);
     public Type NativeType { get; }
+    
+    private static readonly Dictionary<Guid, NativePolyType> Cache = new();
+    public static NativePolyType Create(Type nativeType)
+    {
+        if (NativePolyType.Cache.TryGetValue(nativeType.GUID, out NativePolyType? cached))
+            return cached;
 
-    public NativePolyType(Type nativeType) : base(nativeType.Name, CarpObject.Type, [])
+        NativePolyType polyType = new(nativeType);
+        NativePolyType.Cache[nativeType.GUID] = polyType;
+        return polyType;
+    }
+
+    protected NativePolyType(Type nativeType) : base(nativeType.Name, Type, [])
     {
         this.NativeType = nativeType;
 
@@ -19,11 +31,10 @@ public class NativePolyType : CarpType
     }
     private IEnumerable<Member> LoadMembers()
     {
-        foreach (var method in this
-                     .NativeType.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                     .GroupBy(x => x.Name))
+        foreach (var method in this.NativeType.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly).GroupBy(x => x.Name))
         {
             MethodMember member = new(Formatting.FormatMethod(method.Key));
+            bool isStatic = method.Any(x => x.IsStatic);
 
             List<string?> docs = [];
             foreach (MethodInfo overload in method)
@@ -32,26 +43,42 @@ public class NativePolyType : CarpType
                 member.Overload(func);
                 docs.Add(overload.GetCustomAttribute<DocAttribute>()?.Text);
             }
-            
+
             string doc = string.Join("\n", docs.Where(x => x != null));
 
-            yield return member.Doc(doc).With(Modifiers.Static);
+            member.Doc(doc);
+
+            if (isStatic)
+                member.With(Modifiers.Static);
+
+            yield return member;
         }
 
-        foreach (var property in this.NativeType.GetProperties(BindingFlags.Public | BindingFlags.Static))
+        foreach (var property in this.NativeType.GetProperties(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
         {
             string propName = Formatting.FormatProperty(property.Name);
-            yield return new PropertyMember(propName, Polygot.TypeFromNative(property.PropertyType))
-                .Getter(_ => Polygot.ObjFromNative(property.GetValue(null), property.PropertyType))
-                .Setter((_, value) =>
+            bool isStatic = property.GetAccessors(true).Any(x => x.IsStatic);
+
+            Member member = new PropertyMember(propName, Polygot.TypeFromNative(property.PropertyType))
+                .Getter(self =>
                 {
+                    object? inst = self != null ? Polygot.ObjToNative(self, property.DeclaringType) : null;
+                    return Polygot.ObjFromNative(property.GetValue(inst), property.PropertyType);
+                })
+                .Setter((self, value) =>
+                {
+                    object? inst = self != null ? Polygot.ObjToNative(self, property.DeclaringType) : null;
                     if (property.CanWrite)
-                        property.SetValue(null, Polygot.ObjToNative(value, property.PropertyType));
+                        property.SetValue(inst, Polygot.ObjToNative(value, property.PropertyType));
                     else
                         throw new InvalidAssignmentTargetException($"Property '{propName}' is read-only");
                 })
-                .With(Modifiers.Static)
                 .Doc(property.GetCustomAttribute<DocAttribute>()?.Text ?? "");
+
+            if (isStatic)
+                member.With(Modifiers.Static);
+
+            yield return member;
         }
     }
 

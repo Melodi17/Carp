@@ -1,6 +1,7 @@
 namespace Carp.objects;
 
 using System.Reflection;
+using exceptions;
 using utils;
 
 public class NativePolyFunction : CarpFunction
@@ -15,10 +16,24 @@ public class NativePolyFunction : CarpFunction
 
     public override CarpString String() => CarpString.Create($"<native poly function {this.ID}>");
     public override CarpObject Call(CarpObject? self, CarpObject[] args)
-        => Polygot.ObjFromNative(
-            this._func.Invoke(null,
-                args.Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i].ParameterType)).ToArray()),
-            this._func.ReturnType);
+    {
+        try
+        {
+            return Polygot.ObjFromNative(
+                this._func.Invoke(self != null ? Polygot.ObjToNative(self, this._func.DeclaringType) : null,
+                    args
+                        .Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i].ParameterType))
+                        .ToArray()), this._func.ReturnType);
+        }
+        catch (RuntimeException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException($"{ex.GetType().Name}, {ex.Message}");
+        }
+    }
     public override bool Accepts(CarpObject[] args)
     {
         var parameters = this._func.GetParameters();
