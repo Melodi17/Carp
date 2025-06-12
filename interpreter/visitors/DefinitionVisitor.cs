@@ -80,7 +80,7 @@ public partial class CarpVisitor
             foreach (CarpGrammarParser.Wrapped_definitionContext memberDef in context._definitions)
             {
                 Member memberObj = (Member) this.Visit(memberDef);
-                if (memberObj is MethodMember mm && typeDef.TryFindMember(mm.Name, out Member? existing) && existing is MethodMember existingMethod)
+                if (memberObj is MethodMember mm && typeDef.TryMember(mm.Name, out Member? existing) && existing is MethodMember existingMethod)
                 {
                     existingMethod.Merge(mm);
                     continue;

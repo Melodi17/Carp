@@ -85,15 +85,7 @@ public abstract class CarpObject
         throw new MemberNotAccessibleException(this, name);
     }
     
-    public bool MemberExists(string name, CarpObject? caller = null, bool meta = false)
-    {
-        if (this.Members.TryFind(name, out Member? member))
-            return this.IsAccessible(member, caller) || meta;
-
-        return false;
-    }
-    
-    public bool TryFindMember(string name, out Member? member)
+    public bool TryMember(string name, out Member? member)
     {
         if (this.Members.TryFind(name, out member))
             return this.IsAccessible(member, null);

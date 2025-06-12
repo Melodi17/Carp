@@ -23,15 +23,15 @@ public class ClassType : CarpType
             throw new IllegalInstantiationException(this, "Cannot instantiate a static class");
 
         ClassObject obj = new(this);
-        if (!obj.MemberExists("new"))
+        if (!obj.TryMember("new", out Member? member))
             return obj;
 
-        MethodMember m = obj.Member("new", this) as MethodMember;
+        MethodMember methodMember = member as MethodMember;
 
-        if (m == null)
+        if (methodMember == null)
             return obj;
 
-        m.Get(obj).Call(args);
+        methodMember.Get(obj).Call(args);
         return obj;
     }
 }

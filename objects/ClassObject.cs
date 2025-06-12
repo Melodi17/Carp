@@ -1,5 +1,6 @@
 namespace Carp.objects;
 
+using exceptions;
 using scoping;
 using typing;
 
@@ -15,11 +16,13 @@ public class ClassObject : CarpObject
     private T? GetOverload<T>(string name, CarpObject[] args, CarpType? coerce = null)
         where T : CarpObject
     {
-        if (!MemberExists($"_{name}"))
+        if (!TryMember($"_{name}", out Member? member))
             return null;
-        var member = Member($"_{name}") as MethodMember;
+        
+        if (member is not MethodMember methodMember)
+            throw new RuntimeException($"Member '{name}' is not a method in class '{this._type.Name}'");
 
-        var res = member.Get(this).Call(args);
+        var res = methodMember.Get(this).Call(args);
         res = coerce != null ? res.Coerce(coerce) : res;
         return res as T;
     }
