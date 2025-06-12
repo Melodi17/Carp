@@ -1,7 +1,7 @@
-namespace Carp.toolkit;
+namespace Carp.toolkit.dependency.impl;
 
 using System.Reflection;
-using utils;
+using Carp.utils;
 
 public class NativeLibrary(Assembly asm, string startPath) : ILibrary
 {

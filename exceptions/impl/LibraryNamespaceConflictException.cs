@@ -4,6 +4,7 @@ using System.Reflection;
 using objects;
 using objects.typing;
 using toolkit;
+using toolkit.dependency;
 
 public class LibraryNamespaceConflictException(string ns, IModule existingType, IModule newType) 
     : RuntimeException($"Namespace '{ns}' already contains modules from library '{existingType.Library.Name}', " +

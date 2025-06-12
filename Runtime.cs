@@ -10,6 +10,7 @@ using objects;
 using objects.typing;
 using scoping;
 using toolkit;
+using toolkit.dependency.impl;
 
 public class Runtime
 {

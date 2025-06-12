@@ -1,4 +1,4 @@
-namespace Carp.toolkit;
+namespace Carp.toolkit.dependency;
 
 public interface ILibrary
 {

@@ -1,10 +1,10 @@
-namespace Carp.toolkit;
+namespace Carp.toolkit.dependency.impl;
 
 using System.Reflection;
-using objects;
-using objects.typing;
-using scoping;
-using utils;
+using Carp.objects;
+using Carp.objects.typing;
+using Carp.scoping;
+using Carp.utils;
 
 public class NativeTypeModule(NativeLibrary library, string @namespace, Type type) : IModule
 {

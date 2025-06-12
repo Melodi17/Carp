@@ -1,8 +1,8 @@
-namespace Carp.toolkit;
+namespace Carp.toolkit.dependency;
 
-using exceptions;
-using exceptions.impl;
-using scoping;
+using Carp.exceptions;
+using Carp.exceptions.impl;
+using Carp.scoping;
 
 public class LibraryLoader
 {
