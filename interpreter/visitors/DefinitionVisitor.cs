@@ -35,6 +35,11 @@ public partial class CarpVisitor
         }
 
         context.Scope.Define(member);
+        
+        // If the member is a class, instantiate members
+        if (member is ClassMember classMember)
+            classMember.ConstructMembers();
+        
         return null!;
     }
 
@@ -61,8 +66,38 @@ public partial class CarpVisitor
         MethodMember member = new(name, func);
         return member;
     }
-    public override object VisitClassDefinition(CarpGrammarParser.ClassDefinitionContext context) => base.VisitClassDefinition(context);
-    public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context) => base.VisitStructDefinition(context);
-    public override object VisitEnumDefinition(CarpGrammarParser.EnumDefinitionContext context) => base.VisitEnumDefinition(context);
+    public override object VisitClassDefinition(CarpGrammarParser.ClassDefinitionContext context)
+    {
+        // Create a class member.
+        string name = context.key.Text;
+        CarpType? baseType = context._inherits.Count > 0
+            ? this.VisitType(context._inherits[0])
+            : null;
+
+        ClassType typeDef = new(name, baseType, []);
+        ClassMember member = new("class", typeDef, () =>
+        {
+            foreach (CarpGrammarParser.Wrapped_definitionContext memberDef in context._definitions)
+            {
+                Member memberObj = (Member) this.Visit(memberDef);
+                if (memberObj is MethodMember mm && typeDef.TryFindMember(mm.Name, out Member? existing) && existing is MethodMember existingMethod)
+                {
+                    existingMethod.Merge(mm);
+                    continue;
+                }
+                typeDef.Members.Define(memberObj);
+            }
+        });
+
+        return member;
+    }
+    public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context)
+    {
+        return base.VisitStructDefinition(context);
+    }
+    public override object VisitEnumDefinition(CarpGrammarParser.EnumDefinitionContext context)
+    {
+        return base.VisitEnumDefinition(context);
+    }
     public override object VisitEnumDefinitionAutoValues(CarpGrammarParser.EnumDefinitionAutoValuesContext context) => base.VisitEnumDefinitionAutoValues(context);
 }

@@ -349,6 +349,13 @@ public interface ICarpGrammarVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitComparisonMatchExpression([NotNull] CarpGrammarParser.ComparisonMatchExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>newExpression</c>
+	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNewExpression([NotNull] CarpGrammarParser.NewExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>assignmentExpression</c>
 	/// labeled alternative in <see cref="CarpGrammarParser.expression"/>.
 	/// </summary>

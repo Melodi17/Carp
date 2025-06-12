@@ -102,6 +102,9 @@ public static class Polygot
             }
         }
         
+        if (t == null || t == typeof(object) || t == typeof(CarpObject))
+            return obj;
+        
         throw new NotSupportedException($"Unsupported type: {obj.GetCarpType()}");
     }
     

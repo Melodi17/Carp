@@ -81,7 +81,7 @@ LET : 'let' ;
 FIXED : 'fixed' ;
 
 IMPORT : 'import ' .*? ([\n] | EOF);
-ID : [a-zA-Z][a-zA-Z0-9_]* ;
+ID : [a-zA-Z_][a-zA-Z0-9_]* ;
 //STRING : '\'' (~['\\])* '\'' ;
 INT : ( [0-9]+ | [0-9]+ '.' [0-9]+ | '.' [0-9]+ ) ;
 WS : [ \t\r\n]+ -> skip ;
@@ -176,6 +176,14 @@ expression
     | expr=expression token=('++'|'--') # postfixExpression
     | obj=expression '(' parameters=expression_list ')' # callExpression // Side effects
     | obj=expression '[' parameters=expression_list ']' # indexExpression
+    | left=expression ELIPSIS right=expression # rangeExpression 
+    | ELIPSIS right=expression # rangeEndExpression
+    | left=expression ELIPSIS # rangeStartExpression
+    | ELIPSIS # rangeEmptyExpression
+    | source=type '.' 'new' # newExpression
+    | obj=expression '.' member=ID '.' op=meta # metaMemberExpression
+    | member=ID '.' op=meta # metaObjExpression
+    | obj=expression '.' path=ID # propertyExpression
     | op=unary left=expression # unaryExpression
     | left=expression op=binary_geometric right=expression # binaryGeometricExpression // Geometric
     | left=expression op=binary_arithmatic right=expression # binaryArithmaticExpression // Arithmatic
@@ -183,13 +191,6 @@ expression
     | left=expression op=comparison_compare right=expression # comparisonCompareExpression // Comparing
     | left=expression op=comparison_match right=expression # comparisonMatchExpression // Matching
     | left=expression op=logical right=expression # logicalExpression
-    | left=expression ELIPSIS right=expression # rangeExpression 
-    | ELIPSIS right=expression # rangeEndExpression
-    | left=expression ELIPSIS # rangeStartExpression
-    | ELIPSIS # rangeEmptyExpression
-    | obj=expression '.' member=ID '.' op=meta # metaMemberExpression
-    | member=ID '.' op=meta # metaObjExpression
-    | obj=expression '.' path=ID # propertyExpression
     | condition=expression '?' left=expression ':' right=expression # ternaryExpression // Side effects
     | map # mapExpression
     | array # arrayExpression

@@ -1,0 +1,23 @@
+import std.io
+
+class Apple
+{
+    i32 times_eaten = 0
+    string color = 'red'
+    
+    void eat()
+    {
+        this.times_eaten = this.times_eaten + 1
+        System.outln('You ate the apple! It has been eaten ' + this.times_eaten + ' times.')
+    }
+    
+    string _string() -> 'Apple(color: ' + this.color + ', times_eaten: ' + this.times_eaten + ')'
+    
+    static i32 count_eaten(Apple apple)
+    {
+        return apple.times_eaten
+    }
+}
+
+Apple a = Apple.new()
+a.eat()

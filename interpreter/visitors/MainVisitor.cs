@@ -7,6 +7,7 @@ using exceptions.impl;
 using objects;
 using objects.typing;
 using scoping;
+using toolkit.debugging;
 using utils;
 
 public partial class CarpVisitor : CarpGrammarBaseVisitor<object>

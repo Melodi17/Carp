@@ -28,14 +28,14 @@ public class Program
             {
                 CarpObject res = Runtime.Execute(new LineExecutionContext(obj.Line), scope);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res);
+                    Program.WriteRichObject(res, newLine: true);
             }
 
             if (obj.File != null)
             {
                 CarpObject res = Runtime.Execute(new FileExecutionContext(obj.File), scope);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res);
+                    Program.WriteRichObject(res, newLine: true);
             }
         }
         catch (ParserException e)
@@ -90,7 +90,7 @@ public class Program
                 CarpGrammarParser.ProgramContext ast = Runtime.Parse(lexed, executionContext);
                 CarpObject res = Runtime.Execute(ast, executionContext, globalScope);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res);
+                    Program.WriteRichObject(res, newLine: true);
             }
             catch (ParserException e)
             {
@@ -107,7 +107,7 @@ public class Program
             blockCount++;
         }
     }
-    private static void WriteRichObject(CarpObject res)
+    private static void WriteRichObject(CarpObject res, bool newLine = false)
     {
         ConsoleColor color = res switch
         {
@@ -118,9 +118,26 @@ public class Program
             CarpVoid _ => ConsoleColor.DarkGray,
             _ => ConsoleColor.White,
         };
-
+        
+        if (res is CarpCollection collection)
+        {
+            Console.Write("[");
+            for (int i = 0; i < collection.Items.Count; i++)
+            {
+                WriteRichObject(collection.Items[i], newLine: false);
+                if (i < collection.Items.Count - 1)
+                    Console.Write(", ");
+            }
+            Console.Write("]");
+            if (newLine)
+                Console.WriteLine();
+            return;
+        }
+        
         Console.ForegroundColor = color;
-        Console.WriteLine(res.Repr());
+        Console.Write(res.Repr());
+        if (newLine)
+            Console.WriteLine();
         Console.ResetColor();
     }
 

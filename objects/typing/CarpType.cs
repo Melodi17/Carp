@@ -1,5 +1,6 @@
 namespace Carp.objects.typing;
 
+using exceptions.impl;
 using scoping;
 
 public class CarpType : CarpObject
@@ -19,6 +20,7 @@ public class CarpType : CarpObject
         this.DefaultValueGen = defaultValueGen;
     }
     public Func<CarpObject>? DefaultValueGen { get; set; }
+    public Func<CarpObject[], CarpObject>? Constructor { get; set; }
     public string Name { get; }
     public CarpType? BaseType { get; }
     public CarpType[] TypeArguments { get; set; }
@@ -161,6 +163,13 @@ public class CarpType : CarpObject
     {
         return HashCode.Combine(this.Name, this.TypeArguments);
     }
+    public virtual CarpObject Instantiate(CarpObject[] args)
+    {
+        if (this.Constructor != null)
+            return this.Constructor(args);
+        
+        throw new IllegalInstantiationException(this, "Type does not have a constructor defined.");
+    }
 }
 
 public class CarpTypeBuilder
@@ -179,6 +188,12 @@ public class CarpTypeBuilder
     public CarpTypeBuilder DefaultValue(Func<CarpObject> defaultValue)
     {
         this._type.DefaultValueGen = defaultValue;
+        return this;
+    }
+    
+    public CarpTypeBuilder Constructor(Func<CarpObject[], CarpObject> constructor)
+    {
+        this._type.Constructor = constructor;
         return this;
     }
 }

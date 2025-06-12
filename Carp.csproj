@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <WarningLevel>0</WarningLevel>
         <LangVersion>12</LangVersion>
         <ApplicationIcon>assets\carplogo.ico</ApplicationIcon>
         <Authors>Melodi17</Authors>
@@ -20,7 +21,6 @@
     <ItemGroup>
         <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.0"/>
         <PackageReference Include="CommandLineParser" Version="2.9.1"/>
-        <PackageReference Include="LLVMSharp" Version="16.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     </ItemGroup>
 

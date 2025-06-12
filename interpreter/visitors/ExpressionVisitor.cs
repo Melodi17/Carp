@@ -271,4 +271,13 @@ public partial class CarpVisitor
 
         return func;
     }
+
+    public override object VisitNewExpression(CarpGrammarParser.NewExpressionContext context)
+    {
+        CarpType type = this.VisitType(context.source);
+        if (type == CarpType.Auto)
+            throw new InterpreterException("Cannot instantiate an Auto type");
+
+        return new NativeFunction(type, (self, args) => type.Instantiate(args));
+    }
 }

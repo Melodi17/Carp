@@ -13,7 +13,7 @@ public class MethodMember : Member
         this._overloads = overloads.ToList();
     }
 
-    public override CarpObject Get(CarpObject? self)
+    public override NativeFunction Get(CarpObject? self)
     {
         // Wrap dispatch into a new external func that selects the right overload
         return new NativeFunction(this.ResolveReturnType(), (_, args) => this.Dispatch(self, args));
