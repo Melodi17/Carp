@@ -59,10 +59,7 @@ public class Runtime
         parsedContext.ExecutionContext = executionContext;
 
         parsedContext.LibraryLoader = new();
-        parsedContext.LibraryLoader.Load(new LibraryMeta
-        {
-            StartNamespace = "Carp.libraries"
-        }, Assembly.GetExecutingAssembly());
+        parsedContext.LibraryLoader.Load(new NativeLibrary(Assembly.GetExecutingAssembly(), "Carp.libraries"));
 
         CarpVisitor visitor = new();
         CarpObject? output = visitor.Visit(parsedContext) as CarpObject;
