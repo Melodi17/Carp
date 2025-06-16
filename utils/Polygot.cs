@@ -10,7 +10,7 @@ public static class Polygot
     {
         if (expectedType == typeof(void))
             return CarpVoid.Instance;
-        
+
         if (obj is null)
             return CarpNull.Instance;
 
@@ -22,7 +22,7 @@ public static class Polygot
 
         if (obj is int i)
             return CarpNumber.Create(i);
-        
+
         if (obj is byte t)
             return CarpNumber.Create(t);
 
@@ -35,30 +35,26 @@ public static class Polygot
         if (obj is IEnumerable<CarpObject> iterable)
         {
             IEnumerable<CarpObject> objs = iterable as CarpObject[] ?? iterable.ToArray();
-            return new CarpCollection(CarpType.HighestCommonType(objs.Select(x => x.GetCarpType()).ToArray()),
-                objs);
+            return new CarpCollection(CarpType.HighestCommonType(objs.Select(x => x.GetCarpType()).ToArray()), objs);
         }
 
         if (obj is IEnumerable enumerable)
         {
-            CarpObject[] objs = enumerable
-                .Cast<object>()
-                .Select(x => Polygot.ObjFromNative(x))
-                .ToArray();
+            CarpObject[] objs = enumerable.Cast<object>().Select(x => Polygot.ObjFromNative(x)).ToArray();
             return new CarpCollection(CarpType.HighestCommonType(objs.Select(x => x.GetCarpType()).ToArray()), objs);
         }
-        
+
         return NativePolyObject.Create(obj, expectedType ?? obj.GetType());
     }
-    
+
     public static object? ObjToNative(CarpObject? obj, Type? t = null)
     {
         if (obj is null || obj is CarpNull)
             return null;
-        
+
         if (obj is NativePolyObject polyObj)
             return polyObj.NativeObject;
-        
+
         if (obj is CarpVoid)
             return null;
 
@@ -69,14 +65,13 @@ public static class Polygot
         {
             if (t == null || t == typeof(object) || t == typeof(int))
                 return carpNumber.ValueAsFull;
-            else if (t == typeof(byte))
-                return (byte)carpNumber.ValueAsFull;
-            else if (t == typeof(double))
+            if (t == typeof(byte))
+                return (byte) carpNumber.ValueAsFull;
+            if (t == typeof(double))
                 return carpNumber.ValueAsFraction;
-            else if (CarpNumber.Creators.Any(x => x.Value.Type == obj.GetCarpType() && x.Value.native == t))
+            if (CarpNumber.Creators.Any(x => x.Value.Type == obj.GetCarpType() && x.Value.native == t))
                 return carpNumber.ValueAsFull; // Return as full int for native types
-            else
-                throw new NotSupportedException($"Unsupported number type: {t}");
+            throw new NotSupportedException($"Unsupported number type: {t}");
         }
 
         if (obj is CarpBoolean carpBoolean)
@@ -86,48 +81,50 @@ public static class Polygot
         {
             if (t == null || t == typeof(object[]))
                 return collection.Items.Select(x => Polygot.ObjToNative(x)).ToArray();
-            else if (t.IsArray)
+            if (t.IsArray)
             {
                 Type itemType = t.GetElementType()!;
-                return Helpers.ConvertToTypedArray(itemType, collection.Items.Select(x => Polygot.ObjToNative(x, itemType)).ToArray());
+                return Helpers.ConvertToTypedArray(itemType,
+                    collection.Items.Select(x => Polygot.ObjToNative(x, itemType)).ToArray());
             }
-            else if (t.GetInterfaces().Contains(typeof(IEnumerable)))
+            if (t.GetInterfaces().Contains(typeof(IEnumerable)))
             {
                 Type itemType = t.GetGenericArguments().FirstOrDefault() ?? typeof(object);
                 return collection.Items.Select(x => Polygot.ObjToNative(x, itemType)).ToList();
             }
-            else
-            {
-                throw new NotSupportedException($"Unsupported collection type: {t}");
-            }
+            throw new NotSupportedException($"Unsupported collection type: {t}");
         }
-        
+
         if (t == null || t == typeof(object) || t == typeof(CarpObject))
             return obj;
-        
+
         throw new NotSupportedException($"Unsupported type: {obj.GetCarpType()}");
     }
-    
+
     public static CarpType TypeFromNative(Type type)
     {
         if (type == typeof(string))
             return CarpString.Type;
-        
+
         if (type == typeof(bool))
             return CarpBoolean.Type;
+        
+        if (type == typeof(IEnumerable<object>))
+            return CarpCollection.Type;
 
         if (type.IsArray || type.GetInterfaces().Contains(typeof(IEnumerable)))
-            return CarpType.CreateGeneric(CarpCollection.Type, Polygot.TypeFromNative(type.GetElementType() ?? typeof(object)));
+            return CarpType.CreateGeneric(CarpCollection.Type,
+                Polygot.TypeFromNative(type.GetElementType() ?? typeof(object)));
 
         if (type == typeof(void))
             return CarpVoid.Type;
 
         if (CarpNumber.Creators.Any(x => x.Value.native == type))
             return CarpNumber.Creators.First(x => x.Value.native == type).Value.Type;
-        
+
         if (type == typeof(object))
             return CarpObject.Type;
-        
+
         if (type == typeof(Type))
             return NativePolyType.Type;
 

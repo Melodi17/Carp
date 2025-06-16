@@ -1,5 +1,6 @@
 namespace Carp;
 
+using Antlr4.Runtime;
 using CommandLine;
 using exceptions;
 using interpreter.execution;
@@ -7,6 +8,7 @@ using objects;
 using objects.typing;
 using scoping;
 using toolkit;
+using toolkit.dependency;
 using utils;
 using CommandLineParser = CommandLine.Parser;
 
@@ -21,21 +23,25 @@ public class Program
     {
         CarpType[] types = CarpType.ConstructTypes();
         Scope scope = Runtime.MakeScope(types);
+        LibraryLoader loader = Runtime.MakeLibraryLoader();
+        
+        foreach (string library in obj.Libraries)
+            loader.Import(scope, library.Split('.'));
 
         try
         {
             if (obj.Line != null)
             {
-                CarpObject res = Runtime.Execute(new LineExecutionContext(obj.Line), scope);
+                CarpObject res = Runtime.Execute(new LineExecutionContext(obj.Line), scope, loader);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res, newLine: true);
+                    Program.WriteRichObject(res, true);
             }
 
             if (obj.File != null)
             {
-                CarpObject res = Runtime.Execute(new FileExecutionContext(obj.File), scope);
+                CarpObject res = Runtime.Execute(new FileExecutionContext(obj.File), scope, loader);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res, newLine: true);
+                    Program.WriteRichObject(res, true);
             }
         }
         catch (ParserException e)
@@ -54,11 +60,11 @@ public class Program
         if (obj.Interactive || (obj.File == null && obj.Line == null))
         {
             Console.WriteLine("Entering REPL mode. Press Ctrl+C to exit.");
-            Program.REPL(scope);
+            Program.REPL(scope, loader);
         }
     }
 
-    private static void REPL(Scope globalScope)
+    private static void REPL(Scope globalScope, LibraryLoader loader)
     {
         int blockCount = 0;
         while (true)
@@ -71,7 +77,7 @@ public class Program
             ReplExecutionContext executionContext = new(blockCount, input);
             try
             {
-                var lexed = Runtime.Lex(executionContext);
+                CommonTokenStream? lexed = Runtime.Lex(executionContext);
                 while (Semantics.ShouldMultiline(lexed))
                 {
                     int depth = Semantics.CalculateDepth(lexed);
@@ -88,9 +94,9 @@ public class Program
                 }
 
                 CarpGrammarParser.ProgramContext ast = Runtime.Parse(lexed, executionContext);
-                CarpObject res = Runtime.Execute(ast, executionContext, globalScope);
+                CarpObject res = Runtime.Execute(ast, executionContext, globalScope, loader);
                 if (res != CarpVoid.Instance)
-                    Program.WriteRichObject(res, newLine: true);
+                    Program.WriteRichObject(res, true);
             }
             catch (ParserException e)
             {
@@ -116,15 +122,16 @@ public class Program
             CarpBoolean => ConsoleColor.Green,
             CarpNull _ => ConsoleColor.DarkGray,
             CarpVoid _ => ConsoleColor.DarkGray,
-            _ => ConsoleColor.White,
+            CarpType _ => ConsoleColor.Magenta,
+            _ => ConsoleColor.White
         };
-        
+
         if (res is CarpCollection collection)
         {
             Console.Write("[");
             for (int i = 0; i < collection.Items.Count; i++)
             {
-                WriteRichObject(collection.Items[i], newLine: false);
+                Program.WriteRichObject(collection.Items[i]);
                 if (i < collection.Items.Count - 1)
                     Console.Write(", ");
             }
@@ -133,7 +140,7 @@ public class Program
                 Console.WriteLine();
             return;
         }
-        
+
         Console.ForegroundColor = color;
         Console.Write(res.Repr());
         if (newLine)
@@ -144,7 +151,7 @@ public class Program
     private static void WriteRichError(RuntimeException ex)
     {
         void Print(string text) => Console.Error.WriteLine(Coloring.SubstituteStyles(text));
-        
+
         Print($"%red%{ex.ErrorFriendlyName}: %white%{ex.Message}");
         foreach (StackFrame frame in ex.InternalStackTrace)
         {

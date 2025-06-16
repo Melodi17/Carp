@@ -1,6 +1,5 @@
 namespace Carp.objects;
 
-using System.Diagnostics;
 using exceptions.impl;
 using scoping;
 using typing;
@@ -36,7 +35,7 @@ public class CarpRange : CarpObject, IIterable
     }
     public override CarpType GetCarpType() => CarpType.CreateGeneric(CarpRange.Type, this._itemType);
     public override CarpString String()
-        => (Start == null, End == null) switch
+        => (this.Start == null, this.End == null) switch
         {
             (true, true) => CarpString.Create(".."),
             (false, true) => CarpString.Create($"{this.Start!.Repr()}.."),
@@ -44,8 +43,5 @@ public class CarpRange : CarpObject, IIterable
             (false, false) => CarpString.Create($"{this.Start!.Repr()}..{this.End!.Repr()}")
         };
 
-    public override CarpObject Coerce(CarpType type)
-    {
-        return CommonBehavior.CoerceIIterable(this, type) ?? base.Coerce(type);
-    }
+    public override CarpObject Coerce(CarpType type) => CommonBehavior.CoerceIIterable(this, type) ?? base.Coerce(type);
 }

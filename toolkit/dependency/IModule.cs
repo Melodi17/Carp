@@ -1,6 +1,6 @@
 namespace Carp.toolkit.dependency;
 
-using Carp.scoping;
+using scoping;
 
 public interface IModule
 {

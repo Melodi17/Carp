@@ -2,6 +2,7 @@ namespace Carp.objects;
 
 using System.Reflection;
 using exceptions;
+using typing;
 using utils;
 
 public class NativePolyFunction : CarpFunction
@@ -19,11 +20,14 @@ public class NativePolyFunction : CarpFunction
     {
         try
         {
-            return Polygot.ObjFromNative(
-                this._func.Invoke(self != null ? Polygot.ObjToNative(self, this._func.DeclaringType) : null,
-                    args
-                        .Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i].ParameterType))
-                        .ToArray()), this._func.ReturnType);
+            object?[] parameters = args
+                .Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i].ParameterType))
+                .ToArray();
+
+            object? selfObj = Polygot.ObjToNative(self, this._func.DeclaringType);
+            object? result = this._func.Invoke(selfObj, parameters);
+
+            return Polygot.ObjFromNative(result, this._func.ReturnType);
         }
         catch (RuntimeException)
         {
@@ -36,14 +40,14 @@ public class NativePolyFunction : CarpFunction
     }
     public override bool Accepts(CarpObject[] args)
     {
-        var parameters = this._func.GetParameters();
+        ParameterInfo[] parameters = this._func.GetParameters();
         if (args.Length != parameters.Length)
             return false;
 
         for (int i = 0; i < args.Length; i++)
         {
-            var argType = args[i].GetCarpType();
-            var paramType = Polygot.TypeFromNative(parameters[i].ParameterType);
+            CarpType argType = args[i].GetCarpType();
+            CarpType paramType = Polygot.TypeFromNative(parameters[i].ParameterType);
             if (!argType.Extends(paramType))
                 return false;
         }

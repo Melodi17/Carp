@@ -15,10 +15,12 @@ public partial class CarpVisitor
         // this outside of an object
         return member.Get(null);
     }
-    public override object VisitPropertyType(CarpGrammarParser.PropertyTypeContext context) => base.VisitPropertyType(context);
+    public override object VisitPropertyType(CarpGrammarParser.PropertyTypeContext context)
+        => base.VisitPropertyType(context);
     public override object VisitAutoType(CarpGrammarParser.AutoTypeContext context) => CarpType.Auto;
     public override object VisitMapType(CarpGrammarParser.MapTypeContext context) => base.VisitMapType(context);
-    public override object VisitGenericType(CarpGrammarParser.GenericTypeContext context) => base.VisitGenericType(context);
+    public override object VisitGenericType(CarpGrammarParser.GenericTypeContext context)
+        => base.VisitGenericType(context);
     public override object VisitListType(CarpGrammarParser.ListTypeContext context)
     {
         CarpType itemType = this.VisitType(context.element);

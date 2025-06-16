@@ -5,7 +5,6 @@ using execution;
 using Newtonsoft.Json;
 using objects;
 using scoping;
-using toolkit;
 using toolkit.dependency;
 
 public class Context : ParserRuleContext
@@ -43,7 +42,7 @@ public class Context : ParserRuleContext
         this.CurrentObject = context.CurrentObject;
         this.LibraryLoader = context.LibraryLoader;
     }
-    
+
     public void TryReplicateParent()
     {
         if (this.Parent is Context context)
@@ -57,10 +56,11 @@ public class Context : ParserRuleContext
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            TypeNameHandling = TypeNameHandling.Auto,
+            TypeNameHandling = TypeNameHandling.Auto
         };
         // use newtonsoft json to clone the context
-        T copy = JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(this, settings), settings) ?? throw new InvalidOperationException("Failed to clone context");
+        T copy = JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(this, settings), settings)
+                 ?? throw new InvalidOperationException("Failed to clone context");
 
         // Use non-cloned context data
         copy.ReplicateParent(this);

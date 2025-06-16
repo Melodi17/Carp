@@ -13,7 +13,8 @@ public class StackFrame
     public override bool Equals(object? obj)
     {
         if (obj is StackFrame other)
-            return other.Context.ExecutionContext == this.Context.ExecutionContext && other.Context.Position == this.Context.Position;
+            return other.Context.ExecutionContext == this.Context.ExecutionContext
+                   && other.Context.Position == this.Context.Position;
 
         return false;
     }

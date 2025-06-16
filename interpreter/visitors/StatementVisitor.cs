@@ -1,17 +1,16 @@
 namespace Carp.interpreter.visitors;
 
-using System.Reflection;
 using exceptions;
 using exceptions.flowcontrol;
 using exceptions.impl;
 using objects;
 using objects.typing;
 using scoping;
-using toolkit;
 
 public partial class CarpVisitor
 {
-    public override object VisitProgram(CarpGrammarParser.ProgramContext context) => this.VisitBlock(context._statements) ?? CarpVoid.Instance;
+    public override object VisitProgram(CarpGrammarParser.ProgramContext context)
+        => this.VisitBlock(context._statements) ?? CarpVoid.Instance;
     public override object VisitBlock(CarpGrammarParser.BlockContext context)
     {
         Scope s = new(context.Scope);
@@ -99,7 +98,8 @@ public partial class CarpVisitor
 
         return null!;
     }
-    public override object VisitTry_statement(CarpGrammarParser.Try_statementContext context) => base.VisitTry_statement(context);
+    public override object VisitTry_statement(CarpGrammarParser.Try_statementContext context)
+        => base.VisitTry_statement(context);
     public override object VisitIterStatement(CarpGrammarParser.IterStatementContext context)
     {
         CarpObject iterable = this.VisitExpression(context.iter);
@@ -159,20 +159,24 @@ public partial class CarpVisitor
 
         return null!;
     }
-    public override object VisitIterAsUnpackedStatement(CarpGrammarParser.IterAsUnpackedStatementContext context) => base.VisitIterAsUnpackedStatement(context);
+    public override object VisitIterAsUnpackedStatement(CarpGrammarParser.IterAsUnpackedStatementContext context)
+        => base.VisitIterAsUnpackedStatement(context);
     public override object VisitReturn_statement(CarpGrammarParser.Return_statementContext context)
     {
         if (context.value != null)
             throw new ReturnException(this.VisitExpression(context.value));
         throw new ReturnException(CarpVoid.Instance);
     }
-    public override object VisitBreak_statement(CarpGrammarParser.Break_statementContext context) => throw new BreakException();
-    public override object VisitContinue_statement(CarpGrammarParser.Continue_statementContext context) => throw new ContinueException();
-    public override object VisitYield_statement(CarpGrammarParser.Yield_statementContext context) => base.VisitYield_statement(context);
+    public override object VisitBreak_statement(CarpGrammarParser.Break_statementContext context)
+        => throw new BreakException();
+    public override object VisitContinue_statement(CarpGrammarParser.Continue_statementContext context)
+        => throw new ContinueException();
+    public override object VisitYield_statement(CarpGrammarParser.Yield_statementContext context)
+        => base.VisitYield_statement(context);
     public override object VisitImportStatement(CarpGrammarParser.ImportStatementContext context)
     {
         string fullPath = context.GetText()[7..].Trim(); // Remove "import "
-        
+
         string? ver = fullPath.Contains(":") ? fullPath.Split(':')[1] : null;
         string[] parts = fullPath.Split(":")[0].Split('.');
 

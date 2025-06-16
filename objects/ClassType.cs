@@ -6,16 +6,15 @@ using typing;
 
 public class ClassType : CarpType
 {
-    public List<CarpType> Implements { get; }
-    public CarpType Parent { get; }
-    public ClassMember MemberReference { get; set; }
-
     public ClassType(string name, CarpType? parent, List<CarpType> implements) : base(name, parent ?? CarpObject.Type,
         [])
     {
         this.Parent = parent;
         this.Implements = implements;
     }
+    public List<CarpType> Implements { get; }
+    public CarpType Parent { get; }
+    public ClassMember MemberReference { get; set; }
 
     public override CarpObject Instantiate(CarpObject[] args)
     {

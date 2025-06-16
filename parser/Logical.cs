@@ -3,5 +3,5 @@
 public enum Logical
 {
     And,
-    Or,
+    Or
 }

@@ -7,5 +7,5 @@ public enum Compound
     Multiply,
     Divide,
     Power,
-    Modulus,
+    Modulus
 }

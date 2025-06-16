@@ -84,12 +84,12 @@ public abstract class CarpObject
 
         throw new MemberNotAccessibleException(this, name);
     }
-    
+
     public bool TryMember(string name, out Member? member)
     {
         if (this.Members.TryFind(name, out member))
             return this.IsAccessible(member, null);
-            
+
         return false;
     }
 
@@ -126,7 +126,7 @@ public abstract class CarpObject
 
         return true;
     }
-    
+
     /// Logical OR operation that evaluates the left operand first, and lazy-evaluates the right operand if the left is not truthy.
     public static CarpObject LogicalOr(CarpObject left, Func<CarpObject> right)
     {
@@ -153,7 +153,7 @@ public abstract class CarpObject
     {
         if (this.GetCarpType() == type)
             return this;
-        
+
         if (this.GetCarpType().Extends(type))
             return this;
 
@@ -162,13 +162,13 @@ public abstract class CarpObject
 
         if (type == CarpType.Auto)
             return this;
-        
+
         if (this.GetCarpType() == CarpNull.Type)
             return CarpNull.Instance;
 
         if (type == CarpString.Type)
             return this.String();
-        
+
         throw new ConversionException(this.GetCarpType(), type);
     }
 

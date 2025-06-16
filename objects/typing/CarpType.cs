@@ -60,7 +60,7 @@ public class CarpType : CarpObject
 
     public bool Extends(CarpType type)
     {
-        if (ReferenceEquals(this, type) || Equals(type))
+        if (object.ReferenceEquals(this, type) || this.Equals(type))
             return true;
 
         if (this.BaseType != null && this.BaseType.Extends(type))
@@ -126,7 +126,7 @@ public class CarpType : CarpObject
             CarpRange.Type,
             CarpWound.Type,
             CarpFunction.Type,
-            ..CarpNumber.AllTypes,
+            ..CarpNumber.AllTypes
         ];
 
         foreach (Action builder in CarpType.builderQueue ?? [])
@@ -151,23 +151,20 @@ public class CarpType : CarpObject
         return type;
     }
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
     {
         if (obj is CarpType type)
             return this.Name == type.Name && this.TypeArguments.SequenceEqual(type.TypeArguments);
 
         return false;
     }
-    
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(this.Name, this.TypeArguments);
-    }
+
+    public override int GetHashCode() => HashCode.Combine(this.Name, this.TypeArguments);
     public virtual CarpObject Instantiate(CarpObject[] args)
     {
         if (this.Constructor != null)
             return this.Constructor(args);
-        
+
         throw new IllegalInstantiationException(this, "Type does not have a constructor defined.");
     }
 }
@@ -190,7 +187,7 @@ public class CarpTypeBuilder
         this._type.DefaultValueGen = defaultValue;
         return this;
     }
-    
+
     public CarpTypeBuilder Constructor(Func<CarpObject[], CarpObject> constructor)
     {
         this._type.Constructor = constructor;

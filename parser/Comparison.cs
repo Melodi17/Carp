@@ -7,5 +7,5 @@ public enum Comparison
     Greater,
     Less,
     GreaterEqual,
-    LessEqual,
+    LessEqual
 }

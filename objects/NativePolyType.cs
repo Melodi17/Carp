@@ -1,6 +1,7 @@
 namespace Carp.objects;
 
 using System.Reflection;
+using exceptions;
 using exceptions.impl;
 using scoping;
 using typing;
@@ -9,9 +10,19 @@ using utils;
 public class NativePolyType : CarpType
 {
     public static readonly CarpType Type = CarpType.Create("NativePolyType", CarpObject.Type);
-    public Type NativeType { get; }
-    
+
     private static readonly Dictionary<Guid, NativePolyType> Cache = new();
+
+    protected NativePolyType(Type nativeType) : base(nativeType.Name, NativePolyType.Type, [])
+    {
+        this.NativeType = nativeType;
+    }
+    public void Initialize()
+    {
+        foreach (Member member in this.LoadMembers())
+            this.Members.Define(member);
+    }
+    public Type NativeType { get; }
     public static NativePolyType Create(Type nativeType)
     {
         if (NativePolyType.Cache.TryGetValue(nativeType.GUID, out NativePolyType? cached))
@@ -19,19 +30,17 @@ public class NativePolyType : CarpType
 
         NativePolyType polyType = new(nativeType);
         NativePolyType.Cache[nativeType.GUID] = polyType;
+        polyType.Initialize();
         return polyType;
-    }
-
-    protected NativePolyType(Type nativeType) : base(nativeType.Name, Type, [])
-    {
-        this.NativeType = nativeType;
-
-        foreach (var member in LoadMembers())
-            this.Members.Define(member);
     }
     private IEnumerable<Member> LoadMembers()
     {
-        foreach (var method in this.NativeType.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly).GroupBy(x => x.Name))
+        foreach (IGrouping<string, MethodInfo> method in this
+                     .NativeType.GetMethods(BindingFlags.Instance
+                                            | BindingFlags.Static
+                                            | BindingFlags.Public
+                                            | BindingFlags.DeclaredOnly)
+                     .GroupBy(x => x.Name))
         {
             MethodMember member = new(Formatting.FormatMethod(method.Key));
             bool isStatic = method.Any(x => x.IsStatic);
@@ -54,7 +63,10 @@ public class NativePolyType : CarpType
             yield return member;
         }
 
-        foreach (var property in this.NativeType.GetProperties(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly))
+        foreach (PropertyInfo property in this.NativeType.GetProperties(BindingFlags.Instance
+                                                                        | BindingFlags.Static
+                                                                        | BindingFlags.Public
+                                                                        | BindingFlags.DeclaredOnly))
         {
             string propName = Formatting.FormatProperty(property.Name);
             bool isStatic = property.GetAccessors(true).Any(x => x.IsStatic);
@@ -79,6 +91,34 @@ public class NativePolyType : CarpType
                 member.With(Modifiers.Static);
 
             yield return member;
+        }
+    }
+
+    public override CarpObject Instantiate(CarpObject[] args)
+    {
+        try
+        {
+            ConstructorInfo? constructor =
+                this.NativeType.GetConstructors().FirstOrDefault(x => x.GetParameters().Length == args.Length);
+
+            if (constructor == null)
+                throw new IllegalInstantiationException(this, "No matching constructor found");
+
+            object?[] parameters = args
+                .Select((x, i) => Polygot.ObjToNative(x, constructor.GetParameters()[i].ParameterType))
+                .ToArray();
+
+            object? result = constructor.Invoke(parameters);
+
+            return Polygot.ObjFromNative(result, this.NativeType);
+        }
+        catch (RuntimeException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException($"{ex.GetType().Name}, {ex.Message}");
         }
     }
 

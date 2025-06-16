@@ -1,6 +1,7 @@
 namespace Carp.utils;
 
 using Antlr4.Runtime;
+using Antlr4.Runtime.Atn;
 
 public static class Semantics
 {
@@ -10,7 +11,7 @@ public static class Semantics
         [
             (CarpGrammarLexer.LBRACE, CarpGrammarLexer.RBRACE),
             (CarpGrammarLexer.LPAREN, CarpGrammarLexer.RPAREN),
-            (CarpGrammarLexer.LBRACKET, CarpGrammarLexer.RBRACKET),
+            (CarpGrammarLexer.LBRACKET, CarpGrammarLexer.RBRACKET)
         ];
 
         int[] depths = new int[delimiters.Length];
@@ -32,7 +33,7 @@ public static class Semantics
     {
         if (tokenStream.Size < 2)
             return false;
-        
+
         // If the depth is greater than 0, we should multiline
         int depth = Semantics.CalculateDepth(tokenStream);
         if (depth > 0)
@@ -40,7 +41,7 @@ public static class Semantics
 
         // if (Semantics.CheckUnfinishedMethodDelcaration(tokenStream))
         //     return true;
-        
+
         // Docstrings precede methods, fields and other declarations.
         if (tokenStream.Get(tokenStream.Size - 2).Type == CarpGrammarParser.DOCSTRING)
             return true;
@@ -84,7 +85,7 @@ public static class Semantics
             CarpGrammarParser.SEMICOLON,
             CarpGrammarParser.COLON_COLON,
             CarpGrammarParser.SEMICOLON_SEMICOLON,
-            CarpGrammarParser.ARROW,
+            CarpGrammarParser.ARROW
         ];
         if (multiliners.Contains(tokenStream.Get(tokenStream.Size - 2).Type))
             return true;
@@ -106,7 +107,7 @@ public static class Semantics
             //              ^--- skips to the opening parenthesis
             while (tokenStream.LT(1).Type != CarpGrammarParser.LPAREN)
             {
-                if (tokenStream.LT(1).Type == CarpGrammarParser.Eof)
+                if (tokenStream.LT(1).Type == Recognizer<IToken, ParserATNSimulator>.Eof)
                     return false;
                 tokenStream.Seek(tokenStream.Index - 1);
             }

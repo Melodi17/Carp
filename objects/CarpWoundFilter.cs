@@ -33,7 +33,7 @@ public class CarpWoundFilter : CarpWound
         if (this.Items.Count() == 0)
             return CarpNull.Instance.Member(name, caller, meta);
         CarpType itemType = this.Items.First().Member(name, caller, meta).Type;
-        return new WoundMember(name, itemType,
-            this._filter.Select(item => item.Member(name, caller, meta)), this._filter, this.Items);
+        return new WoundMember(name, itemType, this._filter.Select(item => item.Member(name, caller, meta)),
+            this._filter, this.Items);
     }
 }

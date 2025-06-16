@@ -7,7 +7,6 @@ using exceptions.impl;
 using objects;
 using objects.typing;
 using scoping;
-using toolkit.debugging;
 using utils;
 
 public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
@@ -26,7 +25,8 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
         if (this.Visit(context) is T token)
             return token;
 
-        throw new InterpreterException($"Expected token of {typeof(T).Name}, but got {context.GetType().GetFormattedName()} instead.");
+        throw new InterpreterException(
+            $"Expected token of {typeof(T).Name}, but got {context.GetType().GetFormattedName()} instead.");
     }
 
     private CarpType VisitType(CarpGrammarParser.TypeContext contextRtype)
@@ -41,9 +41,9 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
     protected Func<CarpObject, CarpObject> VisitSetter(CarpGrammarParser.ExpressionContext assignmentTarget)
     {
         // since we're not directly visiting the left side, copy the context to it
-        assignmentTarget.ReplicateParent(assignmentTarget.Parent as Context 
+        assignmentTarget.ReplicateParent(assignmentTarget.Parent as Context
                                          ?? throw new InvalidOperationException("Parent context is null"));
-        
+
         if (assignmentTarget is CarpGrammarParser.VariableExpressionContext vec)
         {
             string name = vec.ID().GetText();
@@ -65,9 +65,10 @@ public partial class CarpVisitor : CarpGrammarBaseVisitor<object>
             Member member = obj.Member(path, assignmentTarget.CurrentObject);
             return value => member.Set(member.Is(Modifiers.Static) ? null : obj, value);
         }
-        throw new InvalidAssignmentTargetException("target of assignment is not a variable, index or property expression");
+        throw new InvalidAssignmentTargetException(
+            "target of assignment is not a variable, index or property expression");
     }
-    
+
     public override object Visit(IParseTree tree)
     {
         if (tree is Context ctx)

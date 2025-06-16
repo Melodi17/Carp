@@ -85,7 +85,7 @@ public class Coloring
             "underline" => (4, 24),
             "inverse" => (7, 27),
             "reset" => (0, 0),
-            _ => throw new Exception($"Invalid style '{style}'"),
+            _ => throw new Exception($"Invalid style '{style}'")
         };
 
         return $"{Coloring.Esc}[{(reset ? styleCodes.Item2 : styleCodes.Item1)}m";
@@ -120,7 +120,7 @@ public class Coloring
             ConsoleColor.DarkCyan => 36,
             ConsoleColor.White => 137,
 
-            _ => throw new Exception("Invalid color"),
+            _ => throw new Exception("Invalid color")
         };
 
         if (background)
@@ -142,7 +142,7 @@ public class Coloring
             "cyan",
             "blue",
             "magenta",
-            "white",
+            "white"
         ];
 
         // Enum.GetValues<ConsoleColor>();
@@ -168,7 +168,9 @@ public class Coloring
             ConsoleColor color = colors[i];
             if (i % (colors.Length / 2) == 0 && i != 0)
                 result += "\n";
-            result += Coloring.AnsiColor(color, false) + color.ToString().Replace("Dark", "D").PadLeft(9) + Coloring.AnsiStyle("reset", true);
+            result += Coloring.AnsiColor(color, false)
+                      + color.ToString().Replace("Dark", "D").PadLeft(9)
+                      + Coloring.AnsiStyle("reset", true);
         }
 
         return result;

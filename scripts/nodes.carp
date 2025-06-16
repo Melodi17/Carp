@@ -1,0 +1,13 @@
+class Node {
+    Node* children = []
+    string name
+    Node parent
+    Node create_child(string name) {
+       Node n = Node.new()
+       n.name = name
+       n.parent = this
+       this.children.add(n)
+    }
+
+    string _string() -> name
+}

@@ -19,7 +19,7 @@ public enum Modifiers
     Abstract = 8,
 
     /// Read only
-    Final = 16,
+    Final = 16
 }
 
 public static class ModifierHelpers

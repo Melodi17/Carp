@@ -5,11 +5,10 @@ using Antlr4.Runtime;
 using exceptions;
 using interpreter.execution;
 using interpreter.visitors;
-using libraries.std.io;
 using objects;
 using objects.typing;
 using scoping;
-using toolkit;
+using toolkit.dependency;
 using toolkit.dependency.impl;
 
 public class Runtime
@@ -22,6 +21,13 @@ public class Runtime
 
         return s;
     }
+    
+    public static LibraryLoader MakeLibraryLoader()
+    {
+        LibraryLoader loader = new();
+        loader.Load(new NativeLibrary(Assembly.GetExecutingAssembly(), "Carp.libraries"));
+        return loader;
+    }
 
     /// <summary>
     /// </summary>
@@ -33,11 +39,11 @@ public class Runtime
     /// <exception cref="ParserException">Thrown when syntax issue is detected at the parser step</exception>
     /// <exception cref="InterpreterException">Thrown when issue with ast-gen step</exception>
     /// <exception cref="RuntimeException">Thrown when carp-level code errors, at the interpreter step</exception>
-    public static CarpObject Execute(IExecutionContext executionContext, Scope? scope = null)
+    public static CarpObject Execute(IExecutionContext executionContext, Scope? scope = null, LibraryLoader? libraryLoader = null)
     {
         CommonTokenStream tokens = Runtime.Lex(executionContext);
         CarpGrammarParser.ProgramContext ast = Runtime.Parse(tokens, executionContext);
-        return Runtime.Execute(ast, executionContext, scope);
+        return Runtime.Execute(ast, executionContext, scope, libraryLoader);
     }
 
     /// <summary>
@@ -54,13 +60,12 @@ public class Runtime
     public static CarpObject Execute(
         CarpGrammarParser.ProgramContext parsedContext,
         IExecutionContext executionContext,
-        Scope? scope = null)
+        Scope? scope = null,
+        LibraryLoader? libraryLoader = null)
     {
-        parsedContext.Scope = scope ?? Runtime.MakeScope(CarpType.ConstructTypes());
         parsedContext.ExecutionContext = executionContext;
-
-        parsedContext.LibraryLoader = new();
-        parsedContext.LibraryLoader.Load(new NativeLibrary(Assembly.GetExecutingAssembly(), "Carp.libraries"));
+        parsedContext.Scope = scope ?? Runtime.MakeScope(CarpType.ConstructTypes());
+        parsedContext.LibraryLoader = libraryLoader ?? Runtime.MakeLibraryLoader();
 
         CarpVisitor visitor = new();
         CarpObject? output = visitor.Visit(parsedContext) as CarpObject;
@@ -71,7 +76,7 @@ public class Runtime
     }
 
     /// <summary>
-    /// Parses the content of the execution context into a CarpGrammarParser.ProgramContext.
+    ///     Parses the content of the execution context into a CarpGrammarParser.ProgramContext.
     /// </summary>
     /// <param name="tokens"></param>
     /// <param name="executionContext">Execution context containing the content to parse.</param>

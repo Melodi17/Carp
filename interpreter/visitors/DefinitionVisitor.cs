@@ -28,18 +28,20 @@ public partial class CarpVisitor
 
         // Basically if the member is a method, and it already exists in the scope,
         // we add an overload
-        if (member is MethodMember mm && context.Scope.TryFind(mm.Name, out Member? existing) && existing is MethodMember existingMethod)
+        if (member is MethodMember mm
+            && context.Scope.TryFind(mm.Name, out Member? existing)
+            && existing is MethodMember existingMethod)
         {
             existingMethod.Merge(mm);
             return null!;
         }
 
         context.Scope.Define(member);
-        
+
         // If the member is a class, instantiate members
         if (member is ClassMember classMember)
             classMember.ConstructMembers();
-        
+
         return null!;
     }
 
@@ -51,7 +53,7 @@ public partial class CarpVisitor
         if (type == CarpType.Auto)
             type = value.GetCarpType();
 
-        FieldMember member = new FieldMember(name, type, value);
+        FieldMember member = new(name, type, value);
         return member;
     }
     public override MethodMember VisitFunctionDefinition(CarpGrammarParser.FunctionDefinitionContext context)
@@ -61,7 +63,8 @@ public partial class CarpVisitor
         CarpType returnType = this.VisitType(context.rtype);
         (CarpType Type, string Name)[] args = this.VisitType_name_list(context.values);
 
-        InternalFunction func = new(returnType, context, context.body, args.ToDictionary(x => x.Name, x => x.Type), this);
+        InternalFunction func = new(returnType, context, context.body, args.ToDictionary(x => x.Name, x => x.Type),
+            this);
 
         MethodMember member = new(name, func);
         return member;
@@ -70,9 +73,7 @@ public partial class CarpVisitor
     {
         // Create a class member.
         string name = context.key.Text;
-        CarpType? baseType = context._inherits.Count > 0
-            ? this.VisitType(context._inherits[0])
-            : null;
+        CarpType? baseType = context._inherits.Count > 0 ? this.VisitType(context._inherits[0]) : null;
 
         ClassType typeDef = new(name, baseType, []);
         ClassMember member = new("class", typeDef, () =>
@@ -80,7 +81,9 @@ public partial class CarpVisitor
             foreach (CarpGrammarParser.Wrapped_definitionContext memberDef in context._definitions)
             {
                 Member memberObj = (Member) this.Visit(memberDef);
-                if (memberObj is MethodMember mm && typeDef.TryMember(mm.Name, out Member? existing) && existing is MethodMember existingMethod)
+                if (memberObj is MethodMember mm
+                    && typeDef.TryMember(mm.Name, out Member? existing)
+                    && existing is MethodMember existingMethod)
                 {
                     existingMethod.Merge(mm);
                     continue;
@@ -92,12 +95,9 @@ public partial class CarpVisitor
         return member;
     }
     public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context)
-    {
-        return base.VisitStructDefinition(context);
-    }
+        => base.VisitStructDefinition(context);
     public override object VisitEnumDefinition(CarpGrammarParser.EnumDefinitionContext context)
-    {
-        return base.VisitEnumDefinition(context);
-    }
-    public override object VisitEnumDefinitionAutoValues(CarpGrammarParser.EnumDefinitionAutoValuesContext context) => base.VisitEnumDefinitionAutoValues(context);
+        => base.VisitEnumDefinition(context);
+    public override object VisitEnumDefinitionAutoValues(CarpGrammarParser.EnumDefinitionAutoValuesContext context)
+        => base.VisitEnumDefinitionAutoValues(context);
 }

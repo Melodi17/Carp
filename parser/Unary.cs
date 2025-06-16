@@ -3,5 +3,5 @@
 public enum Unary
 {
     Negate,
-    Not,
+    Not
 }

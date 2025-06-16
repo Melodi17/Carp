@@ -8,14 +8,19 @@ using utils;
 
 public class InternalFunction : CarpFunction
 {
-    private readonly Context _context;
     private readonly CarpGrammarParser.Generic_blockContext _block;
+    private readonly Context _context;
     private readonly Dictionary<string, CarpType> _parameters;
     private readonly CarpVisitor _visitor;
 
     public readonly string ID = Helpers.GenerateID();
 
-    public InternalFunction(CarpType returnType, Context context, CarpGrammarParser.Generic_blockContext block, Dictionary<string, CarpType> parameters, CarpVisitor visitor) : base(returnType)
+    public InternalFunction(
+        CarpType returnType,
+        Context context,
+        CarpGrammarParser.Generic_blockContext block,
+        Dictionary<string, CarpType> parameters,
+        CarpVisitor visitor) : base(returnType)
     {
         // this._block = block.Clone<CarpGrammarParser.BlockContext>();
         this._context = context;

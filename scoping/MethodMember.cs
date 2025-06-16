@@ -43,7 +43,7 @@ public class MethodMember : Member
         this.Docstring ??= other.Docstring;
         this.Modifiers |= other.Modifiers;
     }
-    
+
     public MethodMember Overload(CarpFunction overload)
     {
         this._overloads.Add(overload);

@@ -27,13 +27,14 @@ public partial class CarpVisitor
             Comparison.GreaterEqual => left.GreaterEqual(right),
             Comparison.Less => left.Less(right),
             Comparison.LessEqual => left.LessEqual(right),
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
     public override CarpObject VisitComparisonCompareExpression(
         CarpGrammarParser.ComparisonCompareExpressionContext context)
         => this.VisitComparisonExpression(context, context.left, context.right, context.op);
-    public override CarpObject VisitComparisonMatchExpression(CarpGrammarParser.ComparisonMatchExpressionContext context)
+    public override CarpObject VisitComparisonMatchExpression(
+        CarpGrammarParser.ComparisonMatchExpressionContext context)
         => this.VisitComparisonExpression(context, context.left, context.right, context.op);
 
     public override CarpObject VisitLogicalExpression(CarpGrammarParser.LogicalExpressionContext context)
@@ -47,7 +48,7 @@ public partial class CarpVisitor
         {
             Logical.And => CarpObject.LogicalAnd(left, GetRight),
             Logical.Or => CarpObject.LogicalOr(left, GetRight),
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
     public CarpObject VisitBinaryExpression(
@@ -74,15 +75,17 @@ public partial class CarpVisitor
             Binary.Modulus => left.Modulus(right),
             Binary.LeftShift => left.LeftShift(right),
             Binary.RightShift => left.RightShift(right),
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
-    public override CarpObject VisitBinaryArithmaticExpression(CarpGrammarParser.BinaryArithmaticExpressionContext context)
+    public override CarpObject VisitBinaryArithmaticExpression(
+        CarpGrammarParser.BinaryArithmaticExpressionContext context)
         => this.VisitBinaryExpression(context, context.left, context.right, context.op);
     public override CarpObject VisitBinaryBitwiseShiftExpression(
         CarpGrammarParser.BinaryBitwiseShiftExpressionContext context)
         => this.VisitBinaryExpression(context, context.left, context.right, context.op);
-    public override CarpObject VisitBinaryGeometricExpression(CarpGrammarParser.BinaryGeometricExpressionContext context)
+    public override CarpObject VisitBinaryGeometricExpression(
+        CarpGrammarParser.BinaryGeometricExpressionContext context)
         => this.VisitBinaryExpression(context, context.left, context.right, context.op);
     public override CarpObject VisitUnaryExpression(CarpGrammarParser.UnaryExpressionContext context)
     {
@@ -93,7 +96,7 @@ public partial class CarpVisitor
         {
             Unary.Negate => obj.Negate(),
             Unary.Not => obj.Not(),
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
     public override CarpObject VisitCompoundAssignmentExpression(
@@ -116,7 +119,7 @@ public partial class CarpVisitor
         {
             Meta.Doc => objMember.Docstring == null ? CarpString.Empty : CarpString.Create(objMember.Docstring),
             Meta.Annotations => objMember.Annotations,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 
@@ -131,7 +134,7 @@ public partial class CarpVisitor
         {
             Meta.Doc => objMember.Docstring == null ? CarpString.Empty : CarpString.Create(objMember.Docstring),
             Meta.Annotations => objMember.Annotations,
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
     public override CarpObject VisitAssignmentExpression(CarpGrammarParser.AssignmentExpressionContext context)
@@ -185,7 +188,7 @@ public partial class CarpVisitor
     }
     public override CarpObject VisitInfixExpression(CarpGrammarParser.InfixExpressionContext context)
     {
-        var setter = this.VisitSetter(context.expr);
+        Func<CarpObject, CarpObject> setter = this.VisitSetter(context.expr);
         CarpObject value = this.VisitExpression(context.expr);
 
         CarpObject newValue = context.token.Type == CarpGrammarParser.PLUS_PLUS ? value.Rise() : value.Fall();
@@ -194,7 +197,7 @@ public partial class CarpVisitor
     }
     public override CarpObject VisitPostfixExpression(CarpGrammarParser.PostfixExpressionContext context)
     {
-        var setter = this.VisitSetter(context.expr);
+        Func<CarpObject, CarpObject> setter = this.VisitSetter(context.expr);
         CarpObject value = this.VisitExpression(context.expr);
 
         CarpObject newValue = context.token.Type == CarpGrammarParser.PLUS_PLUS ? value.Rise() : value.Fall();
@@ -235,7 +238,7 @@ public partial class CarpVisitor
         if (obj is not IIterable carpIterable)
             throw new ConversionException(obj.GetCarpType(), IIterable.Type);
 
-        CarpWound wound = new CarpWound(obj.GetCarpType().TypeArguments[0], carpIterable.GetIterator());
+        CarpWound wound = new(obj.GetCarpType().TypeArguments[0], carpIterable.GetIterator());
         return wound;
     }
     public override CarpObject VisitWindCastExpression(CarpGrammarParser.WindCastExpressionContext context)
@@ -247,7 +250,7 @@ public partial class CarpVisitor
         CarpType type = this.VisitType(context.dest);
 
         IEnumerable<CarpObject> iter = carpIterable.GetIterator().Select(x => x.Coerce(type));
-        CarpWound wound = new CarpWound(obj.GetCarpType().TypeArguments[0], iter);
+        CarpWound wound = new(obj.GetCarpType().TypeArguments[0], iter);
         return wound;
     }
     public override CarpObject VisitFilterExpression(CarpGrammarParser.FilterExpressionContext context)

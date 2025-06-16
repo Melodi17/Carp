@@ -6,5 +6,4 @@ using objects;
 public interface IDebuggable
 {
     CarpObject Evaluate(string expression, Context? ctx);
-    
 }

@@ -38,14 +38,19 @@ public static class CommonBehavior
 
             if (start < 0 || end > items.Count || start >= end)
                 throw new BoundsExceededException(self, index);
-            
+
             return new CarpCollection(itemType, items.Skip(start).Take(end - start));
         }
 
         throw new IllegalArgumentsException($"Index must be a number or range, got {idx.GetCarpType().Name}.");
     }
 
-    public static CarpObject IndexSet(CarpObject self, List<CarpObject> items, CarpType itemType, CarpObject[] index, CarpObject value)
+    public static CarpObject IndexSet(
+        CarpObject self,
+        List<CarpObject> items,
+        CarpType itemType,
+        CarpObject[] index,
+        CarpObject value)
     {
         if (index.Length != 1)
             throw new IllegalArgumentsException($"Index must be a single value, got {index.Length} values.");
@@ -63,7 +68,7 @@ public static class CommonBehavior
             items[idxValue] = value.Coerce(itemType);
             return value;
         }
-        
+
         if (idx is CarpRange { Start: null, End: null })
         {
             for (int i = 0; i < items.Count; i++)

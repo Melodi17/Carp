@@ -70,7 +70,7 @@ public partial class CarpVisitor
         CarpGrammarParser.Type_name_listContext context)
     {
         context.TryReplicateParent();
-        
+
         return context
             ._types.Zip(context._names, (type, name) => (CarpType: this.VisitType(type), Name: name.Text))
             .ToArray();
@@ -78,7 +78,7 @@ public partial class CarpVisitor
     public override CarpObject[] VisitExpression_list(CarpGrammarParser.Expression_listContext context)
     {
         context.TryReplicateParent();
-        
+
         return context._expressions.Select(this.VisitExpression).ToArray();
     }
 }

@@ -1,7 +1,6 @@
 namespace Carp.exceptions.impl;
 
 using objects;
-using objects.typing;
 
 public class BoundsExceededException(CarpObject obj, CarpObject[] bounds)
     : RuntimeException(

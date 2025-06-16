@@ -26,24 +26,24 @@ public class CarpCollection : CarpObject, IIterable
             collection.Items.Clear();
             return self;
         }, [])))
-        .Member(new MethodMember("remove_at").Overload(new NativeConstrainedFunction(CarpCollection.Type, (self, args) =>
-        {
-            CarpCollection collection = (CarpCollection) self!;
-            int index = ((CarpNumber) args[0]).ValueAsFull;
-            if (index < 0)
-                index += collection.Items.Count;
-            if (index < 0 || index >= collection.Items.Count)
-                throw new IndexOutOfRangeException("Index out of range for collection.");
-            collection.Items.RemoveAt(index);
-            return self;
-        }, [CarpNumber.Type])))
-        .Member(new MethodMember("join")
-            .Overload(new NativeConstrainedFunction(CarpString.Type, (self, args) =>
+        .Member(new MethodMember("remove_at").Overload(new NativeConstrainedFunction(CarpCollection.Type,
+            (self, args) =>
             {
                 CarpCollection collection = (CarpCollection) self!;
-                string separator = ((CarpString) args[0]).Value;
-                return CarpString.Create(string.Join(separator, collection.Items.Select(x => x.String().Value)));
-            }, [CarpString.Type])))
+                int index = ((CarpNumber) args[0]).ValueAsFull;
+                if (index < 0)
+                    index += collection.Items.Count;
+                if (index < 0 || index >= collection.Items.Count)
+                    throw new IndexOutOfRangeException("Index out of range for collection.");
+                collection.Items.RemoveAt(index);
+                return self;
+            }, [CarpNumber.Type])))
+        .Member(new MethodMember("join").Overload(new NativeConstrainedFunction(CarpString.Type, (self, args) =>
+        {
+            CarpCollection collection = (CarpCollection) self!;
+            string separator = ((CarpString) args[0]).Value;
+            return CarpString.Create(string.Join(separator, collection.Items.Select(x => x.String().Value)));
+        }, [CarpString.Type])))
         .Member(new MethodMember("contains").Overload(new NativeConstrainedFunction(CarpBoolean.Type, (self, args) =>
         {
             CarpCollection collection = (CarpCollection) self!;
@@ -81,9 +81,7 @@ public class CarpCollection : CarpObject, IIterable
         }
 
         if (type.Extends(CarpString.Type) && this._itemType == CarpString.Type)
-        {
             return CarpString.Create(string.Join("", this.Items.Select(x => ((CarpString) x).Value)));
-        }
 
         return base.Coerce(type);
     }

@@ -42,7 +42,8 @@ public abstract class Member
     /// <param name="self">Should be the object the member belongs to, or should be null when static context.</param>
     /// <returns>Result from get operation</returns>
     public abstract CarpObject Get(CarpObject? self);
-    public virtual CarpObject Set(CarpObject? self, CarpObject value) => throw new InvalidAssignmentTargetException($"Cannot set value of non-settable member '{this.Name}'");
+    public virtual CarpObject Set(CarpObject? self, CarpObject value)
+        => throw new InvalidAssignmentTargetException($"Cannot set value of non-settable member '{this.Name}'");
     public virtual Member Clone()
         =>
             // // Memberwise clone

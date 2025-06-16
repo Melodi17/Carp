@@ -5,5 +5,5 @@ public enum Modifier
 {
     Private = 1,
     Static = 2,
-    Final = 4,
+    Final = 4
 }
