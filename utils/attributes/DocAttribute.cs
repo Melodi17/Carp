@@ -1,4 +1,4 @@
-namespace Carp.utils;
+namespace Carp.utils.attributes;
 
 [AttributeUsage(AttributeTargets.All)]
 public class DocAttribute : Attribute

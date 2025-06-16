@@ -3,6 +3,7 @@ namespace Carp.libraries.std.math;
 using exceptions.impl;
 using objects;
 using utils;
+using utils.attributes;
 
 [Doc("Exposes random number generation functionality.")]
 public class Random

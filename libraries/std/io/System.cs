@@ -2,6 +2,7 @@ namespace Carp.libraries.std.io;
 
 using global::System.Reflection;
 using utils;
+using utils.attributes;
 
 [Doc("Standard library class for input/output operations primarily to standard streams.")]
 public static class System

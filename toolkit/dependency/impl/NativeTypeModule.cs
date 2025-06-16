@@ -5,6 +5,7 @@ using objects;
 using objects.typing;
 using scoping;
 using utils;
+using utils.attributes;
 
 public class NativeTypeModule(NativeLibrary library, string @namespace, Type type) : IModule
 {

@@ -6,6 +6,7 @@ using exceptions.impl;
 using scoping;
 using typing;
 using utils;
+using utils.attributes;
 
 public class NativePolyType : CarpType
 {
@@ -13,9 +14,13 @@ public class NativePolyType : CarpType
 
     private static readonly Dictionary<Guid, NativePolyType> Cache = new();
 
-    protected NativePolyType(Type nativeType) : base(nativeType.Name, NativePolyType.Type, [])
+    protected NativePolyType(Type nativeType) : base(nativeType.Name, GetBaseType(nativeType), [])
     {
         this.NativeType = nativeType;
+    }
+    private static CarpType GetBaseType(Type type)
+    {
+        return Polygot.TypeFromNative(type.BaseType ?? typeof(object));
     }
     public void Initialize()
     {

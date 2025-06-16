@@ -1,6 +1,7 @@
 namespace Carp.toolkit.dependency.impl;
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using utils;
 
 public class NativeLibrary(Assembly asm, string startPath) : ILibrary
@@ -13,6 +14,7 @@ public class NativeLibrary(Assembly asm, string startPath) : ILibrary
             .GetTypes()
             .Where(x => x.Namespace?.StartsWith(startPath) ?? false)
             .Select(x => (ns: Formatting.FormatNamespace(x.Namespace![startPath.Length..]).TrimStart('.'), type: x))
+            .Where(x => x.type.GetCustomAttribute<CompilerGeneratedAttribute>() == null)
             .Select(x => new NativeTypeModule(this, x.ns, x.type));
     }
 }

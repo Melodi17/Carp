@@ -2,6 +2,7 @@ namespace Carp.libraries.std.parsing;
 
 using System.Text.RegularExpressions;
 using utils;
+using utils.attributes;
 
 [Doc("Provides methods for working with regular expressions.")]
 public static class Regex
