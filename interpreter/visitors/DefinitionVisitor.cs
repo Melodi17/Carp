@@ -97,7 +97,16 @@ public partial class CarpVisitor
     public override object VisitStructDefinition(CarpGrammarParser.StructDefinitionContext context)
         => base.VisitStructDefinition(context);
     public override object VisitEnumDefinition(CarpGrammarParser.EnumDefinitionContext context)
-        => base.VisitEnumDefinition(context);
+    {
+        CarpEnum enumType = new(context.key.Text,
+            context._keys.Zip(context._value, (key, value) => (key.Text, this.VisitExpression(value))).ToDictionary());
+
+        return new EnumMember(enumType);
+    }
     public override object VisitEnumDefinitionAutoValues(CarpGrammarParser.EnumDefinitionAutoValuesContext context)
-        => base.VisitEnumDefinitionAutoValues(context);
+    {
+        CarpEnum enumType = new(context.key.Text, context._keys.Select(x => x.Text).ToArray());
+
+        return new EnumMember(enumType);
+    }
 }

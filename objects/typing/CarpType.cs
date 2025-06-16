@@ -72,6 +72,9 @@ public class CarpType : CarpObject
         if (this.Group != null && this.Group == type?.Group)
             return true;
 
+        if (type is CarpEnum e && this.Extends(e.ValueType))
+            return true;
+
         return false;
     }
 
@@ -125,6 +128,7 @@ public class CarpType : CarpObject
             CarpCollection.Type,
             CarpRange.Type,
             CarpWound.Type,
+            CarpEnum.Type,
             CarpFunction.Type,
             ..CarpNumber.AllTypes
         ];
