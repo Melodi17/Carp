@@ -1,12 +1,10 @@
 namespace Carp.libraries.std.parsing;
 
+using utils;
+
+[Doc("Represents a match found by a regular expression.")]
 public class Match
 {
-    public string Value { get; set; }
-    public int Index { get; set; }
-    public int Length { get; set; }
-    public Group[] Groups { get; set; }
-
     public Match(string value, int index, int length, Group[] groups)
     {
         this.Value = value;
@@ -14,6 +12,10 @@ public class Match
         this.Length = length;
         this.Groups = groups;
     }
+    public string Value { get; set; }
+    public int Index { get; set; }
+    public int Length { get; set; }
+    public Group[] Groups { get; set; }
 
     public Group Group(int groupIndex)
     {
@@ -27,9 +29,7 @@ public class Match
     {
         return Array.Find(this.Groups, g => g.Name == groupName);
     }
-    
+
     public override string ToString()
-    {
-        return $"Match(value='{Value}',index={Index},length={Length},groups={Groups.Length})";
-    }
+        => $"Match(value='{this.Value}',index={this.Index},length={this.Length},groups={this.Groups.Length})";
 }

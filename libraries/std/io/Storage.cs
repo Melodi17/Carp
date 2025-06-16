@@ -8,7 +8,7 @@ public static class Storage
 {
     [Doc("Returns the current working directory.")]
     public static string Current => Directory.GetCurrentDirectory();
-    
+
     [Doc("Reads the content of a file at the specified path.")]
     public static string Read(string path)
     {
@@ -25,7 +25,7 @@ public static class Storage
             throw new RuntimeException($"Error reading file at '{path}': {ex.Message}");
         }
     }
-    
+
     [Doc("Writes the specified content to a file at the given path, overwriting any existing content"
          + " and creating the file if it does not exist.")]
     public static void Write(string path, string content)
@@ -39,7 +39,7 @@ public static class Storage
             throw new RuntimeException($"Error writing to file at '{path}': {ex.Message}");
         }
     }
-    
+
     [Doc("Reads the content of a file at the specified path as bytes.")]
     public static byte[] ReadData(string path)
     {
@@ -56,7 +56,7 @@ public static class Storage
             throw new RuntimeException($"Error reading data from '{path}': {ex.Message}");
         }
     }
-    
+
     [Doc("Writes the specified byte array to a file at the given path, overwriting any existing content"
          + " and creating the file if it does not exist.")]
     public static void WriteData(string path, byte[] data)
@@ -70,13 +70,13 @@ public static class Storage
             throw new RuntimeException($"Error writing data to '{path}': {ex.Message}");
         }
     }
-    
+
     [Doc("Checks if the specified path exists, either as a file or a directory.")]
     public static bool Exists(string path) => File.Exists(path) || Directory.Exists(path);
-    
+
     [Doc("Checks if the specified path is a directory.")]
     public static bool IsDirectory(string path) => Directory.Exists(path);
-    
+
     [Doc("Checks if the specified path is a file.")]
     public static bool IsFile(string path) => File.Exists(path);
 
@@ -102,7 +102,7 @@ public static class Storage
             throw new RuntimeException($"Error deleting path '{path}': {ex.Message}");
         }
     }
-    
+
     [Doc("Lists all files and directories in the specified path. Returns an array of strings containing"
          + " the names of files and directories.")]
     public static string[] ListContents(string path)
@@ -111,7 +111,7 @@ public static class Storage
         {
             if (!Directory.Exists(path))
                 throw new PathNotFoundException(path);
-            
+
             return Directory.GetFiles(path).Concat(Directory.GetDirectories(path)).ToArray();
         }
         catch (RuntimeException)
@@ -123,16 +123,15 @@ public static class Storage
             throw new RuntimeException($"Error listing contents of '{path}': {ex.Message}");
         }
     }
-    
-    [Doc("Lists only files in the specified path. Returns an array of strings containing"
-         + " the names of files.")]
+
+    [Doc("Lists only files in the specified path. Returns an array of strings containing" + " the names of files.")]
     public static string[] ListFiles(string path)
     {
         try
         {
             if (!Directory.Exists(path))
                 throw new PathNotFoundException(path);
-            
+
             return Directory.GetFiles(path);
         }
         catch (RuntimeException)
@@ -165,7 +164,7 @@ public static class Storage
             throw new RuntimeException($"Error listing directories in '{path}': {ex.Message}");
         }
     }
-    
+
     [Doc("Creates a new directory at the specified path. If the directory already exists, it does nothing.")]
     public static void CreateDirectory(string path)
     {
@@ -180,6 +179,3 @@ public static class Storage
         }
     }
 }
-
-public class PathNotFoundException(string path) 
-    : RuntimeException($"Path '{path}' not found.");

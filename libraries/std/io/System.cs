@@ -26,10 +26,7 @@ public static class System
     }
 
     [Doc("Reads a line of input from the console and returns it as a string.")]
-    public static string? In()
-    {
-        return Console.In.ReadLine();
-    }
+    public static string? In() => Console.In.ReadLine();
 
     [Doc("When a prompt is provided, writes the prompt to the console as a prefix for the input line.")]
     public static string? In(object prompt)
@@ -52,13 +49,24 @@ public static class System
 
     [Doc("Clears the standard output console.")]
     public static void Clear() => Console.Clear();
-    
+
     [Doc("Exits the program.")]
     public static void Exit() => Environment.Exit(0);
-    
-    [Doc("An error code can be passed to indicate the exit status of the program. A non-zero code typically indicates an error.")]
+
+    [Doc("An error code can be passed to indicate the exit status of the program."
+         + "A non-zero code typically indicates an error.")]
     public static void Exit(int code)
     {
         Environment.Exit(code);
+    }
+
+    [Doc("Returns the value of the specified environment variable."
+         + "If the variable is not found, an EnvironmentVariableNotFoundError is thrown.")]
+    public static string Env(string key)
+    {
+        if (Environment.GetEnvironmentVariable(key) is { } value)
+            return value;
+        
+        throw new EnvironmentVariableNotFoundException(key);
     }
 }
