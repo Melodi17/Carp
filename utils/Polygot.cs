@@ -8,6 +8,9 @@ public static class Polygot
 {
     public static CarpObject ObjFromNative(object? obj, Type? expectedType = null)
     {
+        if (expectedType?.IsAssignableTo(typeof(CarpObject)) ?? false)
+            return obj as CarpObject ?? CarpNull.Instance;
+        
         if (expectedType == typeof(void))
             return CarpVoid.Instance;
 
@@ -49,6 +52,10 @@ public static class Polygot
 
     public static object? ObjToNative(CarpObject? obj, Type? t = null)
     {
+        // if t:CarpObject
+        if (t?.IsAssignableTo(typeof(CarpObject)) ?? false)
+            return obj;
+        
         if (obj is null || obj is CarpNull)
             return null;
 
@@ -103,6 +110,9 @@ public static class Polygot
 
     public static CarpType TypeFromNative(Type type)
     {
+        if (type.IsAssignableTo(typeof(CarpObject)))
+            return CarpObject.Type;
+        
         if (type == typeof(string))
             return CarpString.Type;
 

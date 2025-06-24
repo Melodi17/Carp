@@ -6,16 +6,7 @@ using typing;
 
 public abstract class CarpObject
 {
-    public static readonly CarpType Type = CarpType.Create("obj", null,
-        t => t
-            .Member(new PropertyMember("type", CarpType.Type)
-                .Getter(x => x.GetCarpType())
-                .With(Modifiers.None)
-                .Doc("The type of this object"))
-            .Member(new PropertyMember("string", CarpString.Type)
-                .Getter(x => x.String())
-                .With(Modifiers.None)
-                .Doc("The string representation of this object")));
+    public static readonly CarpType Type = CarpType.Create("obj", null);
 
     public CarpObject(CarpType? type = null)
     {

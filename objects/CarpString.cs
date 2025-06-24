@@ -5,57 +5,7 @@ using typing;
 
 public class CarpString : CarpObject, IIterable
 {
-    public new static readonly CarpType Type = CarpType.Create("string", IIterable.Type, b => b
-        .Member(new MethodMember("replace").Overload(new NativeConstrainedFunction(CarpString.Type!, (self, args) =>
-        {
-            CarpString str = (CarpString) self!;
-            string oldValue = ((CarpString) args[0]).Value;
-            string newValue = ((CarpString) args[1]).Value;
-
-            return CarpString.Create(str.Value.Replace(oldValue, newValue));
-        }, [CarpString.Type!, CarpString.Type!])))
-        .Member(new MethodMember("remove").Overload(new NativeConstrainedFunction(CarpString.Type!, (self, args) =>
-        {
-            CarpString str = (CarpString) self!;
-            string oldValue = ((CarpString) args[0]).Value;
-
-            return CarpString.Create(str.Value.Replace(oldValue, ""));
-        }, [CarpString.Type!])))
-        .Member(new MethodMember("split").Overload(new NativeConstrainedFunction(CarpCollection.Type, (self, args) =>
-        {
-            CarpString str = (CarpString) self!;
-            string delimiter = ((CarpString) args[0]).Value;
-
-            if (delimiter.Length == 0)
-                return new CarpCollection(CarpString.Type!, str.Value.Select(CarpString.Create));
-            return new CarpCollection(CarpString.Type!, str.Value.Split(delimiter).Select(CarpString.Create));
-        }, [CarpString.Type!])))
-        .Member(new MethodMember("contains").Overload(new NativeConstrainedFunction(CarpBoolean.Type, (self, args) =>
-        {
-            CarpString str = (CarpString) self!;
-            string substring = ((CarpString) args[0]).Value;
-
-            return CarpBoolean.Create(str.Value.Contains(substring));
-        }, [CarpString.Type!])))
-        .Member(new MethodMember("starts").Overload(new NativeConstrainedFunction(CarpBoolean.Type, (self, args) =>
-        {
-            CarpString str = (CarpString) self!;
-            string substring = ((CarpString) args[0]).Value;
-
-            return CarpBoolean.Create(str.Value.StartsWith(substring));
-        }, [CarpString.Type!])))
-        .Member(new MethodMember("ends").Overload(new NativeConstrainedFunction(CarpBoolean.Type, (self, args) =>
-        {
-            CarpString str = (CarpString) self!;
-            string substring = ((CarpString) args[0]).Value;
-
-            return CarpBoolean.Create(str.Value.EndsWith(substring));
-        }, [CarpString.Type!])))
-        .Member(new PropertyMember("strip", CarpNumber.Type).Getter<CarpString>(x => CarpString.Create(x.Value.Trim())))
-        .Member(new PropertyMember("lower", CarpNumber.Type).Getter<CarpString>(x
-            => CarpString.Create(x.Value.ToLower())))
-        .Member(new PropertyMember("upper", CarpString.Type!).Getter<CarpString>(x
-            => CarpString.Create(x.Value.ToUpper()))));
+    public new static readonly CarpType Type = CarpType.Create("string", IIterable.Type);
     public static readonly CarpString Empty = new(string.Empty);
     private static readonly Dictionary<string, CarpString> Cache = new();
 

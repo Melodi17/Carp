@@ -8,11 +8,13 @@ using utils;
 public class NativePolyFunction : CarpFunction
 {
     private readonly MethodInfo _func;
+    private readonly bool _selfAsParam;
     public readonly string ID = Helpers.GenerateID();
 
-    public NativePolyFunction(MethodInfo func) : base(Polygot.TypeFromNative(func.ReturnType))
+    public NativePolyFunction(MethodInfo func, bool selfAsParam = false) : base(Polygot.TypeFromNative(func.ReturnType))
     {
         this._func = func;
+        this._selfAsParam = selfAsParam;
     }
 
     public override CarpString String() => CarpString.Create($"<native poly function {this.ID}>");
@@ -20,12 +22,16 @@ public class NativePolyFunction : CarpFunction
     {
         try
         {
+            int selfOffset = this._selfAsParam ? 1 : 0;
             object?[] parameters = args
-                .Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i].ParameterType))
+                .Select((x, i) => Polygot.ObjToNative(x, this._func.GetParameters()[i + selfOffset].ParameterType))
                 .ToArray();
 
-            object? selfObj = Polygot.ObjToNative(self, this._func.DeclaringType);
-            object? result = this._func.Invoke(selfObj, parameters);
+            object? selfObj = Polygot.ObjToNative(self,
+                this._selfAsParam ? this._func.GetParameters()[0].ParameterType : this._func.DeclaringType);
+
+            object? result = this._func.Invoke(selfObj,
+                this._selfAsParam ? parameters.Prepend(selfObj).ToArray() : parameters);
 
             return Polygot.ObjFromNative(result, this._func.ReturnType);
         }
@@ -41,6 +47,9 @@ public class NativePolyFunction : CarpFunction
     public override bool Accepts(CarpObject[] args)
     {
         ParameterInfo[] parameters = this._func.GetParameters();
+        if (this._selfAsParam)
+            parameters = parameters.Skip(1).ToArray();
+        
         if (args.Length != parameters.Length)
             return false;
 

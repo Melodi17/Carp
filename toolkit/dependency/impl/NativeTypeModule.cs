@@ -13,6 +13,12 @@ public class NativeTypeModule(NativeLibrary library, string @namespace, Type typ
     public string Namespace => @namespace;
     public void Import(Scope scope)
     {
+        if (type.GetCustomAttribute<TypeExtensionAttribute>() != null)
+        {
+            NativePolyType.Create(type);
+            return;
+        }
+        
         scope.Define(new FieldMember(type.GetFormattedName(), CarpType.Type, NativePolyType.Create(type))
             .With(Modifiers.Final)
             .Doc(type.GetCustomAttribute<DocAttribute>()?.Text ?? ""));

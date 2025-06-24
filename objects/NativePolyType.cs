@@ -40,6 +40,8 @@ public class NativePolyType : CarpType
     }
     private IEnumerable<Member> LoadMembers()
     {
+        TypeExtensionAttribute? classExtensionAttr = this.NativeType.GetCustomAttribute<TypeExtensionAttribute>();
+
         foreach (IGrouping<string, MethodInfo> method in this
                      .NativeType.GetMethods(BindingFlags.Instance
                                             | BindingFlags.Static
@@ -47,20 +49,49 @@ public class NativePolyType : CarpType
                                             | BindingFlags.DeclaredOnly)
                      .GroupBy(x => x.Name))
         {
-            MethodMember member = new(Formatting.FormatMethod(method.Key));
+            ConsiderAttribute? considerAttr = method.FirstOrDefault()?.GetCustomAttribute<ConsiderAttribute>();
+
+            string name = considerAttr?.Name ?? Formatting.FormatMethod(method.Key);
+            Member member = considerAttr?.TypeOverride == MemberType.Property
+                ? new PropertyMember(name, Polygot.TypeFromNative(method.First().ReturnType))
+                : new MethodMember(name);
+            
             bool isStatic = method.Any(x => x.IsStatic);
+            TypeExtensionAttribute? extensionAttr = classExtensionAttr
+                                                    ?? method
+                                                        .FirstOrDefault()
+                                                        ?.GetCustomAttribute<TypeExtensionAttribute>();
 
             List<string?> docs = [];
-            foreach (MethodInfo overload in method)
+            if (member is MethodMember methodMember)
             {
-                NativePolyFunction func = new(overload);
-                member.Overload(func);
-                docs.Add(overload.GetCustomAttribute<DocAttribute>()?.Text);
+                foreach (MethodInfo overload in method)
+                {
+                    NativePolyFunction func = new(overload, extensionAttr != null);
+                    methodMember.Overload(func);
+                    docs.Add(overload.GetCustomAttribute<DocAttribute>()?.Text);
+                }
+            }
+            else if (member is PropertyMember propertyMember)
+            {
+                MethodInfo overload = method.First();
+                NativePolyFunction func = new(overload, extensionAttr != null);
+                
+                propertyMember.Getter(self => func.Call(self, []));
             }
 
             string doc = string.Join("\n", docs.Where(x => x != null));
 
             member.Doc(doc);
+
+            if (extensionAttr != null)
+            {
+                if (!isStatic)
+                    throw new InterpreterException("Extension methods must be static");
+
+                extensionAttr.BaseType.Members.Define(member);
+                continue;
+            }
 
             if (isStatic)
                 member.With(Modifiers.Static);
