@@ -12,4 +12,16 @@ public interface IExecutionContext
     string GetAtPosition(int position);
 
     string GetContent();
+
+    SecurityFlags GetSecurityFlags()
+    {
+        return SecurityFlags.None;
+    }
+}
+
+[Flags]
+public enum SecurityFlags
+{
+    None = 0,
+    ImportDisallowed = 1,
 }
